@@ -203,3 +203,21 @@ Meraviglia is intended to evolve from an internal consulting tool into a strateg
 # License
 
 Private – Internal Strategic Tool
+
+## AI Development
+
+This project uses a strict AI development protocol to maintain architectural integrity.
+
+All AI-generated code must comply with the rules defined in:
+
+`CODEX_SYSTEM_PROMPT.md`
+
+The system enforces:
+
+- Layer separation (Domain / Engine / State / Rendering)
+- Strict TypeScript typing
+- Pure financial engine logic
+- CSS Grid-based timeline structure
+- No business logic inside UI components
+
+AI contributions must align with the long-term strategic direction of the Meraviglia Engine.
