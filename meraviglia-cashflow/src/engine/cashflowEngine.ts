@@ -1,5 +1,6 @@
 import type { Proposta } from "../models/Proposta"
 import type { PianoStrategico } from "../models/PianoStrategico"
+import { assertValidPaymentStrategy } from "../utils/domainValidation"
 
 export interface CashflowResult {
   mesi: number[]
@@ -22,6 +23,8 @@ export function calcolaCashflow(
   let totaleRisparmio = 0
 
   proposta.servizi.forEach((ps) => {
+    assertValidPaymentStrategy(ps, piano)
+
     const service = ps.service
     const strategia = ps.strategiaPagamento
 
