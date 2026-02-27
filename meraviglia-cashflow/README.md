@@ -1,20 +1,45 @@
-# Meraviglia – Strategic Financial Configuration Engine
+# Meraviglia OS – Sales & Strategic Core
 
 ## Overview
 
-Meraviglia is a strategic financial configuration engine designed to support high-level commercial consulting.
+Meraviglia OS is the Sales & Strategic Core of the broader Meraviglia operating model.
 
-It allows consultants to:
+It supports consultants and strategic teams in designing, structuring, and governing commercial growth trajectories through a unified planning and financial configuration environment.
 
-- Design strategic development plans over time (3–24 months)
-- Configure modular growth phases
-- Build financial proposals dynamically
-- Simulate cash flow impact
-- Compare alternative commercial scenarios
-- Export professional visual outputs (PNG / SVG)
-- Manage a persistent service catalog
+Current capabilities include:
 
-The goal is to evolve this tool into an internal SaaS-like strategic system for advanced consulting workflows.
+- Strategic development planning over time (3–24 months)
+- Modular growth phase configuration
+- Dynamic commercial proposal composition
+- Cashflow simulation and payment-logic configuration
+- Parallel scenario comparison
+- Professional visual exports (PNG / SVG)
+- Persistent local service catalog management
+
+---
+
+## Product Vision
+
+For the complete strategic product direction, see: [`docs/PRODUCT_VISION.md`](../docs/PRODUCT_VISION.md).
+
+---
+
+## Current Development Phase
+
+We are currently in **Phase 1 – MVP Integrity & Sales Core Stabilization**.
+
+---
+
+## Roadmap Overview
+
+- **Phase 1 – MVP Integrity & Sales Core Stabilization**  
+  Stabilize the Sales Core baseline across planning, orchestration, cashflow, and proposal workflows.
+
+- **Phase 2 – Financial Intelligence Layer**  
+  Add deeper financial modeling, control logic, and scenario intelligence.
+
+- **Phase 3 – Modular Governance OS**  
+  Evolve into a modular operating system governing cross-functional growth operations.
 
 ---
 
@@ -141,41 +166,6 @@ Drag & Drop powered by dnd-kit.
 
 ---
 
-# Roadmap – Phase 1 (Stability & Usability)
-
-- [ ] Replace pixel-based drag shift with grid-aware positioning
-- [ ] Auto-calculate module start months
-- [ ] Improve timeline responsiveness
-- [ ] Improve visual hierarchy
-- [ ] Add service name label outside grid cell
-- [ ] Add service deletion from proposal
-- [ ] Add proposal renaming
-- [ ] Improve heatmap logic (service-level payment overlay)
-
----
-
-# Roadmap – Phase 2 (Advanced Strategy Engine)
-
-- [ ] ROI simulation
-- [ ] Margin projection
-- [ ] Break-even visualization
-- [ ] Revenue overlay
-- [ ] Financial summary dashboard
-- [ ] Proposal summary export
-
----
-
-# Roadmap – Phase 3 (Productization)
-
-- [ ] Cloud backend (Supabase / Firebase)
-- [ ] Authentication layer
-- [ ] Multi-client workspace
-- [ ] Save multiple strategic plans
-- [ ] Scenario versioning
-- [ ] SaaS UI refinement
-
----
-
 # Development
 
 ## Install
@@ -186,17 +176,6 @@ npm run dev
 
 ## Build
 npm run build
-
----
-
-# Vision
-
-Meraviglia is intended to evolve from an internal consulting tool into a strategic configuration platform capable of:
-
-- Structuring complex commercial architectures
-- Simulating strategic financial impact
-- Supporting high-level advisory workflows
-- Becoming a modular SaaS system
 
 ---
 
