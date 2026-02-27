@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import type { PianoStrategico } from "../models/PianoStrategico"
 import type { Proposta } from "../models/Proposta"
 import type { ServiceDefinition } from "../models/ServiceDefinition"
+import { sanitizePropostaAtBoundary } from "../utils/domainValidation"
 import { loadFromStorage, saveToStorage } from "../utils/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
@@ -62,11 +63,15 @@ const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
   const services = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
 
+  const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
+  const propostaA = persistedCashflow?.propostaA ?? createDefaultPropostaA()
+  const propostaB = persistedCashflow?.propostaB ?? createDefaultPropostaB()
+
   return {
     services,
-    piano: persistedCashflow?.piano ?? DEFAULT_PIANO,
-    propostaA: persistedCashflow?.propostaA ?? createDefaultPropostaA(),
-    propostaB: persistedCashflow?.propostaB ?? createDefaultPropostaB(),
+    piano,
+    propostaA: sanitizePropostaAtBoundary(propostaA, piano, services),
+    propostaB: sanitizePropostaAtBoundary(propostaB, piano, services),
   }
 }
 
@@ -112,6 +117,8 @@ export function useAppState() {
     setStore({
       ...store,
       piano: nextPiano,
+      propostaA: sanitizePropostaAtBoundary(store.propostaA, nextPiano, store.services),
+      propostaB: sanitizePropostaAtBoundary(store.propostaB, nextPiano, store.services),
     })
   }
 
@@ -122,7 +129,7 @@ export function useAppState() {
 
     setStore({
       ...store,
-      propostaA: nextPropostaA,
+      propostaA: sanitizePropostaAtBoundary(nextPropostaA, store.piano, store.services),
     })
   }
 
@@ -133,21 +140,29 @@ export function useAppState() {
 
     setStore({
       ...store,
-      propostaB: nextPropostaB,
+      propostaB: sanitizePropostaAtBoundary(nextPropostaB, store.piano, store.services),
     })
   }
 
   const addService = (data: Omit<ServiceDefinition, "id">) => {
+    const nextServices = [...store.services, { ...data, id: uuidv4() }]
+
     setStore({
       ...store,
-      services: [...store.services, { ...data, id: uuidv4() }],
+      services: nextServices,
+      propostaA: sanitizePropostaAtBoundary(store.propostaA, store.piano, nextServices),
+      propostaB: sanitizePropostaAtBoundary(store.propostaB, store.piano, nextServices),
     })
   }
 
   const removeService = (id: string) => {
+    const nextServices = store.services.filter((service) => service.id !== id)
+
     setStore({
       ...store,
-      services: store.services.filter((service) => service.id !== id),
+      services: nextServices,
+      propostaA: sanitizePropostaAtBoundary(store.propostaA, store.piano, nextServices),
+      propostaB: sanitizePropostaAtBoundary(store.propostaB, store.piano, nextServices),
     })
   }
 
