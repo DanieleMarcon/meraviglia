@@ -1,9 +1,8 @@
-import { DndContext, useDraggable } from "@dnd-kit/core"
+import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 
-import type { Proposta } from "../models/Proposta"
 import type { PianoStrategico } from "../models/PianoStrategico"
-import type { PropostaService } from "../models/Proposta"
+import type { Proposta, PropostaService } from "../models/Proposta"
 
 interface Props {
   proposta: Proposta
@@ -12,8 +11,28 @@ interface Props {
   onMoveService: (serviceId: string, newMonth: number) => void
 }
 
-function getPaymentColor(value: number, max: number) {
+const MONTH_WIDTH = 100
+
+function buildMonths(durata: number): number[] {
+  return Array.from({ length: durata }, (_, index) => index + 1)
+}
+
+function clampMonth(month: number, durata: number): number {
+  if (month < 1) return 1
+  if (month > durata) return durata
+  return month
+}
+
+function getServiceById(
+  servizi: PropostaService[],
+  serviceId: string
+): PropostaService | undefined {
+  return servizi.find((entry) => entry.service.id === serviceId)
+}
+
+function getPaymentColor(value: number, max: number): string {
   if (max === 0) return "transparent"
+
   const ratio = value / max
 
   if (ratio > 0.75) return "rgba(127,29,29,0.6)"
@@ -24,6 +43,19 @@ function getPaymentColor(value: number, max: number) {
   return "transparent"
 }
 
+function getShiftedMonth(startMonth: number, deltaX: number, durata: number): number {
+  const shift = Math.round(deltaX / MONTH_WIDTH)
+  return clampMonth(startMonth + shift, durata)
+}
+
+function getModuloName(mese: number, piano: PianoStrategico): string {
+  const modulo = piano.moduli.find(
+    (item) => mese >= item.meseInizio && mese < item.meseInizio + item.durata
+  )
+
+  return modulo ? modulo.nome : ""
+}
+
 export default function TimelineView({
   proposta,
   piano,
@@ -31,14 +63,28 @@ export default function TimelineView({
   onMoveService,
 }: Props) {
   const durata = piano.durataTotale
-  const mesi = Array.from({ length: durata }, (_, i) => i + 1)
+  const mesi = buildMonths(durata)
   const maxPagamento = Math.max(...pagamenti)
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const serviceId = String(event.active.id)
+    const serviceEntry = getServiceById(proposta.servizi, serviceId)
+
+    if (!serviceEntry) return
+
+    const newMonth = getShiftedMonth(
+      serviceEntry.service.meseInizio,
+      event.delta.x,
+      durata
+    )
+
+    onMoveService(serviceId, newMonth)
+  }
 
   return (
     <div style={{ marginTop: 40 }}>
       <h2>Timeline Strategica</h2>
 
-      {/* HEADER MESI */}
       <div
         style={{
           display: "grid",
@@ -62,7 +108,6 @@ export default function TimelineView({
         ))}
       </div>
 
-      {/* MODULI */}
       <div
         style={{
           display: "grid",
@@ -71,11 +116,7 @@ export default function TimelineView({
         }}
       >
         {mesi.map((mese) => {
-          const modulo = piano.moduli.find(
-            (m) =>
-              mese >= m.meseInizio &&
-              mese < m.meseInizio + m.durata
-          )
+          const moduloName = getModuloName(mese, piano)
 
           return (
             <div
@@ -85,42 +126,20 @@ export default function TimelineView({
                 padding: 6,
                 fontSize: 11,
                 textAlign: "center",
-                background: modulo ? "#e5e7eb" : "#ffffff",
+                background: moduloName ? "#e5e7eb" : "#ffffff",
               }}
             >
-              {modulo ? modulo.nome : ""}
+              {moduloName}
             </div>
           )
         })}
       </div>
 
-      {/* SERVIZI */}
-      <DndContext
-        onDragEnd={(event) => {
-          const { active, delta } = event
-          const serviceId = active.id as string
-
-          const monthWidth = 100
-          const shift = Math.round(delta.x / monthWidth)
-
-          const found = proposta.servizi.find(
-            (s) => s.service.id === serviceId
-          )
-
-          if (!found) return
-
-          let newMonth = found.service.meseInizio + shift
-
-          if (newMonth < 1) newMonth = 1
-          if (newMonth > durata) newMonth = durata
-
-          onMoveService(serviceId, newMonth)
-        }}
-      >
-        {proposta.servizi.map((ps: PropostaService) => (
+      <DndContext onDragEnd={handleDragEnd}>
+        {proposta.servizi.map((propostaService) => (
           <ServiceRow
-            key={ps.service.id}
-            propostaService={ps}
+            key={propostaService.service.id}
+            propostaService={propostaService}
             durata={durata}
             pagamenti={pagamenti}
             maxPagamento={maxPagamento}
@@ -131,29 +150,29 @@ export default function TimelineView({
   )
 }
 
+interface ServiceRowProps {
+  propostaService: PropostaService
+  durata: number
+  pagamenti: number[]
+  maxPagamento: number
+}
+
 function ServiceRow({
   propostaService,
   durata,
   pagamenti,
   maxPagamento,
-}: {
-  propostaService: PropostaService
-  durata: number
-  pagamenti: number[]
-  maxPagamento: number
-}) {
+}: ServiceRowProps) {
   const { service, colore } = propostaService
-
-  const { attributes, listeners, setNodeRef, transform } =
-    useDraggable({
-      id: service.id,
-    })
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: service.id,
+  })
 
   const style = {
     transform: CSS.Translate.toString(transform),
   }
 
-  const mesi = Array.from({ length: durata }, (_, i) => i + 1)
+  const mesi = buildMonths(durata)
 
   return (
     <div
@@ -172,11 +191,6 @@ function ServiceRow({
         const attivo =
           mese >= service.meseInizio &&
           mese < service.meseInizio + service.durataOperativa
-
-        const paymentOverlay = getPaymentColor(
-          pagamenti[index],
-          maxPagamento
-        )
 
         return (
           <div
@@ -199,7 +213,7 @@ function ServiceRow({
               style={{
                 position: "absolute",
                 inset: 0,
-                background: paymentOverlay,
+                background: getPaymentColor(pagamenti[index], maxPagamento),
               }}
             />
           </div>

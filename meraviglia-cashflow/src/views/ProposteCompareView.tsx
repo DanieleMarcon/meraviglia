@@ -1,8 +1,8 @@
-import type { Proposta } from "../models/Proposta"
-import type { PianoStrategico } from "../models/PianoStrategico"
 import { calcolaCashflow } from "../engine/cashflowEngine"
-import TimelineView from "./TimelineView"
+import type { PianoStrategico } from "../models/PianoStrategico"
+import type { Proposta } from "../models/Proposta"
 import CashflowChart from "./CashflowChart"
+import TimelineView from "./TimelineView"
 
 interface Props {
   piano: PianoStrategico
@@ -12,6 +12,33 @@ interface Props {
   onMoveServiceB: (serviceId: string, newMonth: number) => void
 }
 
+interface ProposalPanelProps {
+  piano: PianoStrategico
+  proposta: Proposta
+  onMoveService: (serviceId: string, newMonth: number) => void
+}
+
+function ProposalPanel({ piano, proposta, onMoveService }: ProposalPanelProps) {
+  const risultato = calcolaCashflow(proposta, piano)
+
+  return (
+    <div style={{ flex: 1 }}>
+      <h2>{proposta.nome}</h2>
+
+      <TimelineView
+        proposta={proposta}
+        piano={piano}
+        pagamenti={risultato.mesi}
+        onMoveService={onMoveService}
+      />
+
+      <div style={{ marginTop: 40 }}>
+        <CashflowChart mesi={risultato.mesi} />
+      </div>
+    </div>
+  )
+}
+
 export default function ProposteCompareView({
   piano,
   propostaA,
@@ -19,9 +46,6 @@ export default function ProposteCompareView({
   onMoveServiceA,
   onMoveServiceB,
 }: Props) {
-  const risultatoA = calcolaCashflow(propostaA, piano)
-  const risultatoB = calcolaCashflow(propostaB, piano)
-
   return (
     <div
       id="export-area"
@@ -33,35 +57,17 @@ export default function ProposteCompareView({
         padding: 20,
       }}
     >
-      <div style={{ flex: 1 }}>
-        <h2>{propostaA.nome}</h2>
+      <ProposalPanel
+        piano={piano}
+        proposta={propostaA}
+        onMoveService={onMoveServiceA}
+      />
 
-        <TimelineView
-          proposta={propostaA}
-          piano={piano}
-          pagamenti={risultatoA.mesi}
-          onMoveService={onMoveServiceA}
-        />
-
-        <div style={{ marginTop: 40 }}>
-          <CashflowChart mesi={risultatoA.mesi} />
-        </div>
-      </div>
-
-      <div style={{ flex: 1 }}>
-        <h2>{propostaB.nome}</h2>
-
-        <TimelineView
-          proposta={propostaB}
-          piano={piano}
-          pagamenti={risultatoB.mesi}
-          onMoveService={onMoveServiceB}
-        />
-
-        <div style={{ marginTop: 40 }}>
-          <CashflowChart mesi={risultatoB.mesi} />
-        </div>
-      </div>
+      <ProposalPanel
+        piano={piano}
+        proposta={propostaB}
+        onMoveService={onMoveServiceB}
+      />
     </div>
   )
 }
