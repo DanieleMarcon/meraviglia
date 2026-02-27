@@ -34,14 +34,14 @@ export function calcolaCashflow(
     const meseInizio = service.meseInizio
 
     switch (strategia.tipo) {
-
-      case "oneShot":
+      case "oneShot": {
         if (meseInizio <= durata) {
           mesi[meseInizio - 1] += prezzoEffettivo
         }
         break
+      }
 
-      case "rate":
+      case "rate": {
         const numeroRate = strategia.numeroRate ?? 1
         const rata = prezzoEffettivo / numeroRate
 
@@ -52,8 +52,9 @@ export function calcolaCashflow(
           }
         }
         break
+      }
 
-      case "abbonamento":
+      case "abbonamento": {
         for (let i = 0; i < service.durataOperativa; i++) {
           const mese = meseInizio + i
           if (mese <= durata) {
@@ -61,8 +62,9 @@ export function calcolaCashflow(
           }
         }
         break
+      }
 
-      case "accontoRate":
+      case "accontoRate": {
         const percentuale = strategia.percentualeAcconto ?? 0.3
         const numeroRateAcconto = strategia.numeroRate ?? 1
 
@@ -82,6 +84,7 @@ export function calcolaCashflow(
           }
         }
         break
+      }
     }
   })
 
