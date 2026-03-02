@@ -112,6 +112,8 @@ function App() {
 
       <PaymentEditor
         proposta={propostaA}
+        piano={piano}
+        catalog={catalog}
         onUpdate={setPropostaA}
       />
 
