@@ -122,3 +122,20 @@ Phase 2 features require stable contracts, composable state, and pluggable rende
 - **M4 → M5** (multi-template and scenario-ready rendering path)
 
 This sequence maximizes architectural coherence: foundation first, domain completion second, interface and output layers third, extensibility last.
+
+## Structural Hardening Notes
+
+- **Separate state core from React hooks (introduce framework-agnostic state layer in future refactor)**  
+  This matters architecturally because it isolates domain/state behavior from view concerns, making the engine portable, easier to test, and safer to evolve if UI frameworks change. This is a **Phase 1 hardening task before SaaS transition** to reduce coupling risk early.
+
+- **Introduce persistence abstraction boundary (prepare for backend storage replacement)**  
+  This matters architecturally because a storage boundary prevents persistence mechanics from leaking into business logic, enabling future backend swaps (or mixed storage strategies) without destabilizing core flows. This is a **Phase 1 hardening task before SaaS transition** to keep migration paths controlled.
+
+- **Add engine-level test harness independent from UI**  
+  This matters architecturally because core proposal/domain validation should run without UI runtime dependencies, improving regression detection speed and confidence for engine refactors. This is a **Phase 1 hardening task before SaaS transition** to harden correctness guarantees.
+
+- **Formalize state schema version migration policy**  
+  This matters architecturally because explicit migration rules protect persisted data integrity across releases and avoid ad hoc conversion logic spread through feature code. This is a **Phase 1 hardening task before SaaS transition** to support safe evolution of customer/workspace data.
+
+- **Ensure no UI-layer dependency leaks into domain/engine**  
+  This matters architecturally because keeping domain/engine pure preserves clear boundaries, avoids circular dependencies, and maintains deterministic behavior across rendering surfaces (UI, PDF, APIs). This is a **Phase 1 hardening task before SaaS transition** to preserve long-term maintainability.
