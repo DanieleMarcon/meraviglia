@@ -1,55 +1,39 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  Cell,
-} from "recharts"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts"
+
+interface ServiceSeries {
+  key: string
+  name: string
+  color: string
+}
+
+interface CashflowMonthData {
+  month: string
+  [serviceKey: string]: number | string
+}
 
 interface Props {
-  mesi: number[]
+  data: CashflowMonthData[]
+  services: ServiceSeries[]
 }
 
-function getColor(value: number, max: number) {
-  if (max === 0) return "#e5e5e5"
-
-  const ratio = value / max
-
-  if (ratio > 0.75) return "#7f1d1d" // rosso intenso
-  if (ratio > 0.5) return "#b91c1c"
-  if (ratio > 0.3) return "#dc2626"
-  if (ratio > 0.1) return "#f87171"
-
-  return "#fecaca"
-}
-
-export default function CashflowChart({ mesi }: Props) {
-  const max = Math.max(...mesi)
-
-  const data = mesi.map((valore, index) => ({
-    mese: `M${index + 1}`,
-    valore,
-  }))
-
+export default function CashflowChart({ data, services }: Props) {
   return (
     <div style={{ width: "100%", height: 400 }}>
       <ResponsiveContainer>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="mese" />
+          <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="valore">
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={getColor(entry.valore, max)}
-              />
-            ))}
-          </Bar>
+          {services.map((service) => (
+            <Bar
+              key={service.key}
+              dataKey={service.key}
+              stackId="cashflow"
+              name={service.name}
+              fill={service.color}
+            />
+          ))}
         </BarChart>
       </ResponsiveContainer>
     </div>

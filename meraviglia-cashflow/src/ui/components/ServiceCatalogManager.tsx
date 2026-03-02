@@ -12,7 +12,6 @@ export default function ServiceCatalogManager() {
     prezzoPieno: 0,
     prezzoScontato: 0,
     durataStandard: 1,
-    colore: "#1f2937",
     consentiRateizzazione: true,
     consentiAcconto: true,
     maxRateConsentite: 12,
@@ -62,11 +61,6 @@ export default function ServiceCatalogManager() {
           onChange={e => setForm({ ...form, durataStandard: Number(e.target.value) })}
         />
 
-        <input
-          type="color"
-          value={form.colore}
-          onChange={e => setForm({ ...form, colore: e.target.value })}
-        />
 
         <button onClick={handleSubmit}>Add</button>
       </div>
