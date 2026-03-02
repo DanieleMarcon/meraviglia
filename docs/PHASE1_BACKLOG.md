@@ -160,3 +160,8 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Hash-based color generation could theoretically cause color similarity collisions.
 - Future optional manual override for service color may be needed for branding.
 - Stacked cashflow visualization may require grouping/filtering if service count grows significantly.
+
+### Post-Cashflow Engine Optimization — Phase 1
+
+- ProposalDocumentEngine now computes cashflow once per proposal build to eliminate redundant deterministic recomputation.
+- Peak month detection currently highlights first occurrence if multiple equal peaks exist (acceptable for Phase 1).

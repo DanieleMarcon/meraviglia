@@ -1,4 +1,5 @@
 import { calcolaCashflow } from "../cashflow/cashflowEngine"
+import type { CashflowResult } from "../cashflow/cashflowEngine"
 import type { PianoStrategico } from "../../domain/models/PianoStrategico"
 import type { ProposalDocument } from "../../domain/models/ProposalDocument"
 import type { ProposalSection } from "../../domain/models/ProposalSection"
@@ -121,10 +122,8 @@ function buildStrategicPlanPayload(piano: PianoStrategico): StrategicPlanPayload
 
 function buildFinancialProposalPayload(
   proposta: Proposta,
-  piano: PianoStrategico
+  cashflow: CashflowResult
 ): FinancialProposalPayload {
-  const cashflow = calcolaCashflow(proposta, piano)
-
   return {
     totaleAnno1: cashflow.totaleAnno1,
     totaleAnno2: cashflow.totaleAnno2,
@@ -134,8 +133,7 @@ function buildFinancialProposalPayload(
   }
 }
 
-function buildCashflowPayload(proposta: Proposta, piano: PianoStrategico): CashflowPayload {
-  const cashflow = calcolaCashflow(proposta, piano)
+function buildCashflowPayload(cashflow: CashflowResult): CashflowPayload {
   const cumulative = cashflow.mesi.reduce<number[]>((acc, value, index) => {
     const previous = index > 0 ? acc[index - 1] : 0
     acc.push(previous + value)
@@ -154,13 +152,9 @@ function buildCashflowPayload(proposta: Proposta, piano: PianoStrategico): Cashf
 }
 
 function buildComparisonPayload(
-  propostaA: Proposta,
-  propostaB: Proposta,
-  piano: PianoStrategico
+  financialA: FinancialProposalPayload,
+  financialB: FinancialProposalPayload
 ): ComparisonPayload {
-  const financialA = buildFinancialProposalPayload(propostaA, piano)
-  const financialB = buildFinancialProposalPayload(propostaB, piano)
-
   const delta24Mesi = financialA.totale24Mesi - financialB.totale24Mesi
   const deltaPercentuale =
     financialB.totale24Mesi !== 0
@@ -197,8 +191,15 @@ export function buildProposalDocument({
 
   const activatedServicesPayload = buildActivatedServicesPayload(propostaA)
   const strategicPlanPayload = buildStrategicPlanPayload(piano)
-  const financialProposalPayload = buildFinancialProposalPayload(propostaA, piano)
-  const cashflowPayload = buildCashflowPayload(propostaA, piano)
+  const cashflowA = calcolaCashflow(propostaA, piano)
+  const financialProposalPayload = buildFinancialProposalPayload(propostaA, cashflowA)
+  const cashflowPayload = buildCashflowPayload(cashflowA)
+
+  const cashflowB = propostaB ? calcolaCashflow(propostaB, piano) : undefined
+  const financialProposalPayloadB =
+    propostaB && cashflowB
+      ? buildFinancialProposalPayload(propostaB, cashflowB)
+      : undefined
 
   const sections: ProposalSection[] = [
     {
@@ -279,9 +280,10 @@ export function buildProposalDocument({
         isSectionEnabled(ProposalSectionType.COMPARISON, sectionToggles) &&
         Boolean(propostaB),
       order: 11,
-      payload: propostaB
-        ? buildComparisonPayload(propostaA, propostaB, piano)
-        : null,
+      payload:
+        propostaB && financialProposalPayloadB
+          ? buildComparisonPayload(financialProposalPayload, financialProposalPayloadB)
+          : null,
     },
     {
       type: ProposalSectionType.CLOSING,
