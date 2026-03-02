@@ -1,5 +1,4 @@
-import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core"
-import { CSS } from "@dnd-kit/utilities"
+import type { DragEvent } from "react"
 
 import type { PianoStrategico } from "../../domain/models/PianoStrategico"
 import type { Proposta, PropostaService } from "../../domain/models/Proposta"
@@ -11,23 +10,8 @@ interface Props {
   onMoveService: (serviceId: string, newMonth: number) => void
 }
 
-const MONTH_WIDTH = 100
-
 function buildMonths(durata: number): number[] {
   return Array.from({ length: durata }, (_, index) => index + 1)
-}
-
-function clampMonth(month: number, durata: number): number {
-  if (month < 1) return 1
-  if (month > durata) return durata
-  return month
-}
-
-function getServiceById(
-  servizi: PropostaService[],
-  serviceId: string
-): PropostaService | undefined {
-  return servizi.find((entry) => entry.service.id === serviceId)
 }
 
 function getPaymentColor(value: number, max: number): string {
@@ -41,11 +25,6 @@ function getPaymentColor(value: number, max: number): string {
   if (ratio > 0.1) return "rgba(248,113,113,0.3)"
 
   return "transparent"
-}
-
-function getShiftedMonth(startMonth: number, deltaX: number, durata: number): number {
-  const shift = Math.round(deltaX / MONTH_WIDTH)
-  return clampMonth(startMonth + shift, durata)
 }
 
 function getModuloName(mese: number, piano: PianoStrategico): string {
@@ -65,21 +44,6 @@ export default function TimelineView({
   const durata = piano.durataTotale
   const mesi = buildMonths(durata)
   const maxPagamento = Math.max(...pagamenti)
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const serviceId = String(event.active.id)
-    const serviceEntry = getServiceById(proposta.servizi, serviceId)
-
-    if (!serviceEntry) return
-
-    const newMonth = getShiftedMonth(
-      serviceEntry.service.meseInizio,
-      event.delta.x,
-      durata
-    )
-
-    onMoveService(serviceId, newMonth)
-  }
 
   return (
     <div style={{ marginTop: 40 }}>
@@ -135,17 +99,16 @@ export default function TimelineView({
         })}
       </div>
 
-      <DndContext onDragEnd={handleDragEnd}>
-        {proposta.servizi.map((propostaService) => (
-          <ServiceRow
-            key={propostaService.service.id}
-            propostaService={propostaService}
-            durata={durata}
-            pagamenti={pagamenti}
-            maxPagamento={maxPagamento}
-          />
-        ))}
-      </DndContext>
+      {proposta.servizi.map((propostaService) => (
+        <ServiceRow
+          key={propostaService.service.id}
+          propostaService={propostaService}
+          durata={durata}
+          pagamenti={pagamenti}
+          maxPagamento={maxPagamento}
+          onMoveService={onMoveService}
+        />
+      ))}
     </div>
   )
 }
@@ -155,6 +118,7 @@ interface ServiceRowProps {
   durata: number
   pagamenti: number[]
   maxPagamento: number
+  onMoveService: (serviceId: string, newMonth: number) => void
 }
 
 function ServiceRow({
@@ -162,29 +126,39 @@ function ServiceRow({
   durata,
   pagamenti,
   maxPagamento,
+  onMoveService,
 }: ServiceRowProps) {
   const { service, colore } = propostaService
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: service.id,
-  })
+  const mesi = buildMonths(durata)
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
+  const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData("text/plain", service.id)
+    event.dataTransfer.effectAllowed = "move"
   }
 
-  const mesi = buildMonths(durata)
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = "move"
+  }
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>, monthIndex: number) => {
+    event.preventDefault()
+    const serviceId = event.dataTransfer.getData("text/plain")
+
+    if (!serviceId) return
+
+    onMoveService(serviceId, monthIndex)
+  }
 
   return (
     <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
+      draggable
+      onDragStart={handleDragStart}
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${durata}, 1fr)`,
         marginBottom: 10,
         cursor: "grab",
-        ...style,
       }}
     >
       {mesi.map((mese, index) => {
@@ -195,6 +169,9 @@ function ServiceRow({
         return (
           <div
             key={mese}
+            data-month-index={mese}
+            onDragOver={handleDragOver}
+            onDrop={(event) => handleDrop(event, mese)}
             style={{
               border: "1px solid #eee",
               height: 40,
@@ -214,6 +191,7 @@ function ServiceRow({
                 position: "absolute",
                 inset: 0,
                 background: getPaymentColor(pagamenti[index], maxPagamento),
+                pointerEvents: "none",
               }}
             />
           </div>
