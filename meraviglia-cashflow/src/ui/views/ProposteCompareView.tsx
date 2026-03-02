@@ -134,7 +134,13 @@ function ProposalPanel({ piano, proposta, onMoveService }: ProposalPanelProps) {
       />
 
       <div style={{ marginTop: 40 }}>
-        <CashflowChart data={chart.data} services={chart.services} />
+        <CashflowChart
+          data={chart.data}
+          services={chart.services}
+          monthlyTotals={risultato.mesi}
+          totalYearOne={risultato.totaleAnno1}
+          total24Months={risultato.totale}
+        />
       </div>
     </div>
   )
