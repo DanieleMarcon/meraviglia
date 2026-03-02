@@ -12,7 +12,7 @@ import PianoEditor from "./ui/components/PianoEditor"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
-import { clearStorage } from "./utils/storage"
+import { clearStorage } from "./state/persistence/storage"
 
 const STORAGE_KEY = "meraviglia-cashflow"
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
