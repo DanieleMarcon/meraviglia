@@ -4,6 +4,12 @@ import { v4 as uuidv4 } from "uuid"
 import type { PianoStrategico } from "../../domain/models/PianoStrategico"
 import type { Proposta } from "../../domain/models/Proposta"
 import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import {
+  createDefaultSectionToggleState,
+  MANDATORY_PROPOSAL_SECTIONS,
+  type SectionToggleState,
+} from "../../domain/models/SectionToggleState"
+import type { ProposalSectionType } from "../../domain/models/ProposalSectionType"
 import { sanitizePropostaAtBoundary } from "../../domain/validation/domainValidation"
 import { loadFromStorage, saveToStorage } from "../persistence/storage"
 
@@ -36,6 +42,7 @@ interface PersistedCashflowState {
   propostaA: Proposta
   propostaB: Proposta
   piano: PianoStrategico
+  sectionToggles?: SectionToggleState
 }
 
 interface AppStateStore {
@@ -43,6 +50,7 @@ interface AppStateStore {
   piano: PianoStrategico
   propostaA: Proposta
   propostaB: Proposta
+  sectionToggles: SectionToggleState
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -59,6 +67,14 @@ const isPersistedCashflowState = (value: unknown): value is PersistedCashflowSta
 const isServiceDefinitionArray = (value: unknown): value is ServiceDefinition[] =>
   Array.isArray(value)
 
+const isSectionToggleState = (value: unknown): value is SectionToggleState => {
+  if (!isObject(value)) {
+    return false
+  }
+
+  return Object.values(value).every((toggleValue) => typeof toggleValue === "boolean")
+}
+
 const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
   const services = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
@@ -66,12 +82,20 @@ const createInitialState = (): AppStateStore => {
   const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
   const propostaA = persistedCashflow?.propostaA ?? createDefaultPropostaA()
   const propostaB = persistedCashflow?.propostaB ?? createDefaultPropostaB()
+  const sectionToggles = isSectionToggleState(persistedCashflow?.sectionToggles)
+    ? { ...createDefaultSectionToggleState(), ...persistedCashflow.sectionToggles }
+    : createDefaultSectionToggleState()
+
+  MANDATORY_PROPOSAL_SECTIONS.forEach((sectionType) => {
+    sectionToggles[sectionType] = true
+  })
 
   return {
     services,
     piano,
     propostaA: sanitizePropostaAtBoundary(propostaA, piano, services),
     propostaB: sanitizePropostaAtBoundary(propostaB, piano, services),
+    sectionToggles,
   }
 }
 
@@ -91,6 +115,7 @@ const setStore = (nextStore: AppStateStore) => {
     piano: store.piano,
     propostaA: store.propostaA,
     propostaB: store.propostaB,
+    sectionToggles: store.sectionToggles,
   })
 
   notifyListeners()
@@ -166,6 +191,20 @@ export function useAppState() {
     })
   }
 
+  const setSectionEnabled = (sectionType: ProposalSectionType, enabled: boolean) => {
+    const nextToggles: SectionToggleState = {
+      ...store.sectionToggles,
+      [sectionType]: MANDATORY_PROPOSAL_SECTIONS.includes(sectionType)
+        ? true
+        : enabled,
+    }
+
+    setStore({
+      ...store,
+      sectionToggles: nextToggles,
+    })
+  }
+
   return {
     ...snapshot,
     setPiano,
@@ -173,5 +212,6 @@ export function useAppState() {
     setPropostaB,
     addService,
     removeService,
+    setSectionEnabled,
   }
 }

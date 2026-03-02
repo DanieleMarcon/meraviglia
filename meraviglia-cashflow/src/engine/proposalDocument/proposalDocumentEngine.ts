@@ -2,8 +2,16 @@ import { calcolaCashflow } from "../cashflow/cashflowEngine"
 import type { PianoStrategico } from "../../domain/models/PianoStrategico"
 import type { ProposalDocument } from "../../domain/models/ProposalDocument"
 import type { ProposalSection } from "../../domain/models/ProposalSection"
-import { ProposalSectionType } from "../../domain/models/ProposalSectionType"
+import {
+  ProposalSectionType,
+  type ProposalSectionType as ProposalSectionTypeValue,
+} from "../../domain/models/ProposalSectionType"
 import type { Proposta } from "../../domain/models/Proposta"
+import {
+  createDefaultSectionToggleState,
+  MANDATORY_PROPOSAL_SECTIONS,
+  type SectionToggleState,
+} from "../../domain/models/SectionToggleState"
 
 export interface BuildProposalDocumentMeta {
   clientName: string
@@ -17,6 +25,18 @@ export interface BuildProposalDocumentInput {
   piano: PianoStrategico
   propostaB?: Proposta
   meta: BuildProposalDocumentMeta
+  sectionToggles?: SectionToggleState
+}
+
+function isSectionEnabled(
+  sectionType: ProposalSectionTypeValue,
+  sectionToggles: SectionToggleState
+): boolean {
+  if (MANDATORY_PROPOSAL_SECTIONS.includes(sectionType)) {
+    return true
+  }
+
+  return sectionToggles[sectionType]
 }
 
 interface ActivatedServicesPayload {
@@ -168,7 +188,13 @@ export function buildProposalDocument({
   piano,
   propostaB,
   meta,
+  sectionToggles: sectionTogglesInput,
 }: BuildProposalDocumentInput): ProposalDocument {
+  const sectionToggles: SectionToggleState = {
+    ...createDefaultSectionToggleState(),
+    ...sectionTogglesInput,
+  }
+
   const activatedServicesPayload = buildActivatedServicesPayload(propostaA)
   const strategicPlanPayload = buildStrategicPlanPayload(piano)
   const financialProposalPayload = buildFinancialProposalPayload(propostaA, piano)
@@ -177,7 +203,7 @@ export function buildProposalDocument({
   const sections: ProposalSection[] = [
     {
       type: ProposalSectionType.COVER,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.COVER, sectionToggles),
       order: 1,
       payload: {
         propostaId: propostaA.id,
@@ -185,7 +211,7 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.PRESENTATION,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.PRESENTATION, sectionToggles),
       order: 2,
       payload: {
         propostaName: propostaA.nome,
@@ -193,7 +219,7 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.INDEX,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.INDEX, sectionToggles),
       order: 3,
       payload: {
         sectionCount: 12,
@@ -201,7 +227,7 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.MERAVIGLIA_NUMBERS,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.MERAVIGLIA_NUMBERS, sectionToggles),
       order: 4,
       payload: {
         placeholder: true,
@@ -209,19 +235,19 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.ACTIVATED_SERVICES,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.ACTIVATED_SERVICES, sectionToggles),
       order: 5,
       payload: activatedServicesPayload,
     },
     {
       type: ProposalSectionType.STRATEGIC_PLAN,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.STRATEGIC_PLAN, sectionToggles),
       order: 6,
       payload: strategicPlanPayload,
     },
     {
       type: ProposalSectionType.OPERATIONAL_ARCHITECTURE,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.OPERATIONAL_ARCHITECTURE, sectionToggles),
       order: 7,
       payload: {
         duration: piano.durataTotale,
@@ -229,19 +255,19 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.FINANCIAL_PROPOSAL,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.FINANCIAL_PROPOSAL, sectionToggles),
       order: 8,
       payload: financialProposalPayload,
     },
     {
       type: ProposalSectionType.CASHFLOW,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.CASHFLOW, sectionToggles),
       order: 9,
       payload: cashflowPayload,
     },
     {
       type: ProposalSectionType.INVESTMENT_AND_TERMS,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.INVESTMENT_AND_TERMS, sectionToggles),
       order: 10,
       payload: {
         placeholder: true,
@@ -249,7 +275,9 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.COMPARISON,
-      enabled: Boolean(propostaB),
+      enabled:
+        isSectionEnabled(ProposalSectionType.COMPARISON, sectionToggles) &&
+        Boolean(propostaB),
       order: 11,
       payload: propostaB
         ? buildComparisonPayload(propostaA, propostaB, piano)
@@ -257,7 +285,7 @@ export function buildProposalDocument({
     },
     {
       type: ProposalSectionType.CLOSING,
-      enabled: true,
+      enabled: isSectionEnabled(ProposalSectionType.CLOSING, sectionToggles),
       order: 12,
       payload: {
         placeholder: true,
