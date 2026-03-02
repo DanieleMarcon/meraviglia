@@ -165,3 +165,8 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 
 - ProposalDocumentEngine now computes cashflow once per proposal build to eliminate redundant deterministic recomputation.
 - Peak month detection currently highlights first occurrence if multiple equal peaks exist (acceptable for Phase 1).
+
+### Post-Engine Test Harness — Phase 1
+
+- Engine-level deterministic test suite introduced for cashflow, validation, and proposal aggregation.
+- UI layer intentionally excluded from Phase 1 automated testing.
