@@ -8,6 +8,7 @@ import ExportButtons from "./ui/components/ExportButtons"
 import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
 import AddServiceToProposal from "./ui/components/AddServiceToProposal"
 import PianoEditor from "./ui/components/PianoEditor"
+import UnauthorizedView from "./ui/views/UnauthorizedView"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
@@ -40,6 +41,10 @@ function App() {
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
+
+  if (window.location.pathname === "/unauthorized") {
+    return <UnauthorizedView />
+  }
 
   const moveService = (
     propostaSetter: Dispatch<SetStateAction<Proposta>>,
