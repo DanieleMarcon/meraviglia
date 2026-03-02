@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Cell } from "recharts"
 
 interface ServiceSeries {
@@ -24,6 +25,12 @@ const formatCurrency = (value: number): string => (
 )
 
 export default function CashflowChart({ data, services, monthlyTotals, totalYearOne, total24Months }: Props) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const peakValue = monthlyTotals.reduce((peak, value) => Math.max(peak, value), 0)
   const peakMonthIndex = monthlyTotals.findIndex((value) => value === peakValue)
 
@@ -35,32 +42,34 @@ export default function CashflowChart({ data, services, monthlyTotals, totalYear
         {peakMonthIndex >= 0 && <span>Peak: M{peakMonthIndex + 1} ({formatCurrency(peakValue)})</span>}
       </div>
 
-      <div style={{ height: 400 }}>
-        <ResponsiveContainer>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            {services.map((service) => (
-            <Bar
-              key={service.key}
-              dataKey={service.key}
-              stackId="cashflow"
-              name={service.name}
-              fill={service.color}
-            >
-              {data.map((_, index) => (
-                <Cell
-                  key={`${service.key}-${index}`}
-                  stroke={index === peakMonthIndex ? "#111827" : undefined}
-                  strokeWidth={index === peakMonthIndex ? 1.5 : 0}
-                />
+      <div style={{ width: "100%", minHeight: 340 }}>
+        {mounted && (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              {services.map((service) => (
+                <Bar
+                  key={service.key}
+                  dataKey={service.key}
+                  stackId="cashflow"
+                  name={service.name}
+                  fill={service.color}
+                >
+                  {data.map((_, index) => (
+                    <Cell
+                      key={`${service.key}-${index}`}
+                      stroke={index === peakMonthIndex ? "#111827" : undefined}
+                      strokeWidth={index === peakMonthIndex ? 1.5 : 0}
+                    />
+                  ))}
+                </Bar>
               ))}
-            </Bar>
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       <div style={{ marginTop: 12, fontWeight: 700 }}>
