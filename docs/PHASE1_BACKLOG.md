@@ -139,3 +139,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 
 - **Ensure no UI-layer dependency leaks into domain/engine**  
   This matters architecturally because keeping domain/engine pure preserves clear boundaries, avoids circular dependencies, and maintains deterministic behavior across rendering surfaces (UI, PDF, APIs). This is a **Phase 1 hardening task before SaaS transition** to preserve long-term maintainability.
+
+
+### Post-UI Precision Micro Observations — Phase 1
+
+- HTML5 drag and drop is not mobile-ready (future touch abstraction needed).
+- Timeline currently does not enforce module-bound drop constraints.
+- No dragover visual preview feedback yet (future UX improvement).
+- ProposalDocumentEngine currently recalculates cashflow multiple times per build (micro-optimization candidate).
+- Service-to-module mapping currently uses placeholder (service.nome), future structural alignment needed.
+- PaymentEditor UX now hardened but still relies on domain layer for final validation (correct separation).

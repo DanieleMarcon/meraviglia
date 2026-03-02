@@ -44,15 +44,34 @@ const resolveMaxRateConsentite = (service: Service, catalog: ServiceDefinition[]
   return clampInteger(match.maxRateConsentite, 1, Number.MAX_SAFE_INTEGER)
 }
 
+export interface PaymentConstraints {
+  maxRateConsentite: number
+  mesiResidui: number
+  maxRatePerPiano: number
+}
+
+export const resolvePaymentConstraints = (
+  service: Service,
+  pianoDurata: number,
+  catalog: ServiceDefinition[]
+): PaymentConstraints => {
+  const maxRateConsentite = resolveMaxRateConsentite(service, catalog)
+  const mesiResidui = Math.max(1, pianoDurata - service.meseInizio + 1)
+
+  return {
+    maxRateConsentite,
+    mesiResidui,
+    maxRatePerPiano: Math.min(maxRateConsentite, mesiResidui),
+  }
+}
+
 const sanitizeStrategiaPagamento = (
   strategiaPagamento: StrategiaPagamento,
   service: Service,
   pianoDurata: number,
   catalog: ServiceDefinition[]
 ): StrategiaPagamento => {
-  const maxRateConsentite = resolveMaxRateConsentite(service, catalog)
-  const mesiResidui = Math.max(1, pianoDurata - service.meseInizio + 1)
-  const maxRatePerPiano = Math.min(maxRateConsentite, mesiResidui)
+  const { maxRatePerPiano } = resolvePaymentConstraints(service, pianoDurata, catalog)
 
   if (!service.consentiRateizzazione && (strategiaPagamento.tipo === "rate" || strategiaPagamento.tipo === "accontoRate")) {
     return { tipo: "oneShot" }
