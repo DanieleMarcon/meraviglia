@@ -128,7 +128,7 @@ function ServiceRow({
   maxPagamento,
   onMoveService,
 }: ServiceRowProps) {
-  const { service, colore } = propostaService
+  const { service } = propostaService
   const mesi = buildMonths(durata)
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
@@ -175,7 +175,7 @@ function ServiceRow({
             style={{
               border: "1px solid #eee",
               height: 40,
-              background: attivo ? colore || "#111827" : "#fafafa",
+              background: attivo ? service.color ?? "#111827" : "#fafafa",
               position: "relative",
               display: "flex",
               alignItems: "center",

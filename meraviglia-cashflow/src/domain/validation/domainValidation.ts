@@ -44,6 +44,18 @@ const resolveMaxRateConsentite = (service: Service, catalog: ServiceDefinition[]
   return clampInteger(match.maxRateConsentite, 1, Number.MAX_SAFE_INTEGER)
 }
 
+
+const resolveCatalogColor = (service: Service, catalog: ServiceDefinition[]): string | undefined => {
+  const match = catalog.find(
+    (definition) =>
+      definition.nome === service.nome &&
+      definition.prezzoPieno === service.prezzoPieno &&
+      definition.prezzoScontato === service.prezzoScontato
+  )
+
+  return match?.color
+}
+
 export interface PaymentConstraints {
   maxRateConsentite: number
   mesiResidui: number
@@ -112,6 +124,7 @@ const sanitizePropostaService = (
 
   const service: Service = {
     ...serviceWithMaxRate,
+    color: serviceWithMaxRate.color ?? resolveCatalogColor(serviceWithMaxRate, catalog),
     durataOperativa: clampInteger(serviceWithMaxRate.durataOperativa, 1, mesiResidui),
   }
 
