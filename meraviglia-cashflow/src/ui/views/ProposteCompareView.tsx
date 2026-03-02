@@ -1,6 +1,6 @@
-import { calcolaCashflow } from "../engine/cashflowEngine"
-import type { PianoStrategico } from "../models/PianoStrategico"
-import type { Proposta } from "../models/Proposta"
+import { calcolaCashflow } from "../../engine/cashflow/cashflowEngine"
+import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import type { Proposta } from "../../domain/models/Proposta"
 import CashflowChart from "./CashflowChart"
 import TimelineView from "./TimelineView"
 

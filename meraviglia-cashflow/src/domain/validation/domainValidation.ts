@@ -3,7 +3,7 @@ import type { Proposta, PropostaService } from "../models/Proposta"
 import type { Service } from "../models/Service"
 import type { ServiceDefinition } from "../models/ServiceDefinition"
 import type { StrategiaPagamento } from "../models/StrategiaPagamento"
-import { DomainValidationError } from "../models/DomainValidationError"
+import { DomainValidationError } from "../errors/DomainValidationError"
 
 const FALLBACK_MAX_RATE = 12
 

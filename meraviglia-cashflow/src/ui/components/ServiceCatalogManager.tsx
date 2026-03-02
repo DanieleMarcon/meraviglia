@@ -1,6 +1,6 @@
 import { useState } from "react"
-import type { ServiceDefinition } from "../models/ServiceDefinition"
-import { useServiceCatalog } from "../hooks/useServiceCatalog"
+import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import { useServiceCatalog } from "../../state/appState/useServiceCatalog"
 
 export default function ServiceCatalogManager() {
 

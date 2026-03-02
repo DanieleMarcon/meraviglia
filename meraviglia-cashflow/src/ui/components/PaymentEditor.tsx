@@ -1,5 +1,5 @@
-import type { Proposta } from "../models/Proposta"
-import type { TipoPagamento } from "../models/StrategiaPagamento"
+import type { Proposta } from "../../domain/models/Proposta"
+import type { TipoPagamento } from "../../domain/models/StrategiaPagamento"
 
 interface Props {
   proposta: Proposta

@@ -1,4 +1,4 @@
-import type { PianoStrategico, Modulo } from "../models/PianoStrategico"
+import type { PianoStrategico, Modulo } from "../../domain/models/PianoStrategico"
 
 interface Props {
   piano: PianoStrategico

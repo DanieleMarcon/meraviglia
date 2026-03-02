@@ -1,6 +1,6 @@
-import type { Proposta } from "../models/Proposta"
-import type { PianoStrategico } from "../models/PianoStrategico"
-import { assertValidPaymentStrategy } from "../utils/domainValidation"
+import type { Proposta } from "../../domain/models/Proposta"
+import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import { assertValidPaymentStrategy } from "../../domain/validation/domainValidation"
 
 export interface CashflowResult {
   mesi: number[]
