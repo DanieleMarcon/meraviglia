@@ -5,7 +5,7 @@ export interface ServiceDefinition {
   prezzoPieno: number
   prezzoScontato: number
   durataStandard: number
-  colore: string
+  color?: string
   consentiRateizzazione: boolean
   consentiAcconto: boolean
   maxRateConsentite: number

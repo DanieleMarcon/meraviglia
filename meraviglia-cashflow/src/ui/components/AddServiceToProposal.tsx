@@ -28,11 +28,11 @@ export default function AddServiceToProposal({
         meseInizio: 1,
         consentiRateizzazione: serviceDef.consentiRateizzazione,
         consentiAcconto: serviceDef.consentiAcconto,
+        color: serviceDef.color,
       },
       strategiaPagamento: {
         tipo: "oneShot" as TipoPagamento,
       },
-      colore: serviceDef.colore,
     }
 
     onUpdate({

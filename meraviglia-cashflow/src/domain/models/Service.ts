@@ -15,4 +15,5 @@ export interface Service {
   consentiRateizzazione: boolean
   consentiAcconto: boolean
   maxRateConsentite?: number
+  color?: string
 }

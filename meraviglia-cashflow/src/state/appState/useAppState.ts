@@ -75,9 +75,46 @@ const isSectionToggleState = (value: unknown): value is SectionToggleState => {
   return Object.values(value).every((toggleValue) => typeof toggleValue === "boolean")
 }
 
+const normalizeHue = (value: number): number => ((value % 360) + 360) % 360
+
+const generateDeterministicColorFromId = (id: string): string => {
+  let hash = 0
+
+  for (let index = 0; index < id.length; index += 1) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(index)
+    hash |= 0
+  }
+
+  const hue = normalizeHue(hash)
+  return `hsl(${hue} 65% 45%)`
+}
+
+const ensureServiceColors = (services: ServiceDefinition[]): { services: ServiceDefinition[]; changed: boolean } => {
+  let changed = false
+
+  const nextServices = services.map((service) => {
+    if (service.color) {
+      return service
+    }
+
+    changed = true
+    return {
+      ...service,
+      color: generateDeterministicColorFromId(service.id),
+    }
+  })
+
+  return { services: nextServices, changed }
+}
+
 const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
-  const services = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
+  const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
+  const { services, changed } = ensureServiceColors(persistedServices)
+
+  if (changed) {
+    saveToStorage(SERVICE_CATALOG_STORAGE_KEY, services)
+  }
 
   const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
   const propostaA = persistedCashflow?.propostaA ?? createDefaultPropostaA()
@@ -170,7 +207,8 @@ export function useAppState() {
   }
 
   const addService = (data: Omit<ServiceDefinition, "id">) => {
-    const nextServices = [...store.services, { ...data, id: uuidv4() }]
+    const id = uuidv4()
+    const nextServices = [...store.services, { ...data, id, color: data.color ?? generateDeterministicColorFromId(id) }]
 
     setStore({
       ...store,
