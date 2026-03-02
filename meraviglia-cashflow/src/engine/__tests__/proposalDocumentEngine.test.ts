@@ -39,7 +39,7 @@ const meta = {
 }
 
 describe("proposalDocumentEngine", () => {
-  it("include tutte le sezioni attese", () => {
+  it("include tutte le sezioni attese con comparison disabilitata se assente", () => {
     const doc = buildProposalDocument({
       propostaA: baseProposal("A", 1000),
       piano,
@@ -47,8 +47,24 @@ describe("proposalDocumentEngine", () => {
     })
 
     expect(doc.sections).toHaveLength(12)
-    expect(doc.sections.map((section) => section.type)).toEqual(Object.values(ProposalSectionType))
-    expect(doc.sections.every((section) => section.enabled)).toBe(true)
+
+    expect(doc.sections.map((section) => section.type)).toEqual(
+      Object.values(ProposalSectionType)
+    )
+
+    // Comparison deve essere disabilitata se propostaB non è presente
+    const comparison = doc.sections.find(
+      (section) => section.type === ProposalSectionType.COMPARISON
+    )
+
+    expect(comparison?.enabled).toBe(false)
+
+    // Tutte le altre sezioni devono essere enabled
+    const otherSections = doc.sections.filter(
+      (section) => section.type !== ProposalSectionType.COMPARISON
+    )
+
+    expect(otherSections.every((section) => section.enabled)).toBe(true)
   })
 
   it("rispetta le sezioni disabilitate non mandatory", () => {
@@ -63,12 +79,29 @@ describe("proposalDocumentEngine", () => {
       sectionToggles: toggles,
     })
 
-    const cashflow = doc.sections.find((section) => section.type === ProposalSectionType.CASHFLOW)
-    const comparison = doc.sections.find((section) => section.type === ProposalSectionType.COMPARISON)
+    const cashflow = doc.sections.find(
+      (section) => section.type === ProposalSectionType.CASHFLOW
+    )
+
+    const comparison = doc.sections.find(
+      (section) => section.type === ProposalSectionType.COMPARISON
+    )
 
     expect(cashflow?.enabled).toBe(false)
     expect(comparison?.enabled).toBe(false)
-    expect(doc.sections.find((section) => section.type === ProposalSectionType.COVER)?.enabled).toBe(true)
+
+    // Mandatory sections non possono essere disabilitate
+    expect(
+      doc.sections.find(
+        (section) => section.type === ProposalSectionType.COVER
+      )?.enabled
+    ).toBe(true)
+
+    expect(
+      doc.sections.find(
+        (section) => section.type === ProposalSectionType.CLOSING
+      )?.enabled
+    ).toBe(true)
   })
 
   it("calcola delta comparison corretto tra due proposte", () => {
@@ -79,9 +112,12 @@ describe("proposalDocumentEngine", () => {
       meta,
     })
 
-    const comparison = doc.sections.find((section) => section.type === ProposalSectionType.COMPARISON)
+    const comparison = doc.sections.find(
+      (section) => section.type === ProposalSectionType.COMPARISON
+    )
 
     expect(comparison?.enabled).toBe(true)
+
     expect(comparison?.payload).toMatchObject({
       delta24Mesi: 200,
       deltaPercentuale: 25,
