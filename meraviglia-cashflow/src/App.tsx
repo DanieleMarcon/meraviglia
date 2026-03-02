@@ -13,9 +13,19 @@ import PianoEditor from "./ui/components/PianoEditor"
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
 import { clearStorage } from "./state/persistence/storage"
+import { ProposalSectionType } from "./domain/models/ProposalSectionType"
 
 const STORAGE_KEY = "meraviglia-cashflow"
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
+
+const SECTION_TOGGLE_LABELS = [
+  { type: ProposalSectionType.ACTIVATED_SERVICES, label: "Activated Services" },
+  { type: ProposalSectionType.STRATEGIC_PLAN, label: "Strategic Plan" },
+  { type: ProposalSectionType.FINANCIAL_PROPOSAL, label: "Financial Proposal" },
+  { type: ProposalSectionType.CASHFLOW, label: "Cashflow" },
+  { type: ProposalSectionType.COMPARISON, label: "Comparison" },
+  { type: ProposalSectionType.INVESTMENT_AND_TERMS, label: "Investment and Terms" },
+] as const
 
 function App() {
   const { services: catalog } = useServiceCatalog()
@@ -26,6 +36,8 @@ function App() {
     setPropostaA,
     propostaB,
     setPropostaB,
+    sectionToggles,
+    setSectionEnabled,
   } = useAppState()
 
   const moveService = (
@@ -79,6 +91,24 @@ function App() {
       </div>
 
       <ExportButtons elementId="export-area" />
+
+      <div style={{ marginBottom: 20 }}>
+        <h3 style={{ marginBottom: 8 }}>Proposal Sections</h3>
+
+        {SECTION_TOGGLE_LABELS
+          .filter((item) => item.type !== ProposalSectionType.COMPARISON || Boolean(propostaB))
+          .map((item) => (
+            <label key={item.type} style={{ display: "block", marginBottom: 4 }}>
+              <input
+                type="checkbox"
+                checked={sectionToggles[item.type]}
+                onChange={(event) => setSectionEnabled(item.type, event.target.checked)}
+              />
+              {" "}
+              {item.label}
+            </label>
+          ))}
+      </div>
 
       <PaymentEditor
         proposta={propostaA}
