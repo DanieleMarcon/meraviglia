@@ -1,8 +1,8 @@
-import type { PianoStrategico } from "../models/PianoStrategico"
-import type { ProposalDocument } from "../models/ProposalDocument"
-import type { ProposalSection } from "../models/ProposalSection"
-import { ProposalSectionType } from "../models/ProposalSectionType"
-import type { Proposta } from "../models/Proposta"
+import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import type { ProposalDocument } from "../../domain/models/ProposalDocument"
+import type { ProposalSection } from "../../domain/models/ProposalSection"
+import { ProposalSectionType } from "../../domain/models/ProposalSectionType"
+import type { Proposta } from "../../domain/models/Proposta"
 
 export interface BuildProposalDocumentMeta {
   clientName: string

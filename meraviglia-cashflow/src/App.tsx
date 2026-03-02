@@ -1,17 +1,17 @@
 import type { Dispatch, SetStateAction } from "react"
 
-import type { Proposta } from "./models/Proposta"
-import type { PropostaService } from "./models/Proposta"
+import type { Proposta } from "./domain/models/Proposta"
+import type { PropostaService } from "./domain/models/Proposta"
 
-import ProposteCompareView from "./views/ProposteCompareView"
-import PaymentEditor from "./components/PaymentEditor"
-import ExportButtons from "./components/ExportButtons"
-import ServiceCatalogManager from "./components/ServiceCatalogManager"
-import AddServiceToProposal from "./components/AddServiceToProposal"
-import PianoEditor from "./components/PianoEditor"
+import ProposteCompareView from "./ui/views/ProposteCompareView"
+import PaymentEditor from "./ui/components/PaymentEditor"
+import ExportButtons from "./ui/components/ExportButtons"
+import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
+import AddServiceToProposal from "./ui/components/AddServiceToProposal"
+import PianoEditor from "./ui/components/PianoEditor"
 
-import { useServiceCatalog } from "./hooks/useServiceCatalog"
-import { useAppState } from "./hooks/useAppState"
+import { useServiceCatalog } from "./state/appState/useServiceCatalog"
+import { useAppState } from "./state/appState/useAppState"
 import { clearStorage } from "./utils/storage"
 
 const STORAGE_KEY = "meraviglia-cashflow"

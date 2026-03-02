@@ -1,11 +1,11 @@
 import { useSyncExternalStore, type SetStateAction } from "react"
 import { v4 as uuidv4 } from "uuid"
 
-import type { PianoStrategico } from "../models/PianoStrategico"
-import type { Proposta } from "../models/Proposta"
-import type { ServiceDefinition } from "../models/ServiceDefinition"
-import { sanitizePropostaAtBoundary } from "../utils/domainValidation"
-import { loadFromStorage, saveToStorage } from "../utils/storage"
+import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import type { Proposta } from "../../domain/models/Proposta"
+import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import { sanitizePropostaAtBoundary } from "../../domain/validation/domainValidation"
+import { loadFromStorage, saveToStorage } from "../../utils/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
 const CASHFLOW_STORAGE_KEY = "meraviglia-cashflow"

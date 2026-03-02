@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
-import type { Proposta } from "../models/Proposta"
-import type { ServiceDefinition } from "../models/ServiceDefinition"
-import type { TipoPagamento } from "../models/StrategiaPagamento"
+import type { Proposta } from "../../domain/models/Proposta"
+import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import type { TipoPagamento } from "../../domain/models/StrategiaPagamento"
 
 interface Props {
   catalog: ServiceDefinition[]

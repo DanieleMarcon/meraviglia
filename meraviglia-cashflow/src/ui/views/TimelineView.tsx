@@ -1,8 +1,8 @@
 import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 
-import type { PianoStrategico } from "../models/PianoStrategico"
-import type { Proposta, PropostaService } from "../models/Proposta"
+import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import type { Proposta, PropostaService } from "../../domain/models/Proposta"
 
 interface Props {
   proposta: Proposta
