@@ -25,7 +25,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           // Separiamo librerie pesanti
-          reactVendor: ["react", "react-dom"],
           charts: ["recharts"],
         },
       },
