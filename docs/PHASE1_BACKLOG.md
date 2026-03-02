@@ -149,3 +149,8 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - ProposalDocumentEngine currently recalculates cashflow multiple times per build (micro-optimization candidate).
 - Service-to-module mapping currently uses placeholder (service.nome), future structural alignment needed.
 - PaymentEditor UX now hardened but still relies on domain layer for final validation (correct separation).
+
+### Post-Section Toggle Architectural Observations — Phase 1
+
+- Section toggles are currently stored in application state only. In future, toggle configuration should become part of ProposalDocument meta to allow deterministic document reconstruction independent of UI state.
+- Section toggles are currently global for propostaA only. Future multi-scenario support will require toggle state to be per-proposal to avoid cross-proposal configuration leakage.
