@@ -34,7 +34,9 @@ export default function CashflowChart({ data, services, monthlyTotals, totalYear
   const peakValue = monthlyTotals.reduce((peak, value) => Math.max(peak, value), 0)
   const peakMonthIndex = monthlyTotals.findIndex((value) => value === peakValue)
 
+export default function CashflowChart({ data, services }: Props) {
   return (
+
     <div style={{ width: "100%" }}>
       <div style={{ display: "flex", gap: 24, marginBottom: 12, fontWeight: 700 }}>
         <span>Totale Anno 1: {formatCurrency(totalYearOne)}</span>
