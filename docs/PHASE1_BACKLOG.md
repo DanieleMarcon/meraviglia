@@ -154,3 +154,19 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 
 - Section toggles are currently stored in application state only. In future, toggle configuration should become part of ProposalDocument meta to allow deterministic document reconstruction independent of UI state.
 - Section toggles are currently global for propostaA only. Future multi-scenario support will require toggle state to be per-proposal to avoid cross-proposal configuration leakage.
+
+### Post-Service Visual Identity Observations — Phase 1
+
+- Hash-based color generation could theoretically cause color similarity collisions.
+- Future optional manual override for service color may be needed for branding.
+- Stacked cashflow visualization may require grouping/filtering if service count grows significantly.
+
+### Post-Cashflow Engine Optimization — Phase 1
+
+- ProposalDocumentEngine now computes cashflow once per proposal build to eliminate redundant deterministic recomputation.
+- Peak month detection currently highlights first occurrence if multiple equal peaks exist (acceptable for Phase 1).
+
+### Post-Engine Test Harness — Phase 1
+
+- Engine-level deterministic test suite introduced for cashflow, validation, and proposal aggregation.
+- UI layer intentionally excluded from Phase 1 automated testing.

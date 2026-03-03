@@ -1,14 +1,14 @@
-import type { Dispatch, SetStateAction } from "react"
+import React, { type Dispatch, type SetStateAction } from "react"
 
 import type { Proposta } from "./domain/models/Proposta"
 import type { PropostaService } from "./domain/models/Proposta"
 
-import ProposteCompareView from "./ui/views/ProposteCompareView"
 import PaymentEditor from "./ui/components/PaymentEditor"
 import ExportButtons from "./ui/components/ExportButtons"
 import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
 import AddServiceToProposal from "./ui/components/AddServiceToProposal"
 import PianoEditor from "./ui/components/PianoEditor"
+import UnauthorizedView from "./ui/views/UnauthorizedView"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
@@ -17,6 +17,8 @@ import { ProposalSectionType } from "./domain/models/ProposalSectionType"
 
 const STORAGE_KEY = "meraviglia-cashflow"
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
+
+const ProposteCompareView = React.lazy(() => import("./ui/views/ProposteCompareView"))
 
 const SECTION_TOGGLE_LABELS = [
   { type: ProposalSectionType.ACTIVATED_SERVICES, label: "Activated Services" },
@@ -39,6 +41,10 @@ function App() {
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
+
+  if (window.location.pathname === "/unauthorized") {
+    return <UnauthorizedView />
+  }
 
   const moveService = (
     propostaSetter: Dispatch<SetStateAction<Proposta>>,
@@ -117,17 +123,19 @@ function App() {
         onUpdate={setPropostaA}
       />
 
-      <ProposteCompareView
-        piano={piano}
-        propostaA={propostaA}
-        propostaB={propostaB}
-        onMoveServiceA={(id, month) =>
-          moveService(setPropostaA, id, month)
-        }
-        onMoveServiceB={(id, month) =>
-          moveService(setPropostaB, id, month)
-        }
-      />
+      <React.Suspense fallback={<div style={{ padding: 16 }}>Loading...</div>}>
+        <ProposteCompareView
+          piano={piano}
+          propostaA={propostaA}
+          propostaB={propostaB}
+          onMoveServiceA={(id, month) =>
+            moveService(setPropostaA, id, month)
+          }
+          onMoveServiceB={(id, month) =>
+            moveService(setPropostaB, id, month)
+          }
+        />
+      </React.Suspense>
     </div>
   )
 }

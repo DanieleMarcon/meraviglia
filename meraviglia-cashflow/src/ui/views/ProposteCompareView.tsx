@@ -1,7 +1,7 @@
+import React from "react"
 import { calcolaCashflow } from "../../engine/cashflow/cashflowEngine"
 import type { PianoStrategico } from "../../domain/models/PianoStrategico"
 import type { Proposta, PropostaService } from "../../domain/models/Proposta"
-import CashflowChart from "./CashflowChart"
 import TimelineView from "./TimelineView"
 
 interface Props {
@@ -28,6 +28,8 @@ interface ServiceSeries {
   name: string
   color: string
 }
+
+const CashflowChart = React.lazy(() => import("./CashflowChart"))
 
 const getServiceMonthlyContribution = (propostaService: PropostaService, durata: number): number[] => {
   const contributions = Array<number>(durata).fill(0)
@@ -134,7 +136,15 @@ function ProposalPanel({ piano, proposta, onMoveService }: ProposalPanelProps) {
       />
 
       <div style={{ marginTop: 40 }}>
-        <CashflowChart data={chart.data} services={chart.services} />
+        <React.Suspense fallback={<div style={{ padding: 16 }}>Loading...</div>}>
+          <CashflowChart
+            data={chart.data}
+            services={chart.services}
+            monthlyTotals={risultato.mesi}
+            totalYearOne={risultato.totaleAnno1}
+            total24Months={risultato.totale}
+          />
+        </React.Suspense>
       </div>
     </div>
   )
