@@ -11,6 +11,14 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - Intake artifacts linked to workspace/project context.
 - Basic auditability for intake creation/update events.
 
+### Architecture Hardening — Step 1 (Completed Governance Milestone)
+- Platform Core — Brand-Agnostic Architecture formalized.
+- Multi-tenant schema established with `organizations`, `users`, `permissions`, `roles`, `role_permissions`, `user_roles`, `workspaces`.
+- Supabase identity split confirmed: `auth.users` + `public.users`.
+- Organization-scoped RBAC model defined and seeded with global permissions.
+- RLS policies defined for strict organization isolation.
+- Explicitly out of scope in this step: self-signup organization creation, cross-organization super-admin/network layer.
+
 ### Architectural Risk
 - Early coupling of intake logic to UI forms.
 - Leakage of Supabase-specific assumptions into domain/application layers.
