@@ -20,6 +20,7 @@ public.organizations
   1 ─── * public.users
   1 ─── * public.roles
   1 ─── * public.workspaces
+  1 ─── * public.intakes
 
 public.permissions (global catalog)
   1 ─── * public.role_permissions
@@ -31,6 +32,9 @@ public.roles
 public.users
   1 ─── * public.user_roles
   1 ─── * public.workspaces (created_by_user_id optional reference)
+
+public.intakes
+  * ─── 0..1 public.workspaces (workspace_id set on conversion)
 ```
 
 ## Table Responsibilities
@@ -56,6 +60,9 @@ Many-to-many mapping between users and roles, within tenant boundaries.
 ### `public.workspaces`
 Organization-scoped strategic containers for planning/orchestration initiatives.
 
+### `public.intakes`
+Organization-scoped strategic entry records. Stores initial strategic inputs (`draft`/`validated`) and links to workspace once converted (`converted`).
+
 ## RBAC Flow
 1. Platform defines global permissions in `public.permissions`.
 2. Each organization defines custom roles in `public.roles`.
@@ -68,7 +75,7 @@ This keeps permission semantics globally consistent while allowing per-tenant ro
 ## Tenant Isolation Model
 Isolation boundary is `organization_id`.
 
-- `public.users`, `public.roles`, and `public.workspaces` include explicit `organization_id`.
+- `public.users`, `public.roles`, `public.workspaces`, and `public.intakes` include explicit `organization_id`.
 - `public.user_roles` is constrained transitively by requiring both linked user and role to be in current user organization.
 - Foreign keys + RLS prevent cross-tenant traversal.
 
@@ -78,6 +85,7 @@ RLS is enabled and forced on:
 - `public.roles`
 - `public.user_roles`
 - `public.workspaces`
+- `public.intakes`
 
 A helper function `public.current_user_organization_id()` resolves tenant context from `auth.uid()` via `public.users`.
 
@@ -99,3 +107,9 @@ Policies ensure:
 - Add policy-helper functions for permission checks (`has_permission(permission_key)`).
 - Add soft-delete/versioning patterns for strategic artifacts.
 - Add optional custom role templates per tenant onboarding workflow.
+
+## Intake Conversion Lifecycle
+1. Intake is created with status `draft`.
+2. Intake can be updated and moved to `validated`.
+3. Conversion creates a workspace and updates intake to `converted`.
+4. Converted intake stores `workspace_id` for strategic traceability.

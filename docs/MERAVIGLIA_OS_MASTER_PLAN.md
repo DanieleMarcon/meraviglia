@@ -76,6 +76,13 @@ It is intentionally modular, enabling future intelligence components (e.g., ROI 
 
 **Cycle principle:** Design → Blueprint → Execution → Feedback is a continuous loop, not a linear project lifecycle.
 
+## Intake as Formal Entry Boundary of Strategic Cycle
+Intake is now the formal entry boundary of the Meraviglia strategic cycle.
+
+- No strategic workflow should start directly from workspace creation.
+- Strategic assumptions are captured first in intake and then converted into workspace context.
+- Conversion from intake to workspace is the traceability bridge between design intent and orchestration execution.
+
 ## Long-Term SaaS Evolution Vision
 Meraviglia OS evolves in staged maturity:
 1. **Foundation**: multi-user architecture, shared governance standards, modular domain boundaries.

@@ -1,6 +1,9 @@
 # Meraviglia OS — Roadmap Phases
 
 ## Phase 2A — Auth + DB + Intake
+### Status Update
+- Intake module — baseline implemented (table, RLS isolation, repository/infra/application flow, conversion to workspace).
+
 ### Objective
 Establish production-oriented identity and persistence baseline, and introduce the strategic Intake module as the formal entry point for workspace-level planning.
 
