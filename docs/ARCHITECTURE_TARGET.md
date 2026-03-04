@@ -38,6 +38,22 @@ Meraviglia OS target architecture is organized into six explicit layers:
    - Presentation and interaction surfaces.
    - Consumes application-level use cases only, never domain/engine internals directly in future state.
 
+## Application Layer Introduction (Step 2)
+The application layer is now introduced as the minimal use-case coordination boundary between UI and persistence.
+
+Purpose:
+- Keep UI focused on presentation and interaction only.
+- Centralize basic use-case validation and orchestration in one place.
+- Prepare the codebase for incremental migration of workflows without touching domain/engine purity.
+
+Boundary clarification:
+- UI should no longer access database clients directly.
+- Application services call repository contracts for persistence operations.
+- Repository interfaces define the persistence boundary; infra adapters implement those interfaces with Supabase.
+- Domain and engine remain pure and framework-agnostic, with no Supabase dependencies.
+
+This baseline structure establishes the dependency flow `ui → application → repository → infra → supabase client` for workspace operations.
+
 ## Multi-Tenant Core Data Architecture
 Primary platform entities:
 - `organizations`
