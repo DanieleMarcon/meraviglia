@@ -92,6 +92,16 @@ A **Workspace** is the top-level strategic container.
 
 This preserves Meraviglia OS as strategic orchestration while enabling CRM interoperability.
 
+## Intake as Strategic Entry Aggregate
+Intake is the **strategic entry aggregate** for all new strategic flows.
+
+Rules:
+- Every strategic flow starts from an intake record.
+- Workspace creation is a conversion step from intake (`draft/validated` → `converted`).
+- Intake keeps the first strategic assumptions traceable before workspace planning expands.
+
+This keeps the platform intake-first while preserving workspace as the execution-oriented strategic container.
+
 ## Intake Module Positioning
 The Intake module is the structured strategic entry point.
 

@@ -43,6 +43,9 @@ This block is mandatory for governance traceability and audit readiness.
 - Strategic identity/positioning changes require updates in `MERAVIGLIA_OS_MASTER_PLAN.md`.
 - Documentation updates must be atomic with the decision they represent.
 
+## Intake-First Micro Rule
+All strategic flows originate from Intake.
+
 ## Layer Boundary Rules
 - Domain contains strategic semantics only; no transport/infrastructure concerns.
 - Engine contains deterministic transformation/orchestration logic; no UI coupling.
