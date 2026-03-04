@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Cell } from "recharts"
 
 interface ServiceSeries {
@@ -25,28 +24,20 @@ const formatCurrency = (value: number): string => (
 )
 
 export default function CashflowChart({ data, services, monthlyTotals, totalYearOne, total24Months }: Props) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const peakValue = monthlyTotals.reduce((peak, value) => Math.max(peak, value), 0)
   const peakMonthIndex = monthlyTotals.findIndex((value) => value === peakValue)
 
-export default function CashflowChart({ data, services }: Props) {
   return (
-
     <div style={{ width: "100%" }}>
       <div style={{ display: "flex", gap: 24, marginBottom: 12, fontWeight: 700 }}>
         <span>Totale Anno 1: {formatCurrency(totalYearOne)}</span>
         <span>Totale 24 Mesi: {formatCurrency(total24Months)}</span>
-        {peakMonthIndex >= 0 && <span>Peak: M{peakMonthIndex + 1} ({formatCurrency(peakValue)})</span>}
+        {peakMonthIndex >= 0 ? <span>Peak: M{peakMonthIndex + 1} ({formatCurrency(peakValue)})</span> : null}
       </div>
 
       <div style={{ width: "100%", minHeight: 340 }}>
-        {mounted && (
-          <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
@@ -71,7 +62,6 @@ export default function CashflowChart({ data, services }: Props) {
               ))}
             </BarChart>
           </ResponsiveContainer>
-        )}
       </div>
 
       <div style={{ marginTop: 12, fontWeight: 700 }}>

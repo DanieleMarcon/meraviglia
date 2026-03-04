@@ -9,6 +9,8 @@ import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
 import AddServiceToProposal from "./ui/components/AddServiceToProposal"
 import PianoEditor from "./ui/components/PianoEditor"
 import UnauthorizedView from "./ui/views/UnauthorizedView"
+import { AuthProvider } from "./auth/AuthProvider"
+import ProtectedRoute from "./auth/ProtectedRoute"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
@@ -29,7 +31,7 @@ const SECTION_TOGGLE_LABELS = [
   { type: ProposalSectionType.INVESTMENT_AND_TERMS, label: "Investment and Terms" },
 ] as const
 
-function App() {
+function CashflowApp() {
   const { services: catalog } = useServiceCatalog()
   const {
     piano,
@@ -41,10 +43,6 @@ function App() {
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
-
-  if (window.location.pathname === "/unauthorized") {
-    return <UnauthorizedView />
-  }
 
   const moveService = (
     propostaSetter: Dispatch<SetStateAction<Proposta>>,
@@ -137,6 +135,20 @@ function App() {
         />
       </React.Suspense>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      {window.location.pathname === "/unauthorized" ? (
+        <UnauthorizedView />
+      ) : (
+        <ProtectedRoute>
+          <CashflowApp />
+        </ProtectedRoute>
+      )}
+    </AuthProvider>
   )
 }
 
