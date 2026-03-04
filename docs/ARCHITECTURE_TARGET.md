@@ -1,5 +1,16 @@
 # Meraviglia OS — Target Architecture
 
+## Platform Core — Brand-Agnostic Architecture
+Meraviglia OS platform core is defined as **brand-agnostic, white-label ready, and tenant-isolated by design**.
+
+Final decision for architecture hardening step 1:
+- Multi-organization model is the tenancy baseline.
+- Each user belongs to exactly one organization.
+- Identity source remains `auth.users`; application identity is `public.users`.
+- RBAC is structured as global permission catalog + organization-local roles + mapping tables.
+- Tenant isolation is enforced by schema constraints and RLS.
+- No self-signup organization provisioning and no cross-organization super-admin layer in this step.
+
 ## Target Layered Architecture
 Meraviglia OS target architecture is organized into six explicit layers:
 
@@ -26,6 +37,30 @@ Meraviglia OS target architecture is organized into six explicit layers:
 6. **ui**
    - Presentation and interaction surfaces.
    - Consumes application-level use cases only, never domain/engine internals directly in future state.
+
+## Multi-Tenant Core Data Architecture
+Primary platform entities:
+- `organizations`
+- `users` (application identity, linked to `auth.users`)
+- `permissions` (global)
+- `roles` (organization-scoped)
+- `role_permissions`
+- `user_roles`
+- `workspaces`
+
+Isolation principle:
+- Organization is the hard tenant boundary.
+- Shared/global semantics are limited to permission catalog.
+- Strategic data and access controls are organization-scoped.
+
+## RBAC Structured Model
+Authorization model uses four explicit layers:
+1. Global permission catalog (`permissions`).
+2. Roles defined per organization (`roles`).
+3. Role-to-permission assignment (`role_permissions`).
+4. User-to-role assignment (`user_roles`).
+
+This model keeps permission language stable while enabling organization autonomy for role composition.
 
 ## Workspace Conceptual Model (Project-Centric, CRM-Referenced)
 A **Workspace** is the top-level strategic container.
@@ -66,19 +101,15 @@ Rules:
 - Infra layer owns implementations (Supabase now, extensible later).
 - No business logic inside repository implementations.
 
-## Integration Contracts (CRMAdapter Concept)
-External system interoperability is defined through explicit contracts, beginning with `CRMAdapter`.
+## Tenant Isolation Guarantees
+Isolation is implemented by:
+- Foreign keys anchored to `organization_id` boundaries.
+- Organization-scoped uniqueness constraints.
+- Row Level Security policies on tenant-sensitive tables.
+- Helper function that resolves current user organization from authenticated identity.
 
-### CRMAdapter Responsibilities
-- Resolve external entity references (accounts/contacts/opportunities).
-- Push orchestration outputs where needed.
-- Pull execution outcomes for feedback ingestion.
-- Normalize external data into Meraviglia-compatible structures.
-
-### Contract Principles
-- Adapter contracts are stable interfaces with versioning.
-- Domain and engine never import vendor SDKs directly.
-- Each external platform (Relatia, future CRMs) receives an isolated infra adapter implementation.
+Guarantee statement:
+- Authenticated users can access and mutate only rows belonging to their own organization context, with no cross-tenant visibility via normal application roles.
 
 ## Auth & Security Target Model
 Target security model:

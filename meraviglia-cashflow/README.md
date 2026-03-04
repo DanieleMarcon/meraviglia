@@ -5,6 +5,20 @@ Meraviglia OS is evolving from the original Preventivatore tool into a modular s
 
 This repository (`meraviglia-cashflow`) currently represents the cashflow/planning core of that evolution. Its role is to support strategic design workflows (timeline planning, proposal structuring, and financial simulation) while the broader Meraviglia OS architecture expands toward orchestration, governance, and cross-system integration.
 
+## Platform Core — Brand-Agnostic Architecture
+Meraviglia OS platform core is formally defined as **brand-agnostic** and **white-label ready**.
+
+Architecture hardening step 1 establishes:
+- Multi-tenant model based on `organizations`.
+- User model split between `auth.users` and `public.users`.
+- Structured RBAC (`permissions`, `roles`, `role_permissions`, `user_roles`).
+- Organization-scoped `workspaces` as strategic containers.
+- Database-level tenant isolation via RLS on tenant-sensitive tables.
+
+Explicitly not included in this milestone:
+- Self-signup organization creation.
+- Cross-organization super-admin/network governance.
+
 ### Strategic Positioning
 - **Meraviglia OS is not a CRM.**
 - **Relatia CRM remains the core business CRM platform.**
@@ -15,6 +29,8 @@ The formal governance foundation for Phase 2+ is documented here:
 
 - Master Plan: [`../docs/MERAVIGLIA_OS_MASTER_PLAN.md`](../docs/MERAVIGLIA_OS_MASTER_PLAN.md)
 - Target Architecture: [`../docs/ARCHITECTURE_TARGET.md`](../docs/ARCHITECTURE_TARGET.md)
+- Platform Data Model: [`../docs/PLATFORM_DATA_MODEL.md`](../docs/PLATFORM_DATA_MODEL.md)
+- SQL Baseline (Step 1): [`../docs/SUPABASE_PLATFORM_CORE_STEP1.sql`](../docs/SUPABASE_PLATFORM_CORE_STEP1.sql)
 - Roadmap Phases: [`../docs/ROADMAP_PHASES.md`](../docs/ROADMAP_PHASES.md)
 - Development Standard: [`../docs/DEVELOPMENT_STANDARD.md`](../docs/DEVELOPMENT_STANDARD.md)
 
@@ -23,8 +39,9 @@ Current status of the codebase in relation to the target architecture:
 
 - ✅ Supabase authentication introduced
 - ✅ Multi-user foundation established
-- ⏳ Workspace refactor not yet implemented
-- ⏳ Intake module not yet implemented
+- ✅ Governance baseline for multi-tenant RBAC and isolation formalized
+- ⏳ Workspace refactor implementation in progress
+- ⏳ Intake module implementation pending
 - ⏳ Application-layer-first architecture transition in progress
 
 This means the repository is in a transition stage between MVP cashflow tooling and full Meraviglia OS modular architecture.

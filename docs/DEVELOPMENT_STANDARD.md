@@ -11,6 +11,17 @@ Meraviglia OS follows an architecture-first, governance-driven methodology:
 
 Delivery principle: no major implementation step should proceed without corresponding documentation and boundary validation.
 
+## Platform Core — Brand-Agnostic Architecture
+All platform-core decisions must preserve white-label neutrality.
+
+Mandatory rule:
+- Use neutral entity naming (`organizations`, `users`, `roles`, `permissions`, `workspaces`) and avoid brand-specific persistence semantics.
+
+Multi-tenant baseline:
+- Organization is the tenant boundary.
+- User identity is split between `auth.users` and `public.users`.
+- RBAC model is global permission catalog + organization roles + mapping tables.
+
 ## Mandatory REQUIRED OUTPUT BLOCK Structure
 Every substantial implementation or architectural task must end with a standardized output block containing:
 
@@ -41,6 +52,15 @@ This block is mandatory for governance traceability and audit readiness.
 - UI focuses on presentation and interaction through application entry points.
 
 Boundary violations are treated as architectural defects.
+
+## Tenant Security & Isolation Standard
+Required for tenant-scoped data:
+- `organization_id` enforced with foreign keys and NOT NULL where applicable.
+- RLS enabled on tenant-sensitive tables.
+- Policies bound to authenticated user organization context.
+- Cross-organization access disallowed by default.
+
+No implementation is production-ready without explicit isolation guarantees.
 
 ## Repository Isolation Rule
 Repository interfaces must remain infrastructure-agnostic.

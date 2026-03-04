@@ -9,6 +9,18 @@ Meraviglia OS is designed to become the decision and orchestration brain that si
 - Operationally executable
 - Continuously improved through feedback
 
+## Platform Core — Brand-Agnostic Architecture
+Meraviglia OS platform foundation is explicitly **brand-agnostic** and **white-label ready**.
+
+Final architecture hardening decision:
+- Platform tenancy model is organization-based.
+- User membership is single-organization.
+- Core identity split is `auth.users` (authentication) + `public.users` (application identity).
+- Access control is RBAC with global permission catalog and organization-scoped role modeling.
+- Strict isolation is enforced at database level through RLS and tenant-constrained relations.
+
+This establishes a SaaS-ready platform core without introducing a network/super-admin layer in this milestone.
+
 ## Positioning vs Relatia
 Meraviglia OS and Relatia CRM are complementary but distinct products:
 
@@ -79,6 +91,7 @@ Target end-state: a scalable B2B SaaS operating system where organizations can d
 - **Modular orchestration core** able to coordinate multiple external systems.
 - **Decision-grade modeling** (scenario, blueprint, ROI) as first-class capabilities.
 - **Governance-native foundation** with architectural boundaries and auditability from early stages.
+- **Tenant isolation by default** for multi-organization SaaS durability.
 
 ## Governance Principles
 1. **Strategic supremacy**: architecture decisions must preserve Meraviglia OS as a strategic system, not a transactional CRM clone.
@@ -88,3 +101,4 @@ Target end-state: a scalable B2B SaaS operating system where organizations can d
 5. **Evidence-driven evolution**: roadmap progression depends on measurable architectural and product completion criteria.
 6. **Documentation-before-implementation**: all major architectural shifts must be codified before code expansion.
 7. **Security as baseline**: identity, access, and audit concerns are treated as core architecture, not post-hoc additions.
+8. **Brand neutrality**: platform core naming, models, and governance remain white-label compatible.
