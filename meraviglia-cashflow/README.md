@@ -1,206 +1,96 @@
-# Meraviglia OS – Sales & Strategic Core
+# Meraviglia OS — Cashflow Module (Strategic Core)
 
-## Overview
+## High-Level System Description
+Meraviglia OS is evolving from the original Preventivatore tool into a modular strategic operating system.
 
-Meraviglia OS is the Sales & Strategic Core of the broader Meraviglia operating model.
+This repository (`meraviglia-cashflow`) currently represents the cashflow/planning core of that evolution. Its role is to support strategic design workflows (timeline planning, proposal structuring, and financial simulation) while the broader Meraviglia OS architecture expands toward orchestration, governance, and cross-system integration.
 
-It supports consultants and strategic teams in designing, structuring, and governing commercial growth trajectories through a unified planning and financial configuration environment.
+### Strategic Positioning
+- **Meraviglia OS is not a CRM.**
+- **Relatia CRM remains the core business CRM platform.**
+- Meraviglia OS is the strategic/orchestration brain that designs and governs initiatives above operational systems of record.
+
+## Governance Documentation
+The formal governance foundation for Phase 2+ is documented here:
+
+- Master Plan: [`../docs/MERAVIGLIA_OS_MASTER_PLAN.md`](../docs/MERAVIGLIA_OS_MASTER_PLAN.md)
+- Target Architecture: [`../docs/ARCHITECTURE_TARGET.md`](../docs/ARCHITECTURE_TARGET.md)
+- Roadmap Phases: [`../docs/ROADMAP_PHASES.md`](../docs/ROADMAP_PHASES.md)
+- Development Standard: [`../docs/DEVELOPMENT_STANDARD.md`](../docs/DEVELOPMENT_STANDARD.md)
+
+## Current System Status
+Current status of the codebase in relation to the target architecture:
+
+- ✅ Supabase authentication introduced
+- ✅ Multi-user foundation established
+- ⏳ Workspace refactor not yet implemented
+- ⏳ Intake module not yet implemented
+- ⏳ Application-layer-first architecture transition in progress
+
+This means the repository is in a transition stage between MVP cashflow tooling and full Meraviglia OS modular architecture.
+
+## Current Development Context
+This module still delivers the sales/financial planning experience while architectural governance is being formalized for subsequent implementation phases.
 
 Current capabilities include:
-
-- Strategic development planning over time (3–24 months)
-- Modular growth phase configuration
-- Dynamic commercial proposal composition
-- Cashflow simulation and payment-logic configuration
+- Strategic timeline planning (3–24 months)
+- Modular phase configuration
+- Proposal composition with payment logic
+- Cashflow simulation
 - Parallel scenario comparison
-- Professional visual exports (PNG / SVG)
-- Persistent local service catalog management
+- PNG/SVG visual export
+- Local service catalog persistence
 
----
-
-## Product Vision
-
-For the complete strategic product direction, see: [`docs/PRODUCT_VISION.md`](../docs/PRODUCT_VISION.md).
-
----
-
-## Current Development Phase
-
-We are currently in **Phase 1 – MVP Integrity & Sales Core Stabilization**.
-
----
-
-## Roadmap Overview
-
-- **Phase 1 – MVP Integrity & Sales Core Stabilization**  
-  Stabilize the Sales Core baseline across planning, orchestration, cashflow, and proposal workflows.
-
-- **Phase 2 – Financial Intelligence Layer**  
-  Add deeper financial modeling, control logic, and scenario intelligence.
-
-- **Phase 3 – Modular Governance OS**  
-  Evolve into a modular operating system governing cross-functional growth operations.
-
----
-
-# Core Concept
-
-Meraviglia is built around 4 conceptual layers:
-
-## 1. Service Catalog (Local Backend Layer)
-
-A persistent catalog of services including:
-
-- Name
-- Category
-- Full price
-- Discounted price
-- Standard duration
-- Color
-- Installment constraints
-- Down payment permissions
-
-Stored in localStorage.
-
----
-
-## 2. Strategic Plan
-
-A configurable timeline including:
-
-- Total duration (months)
-- Modular phases
-  - Name
-  - Duration
-  - Validation (sum must match total duration)
-
-Rendered using CSS Grid to ensure perfect alignment between:
-
-- Months
-- Modules
-- Services
-- Financial overlays
-
----
-
-## 3. Proposal Engine
-
-Each proposal includes:
-
-- Selected services from the catalog
-- Payment strategy per service:
-  - One-shot
-  - Installments
-  - Subscription
-  - Down payment + installments
-- Service positioning in time
-- Financial heatmap overlay
-
-Multiple proposals can be compared in parallel.
-
----
-
-## 4. Rendering Engine
-
-Timeline uses a unified CSS Grid structure:
-Row 1: Months
-Row 2: Strategic Modules
-Row 3+: Services
-Overlay: Payment intensity heatmap
-
-Cashflow chart built with Recharts.
-
-Drag & Drop powered by dnd-kit.
-
----
-
-# Tech Stack
-
+## Tech Stack
 - React + Vite
 - TypeScript (strict mode)
 - dnd-kit
 - Recharts
 - html-to-image
 - UUID
-- localStorage persistence
+- Supabase (auth foundation)
 
----
+## Clean Project Tree (Current)
+```text
+meraviglia-cashflow/
+├── docs/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── auth/
+│   ├── domain/
+│   ├── engine/
+│   ├── lib/
+│   ├── state/
+│   └── ui/
+├── CODEX_SYSTEM_PROMPT.md
+├── README.md
+├── eslint.config.js
+├── index.html
+├── middleware.ts
+├── package.json
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── vitest.config.ts
+```
 
-# Current Features
-
-✔ Service catalog with persistence  
-✔ Add services to proposal  
-✔ Custom strategic plan editor  
-✔ Drag & drop service positioning  
-✔ Payment configuration editor  
-✔ Financial heatmap overlay  
-✔ Parallel proposal comparison  
-✔ PNG & SVG export  
-✔ Local persistence  
-
----
-
-# Architectural Principles
-
-- Separation of concerns (Catalog / Plan / Proposal / Rendering)
-- Stateless rendering logic
-- Persistent local data layer
-- Type-safe domain models
-- Modular components
-- Scalable grid-based timeline
-
----
-
-# Known Limitations
-
-1. Timeline drag calculation still assumes fixed pixel width per month.
-2. Module start month is implicit (derived from order).
-3. No ROI / margin simulation yet.
-4. No PDF generation.
-5. No cloud persistence.
-6. No user authentication.
-7. No theming system.
-8. No service category filtering.
-9. No multi-proposal management system.
-10. No scenario versioning.
-
----
-
-# Development
-
-## Install
+## Development
+### Install
+```bash
 npm install
+```
 
-## Run
+### Run
+```bash
 npm run dev
+```
 
-## Build
+### Build
+```bash
 npm run build
+```
 
----
-
-# License
-
+## License
 Private – Internal Strategic Tool
-
-## AI Development
-
-This project uses a strict AI development protocol to maintain architectural integrity.
-
-All AI-generated code must comply with the rules defined in:
-
-`CODEX_SYSTEM_PROMPT.md`
-
-The system enforces:
-
-- Layer separation (Domain / Engine / State / Rendering)
-- Strict TypeScript typing
-- Pure financial engine logic
-- CSS Grid-based timeline structure
-- No business logic inside UI components
-
-AI contributions must align with the long-term strategic direction of the Meraviglia Engine.
-
-## Current Status
-
-Phase 1 MVP completed with full architectural hardening and deterministic engine test coverage.
