@@ -33,6 +33,30 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - Existing Supabase auth bootstrap.
 - Initial multi-user scaffolding.
 - Domain definitions for workspace and intake concepts.
+- Enforced dependency chain `ui → application → domain → repository → infra`.
+
+---
+
+## Phase 2A.5 — Architecture Hardening
+### Objective
+Consolidate strategic architecture decisions into enforceable documentation and prepare the modeling stack for simulation-ready execution.
+
+### Completion Criteria
+- Domain Layer introduction codified and adopted as mandatory architecture baseline.
+- Blueprint Domain Model defined with explicit aggregate boundaries and invariants.
+- Strategy Template system design documented and linked to the Knowledge Layer for reusable strategic patterns.
+- Documentation consolidation completed across architecture, roadmap, master plan, and development standards.
+- Preparation baseline for Simulation Engine established (model contracts, data expectations, integration boundaries).
+
+### Architectural Risk
+- Fragmented architectural guidance causing inconsistent implementation choices.
+- Premature simulation implementation without stabilized strategic model semantics.
+- Drift between documented strategy and executable orchestration behavior.
+
+### Dependencies
+- Phase 2A foundational persistence and intake baseline.
+- Alignment on target dependency chain `ui → application → domain → repository → infra`.
+- Governance commitment to documentation-first architecture hardening.
 
 ---
 

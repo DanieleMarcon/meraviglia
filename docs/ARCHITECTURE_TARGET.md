@@ -12,7 +12,7 @@ Final decision for architecture hardening step 1:
 - No self-signup organization provisioning and no cross-organization super-admin layer in this step.
 
 ## Target Layered Architecture
-Meraviglia OS target architecture is organized into six explicit layers:
+Meraviglia OS target architecture is organized into explicit layers, with the Domain Layer now formalized as the strategic semantic core:
 
 1. **domain**
    - Core business entities, value objects, invariants, policies.
@@ -52,7 +52,7 @@ Boundary clarification:
 - Repository interfaces define the persistence boundary; infra adapters implement those interfaces with Supabase.
 - Domain and engine remain pure and framework-agnostic, with no Supabase dependencies.
 
-This baseline structure establishes the dependency flow `ui → application → repository → infra → supabase client` for workspace operations.
+This baseline structure establishes the dependency flow `ui → application → domain → repository → infra` for workspace operations, with infrastructure adapters owning Supabase client usage.
 
 ## Operational UI Layer Introduction
 The first operational UI module (Intake interface) establishes the UI baseline for executable workflows.
@@ -63,7 +63,7 @@ Principles:
 - Application services remain the orchestration boundary for persistence and workflow transitions.
 
 Operational flow remains strictly aligned to the dependency chain:
-`ui → application → repository → infra → supabase`
+`ui → application → domain → repository → infra`
 
 ## Workspace Operational UI
 The Workspace Operational UI represents the execution container for strategic planning.
@@ -75,7 +75,22 @@ Positioning:
 Architecture constraints:
 - Workspace UI consumes application services only.
 - No direct infra or Supabase imports are allowed in workspace presentation modules.
-- Dependency chain remains enforced as `ui → application → repository → infra`.
+- Dependency chain remains enforced as `ui → application → domain → repository → infra`.
+
+## Strategic Modeling Core
+The strategic modeling core is centered on **Blueprint** as the primary aggregate root for strategic design and orchestration continuity.
+
+Blueprint aggregate composition:
+- **Objectives**: explicit strategic outcomes to be achieved and governed over time.
+- **Hypotheses**: assumptions that connect intended actions to expected outcomes and must be validated through feedback.
+- **Actions**: executable intervention units sequenced for operational activation.
+- **Indicators**: measurable signals used to evaluate effectiveness, variance, and progress against objectives.
+- **Simulations**: modeled scenarios used to test expected impact before operational rollout.
+
+Strategic implications:
+- The Blueprint engine is treated as the core strategic modeling aggregate for decision orchestration.
+- Strategy Templates are the reusable blueprint design patterns provided by the Knowledge Layer for accelerated and consistent modeling.
+- Application workflows must preserve Blueprint traceability from intake assumptions through simulation and execution feedback.
 
 ## Multi-Tenant Core Data Architecture
 Primary platform entities:
@@ -188,7 +203,9 @@ Planned approach:
 
 ## Boundary Rules (Non-Negotiable Dependencies)
 ### Allowed dependency flow
-`ui → application → domain/engine`
+`ui → application → domain → repository → infra`
+
+`application → engine (deterministic strategic orchestration only)`
 
 `application → repository (interfaces)`
 

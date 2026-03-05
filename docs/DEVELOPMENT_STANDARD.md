@@ -40,6 +40,7 @@ This block is mandatory for governance traceability and audit readiness.
 - Any architecture-impacting change must update corresponding docs in `/docs` before or together with implementation.
 - Roadmap phase transitions require explicit criteria updates in `ROADMAP_PHASES.md`.
 - Structural boundary changes require updates in `ARCHITECTURE_TARGET.md`.
+- Strategic modeling changes (Blueprint model, Strategy Templates, simulation boundaries) must update Knowledge Layer-linked documentation.
 - Strategic identity/positioning changes require updates in `MERAVIGLIA_OS_MASTER_PLAN.md`.
 - Documentation updates must be atomic with the decision they represent.
 
@@ -55,6 +56,10 @@ All strategic flows originate from Intake.
 - UI focuses on presentation and interaction through application entry points.
 
 Boundary violations are treated as architectural defects.
+
+Mandatory dependency chain for feature delivery:
+`ui → application → domain → repository → infra`
+
 
 ## Tenant Security & Isolation Standard
 Required for tenant-scoped data:
@@ -105,6 +110,31 @@ Every pull request must be reviewed against:
 4. Determinism/testability of business logic.
 5. Documentation consistency with implemented behavior.
 6. Long-term alignment with Meraviglia OS strategic positioning (non-CRM orchestration brain).
+
+## Architectural Risks
+### Risk 1 — Weak Domain Model
+If the Domain Layer is underspecified, strategic rules leak into UI/application code and become inconsistent across workflows.
+
+Mitigation strategies:
+- Define and version core domain aggregates and invariants (including Blueprint and related value objects).
+- Require domain-level review for new strategic capabilities before implementation approval.
+- Enforce tests around domain rules independent from infra/UI behavior.
+
+### Risk 2 — Non-atomic operations
+If strategic operations are split across non-atomic persistence steps, traceability and consistency can break under failure conditions.
+
+Mitigation strategies:
+- Design critical workflow mutations as transactional or compensatable units.
+- Require explicit idempotency strategy for cross-boundary operations.
+- Add failure-mode documentation and rollback policy for each high-impact use case.
+
+### Risk 3 — Blueprint model over-flexibility
+If Blueprint structure becomes excessively permissive, model quality degrades and simulation outputs lose strategic reliability.
+
+Mitigation strategies:
+- Define mandatory Blueprint structure constraints (objectives, hypotheses, actions, indicators, simulations).
+- Govern Strategy Templates through Knowledge Layer curation and versioning.
+- Introduce schema and validation gates before blueprint activation in operational flows.
 
 ## Audit Policy Before Each New Module
 Before creating a new module, complete a pre-module audit:
