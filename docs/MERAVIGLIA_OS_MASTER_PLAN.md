@@ -83,6 +83,17 @@ Intake is now the formal entry boundary of the Meraviglia strategic cycle.
 - Strategic assumptions are captured first in intake and then converted into workspace context.
 - Conversion from intake to workspace is the traceability bridge between design intent and orchestration execution.
 
+
+## First Operational Workflow
+The first operational workflow now implemented in UI is:
+
+`Intake creation → Intake listing/monitoring → Intake-to-Workspace conversion`
+
+This workflow formalizes the minimum executable strategic path and preserves traceability from first assumptions (intake) to operational container activation (workspace).
+
+Governance constraint:
+- UI interaction remains bound to application services, preserving architectural boundaries and keeping infra details outside presentation modules.
+
 ## Long-Term SaaS Evolution Vision
 Meraviglia OS evolves in staged maturity:
 1. **Foundation**: multi-user architecture, shared governance standards, modular domain boundaries.

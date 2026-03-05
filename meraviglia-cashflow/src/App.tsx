@@ -8,6 +8,7 @@ import ExportButtons from "./ui/components/ExportButtons"
 import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
 import AddServiceToProposal from "./ui/components/AddServiceToProposal"
 import PianoEditor from "./ui/components/PianoEditor"
+import IntakeView from "./ui/views/IntakeView"
 import UnauthorizedView from "./ui/views/UnauthorizedView"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
@@ -120,6 +121,8 @@ function CashflowApp() {
         catalog={catalog}
         onUpdate={setPropostaA}
       />
+
+      <IntakeView />
 
       <React.Suspense fallback={<div style={{ padding: 16 }}>Loading...</div>}>
         <ProposteCompareView
