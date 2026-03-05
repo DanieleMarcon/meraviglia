@@ -113,3 +113,10 @@ Policies ensure:
 2. Intake can be updated and moved to `validated`.
 3. Conversion creates a workspace and updates intake to `converted`.
 4. Converted intake stores `workspace_id` for strategic traceability.
+
+## Atomic Conversion Requirement (Future Hardening)
+`convertIntakeToWorkspace` currently performs multiple operations (workspace create + intake update) at application level, so the conversion is not atomic.
+
+For production hardening, this flow should move to a single database function/RPC to guarantee transactional consistency under concurrency and failure conditions.
+
+Current implementation remains acceptable for internal MVP usage given existing RLS boundaries and controlled operational scope.

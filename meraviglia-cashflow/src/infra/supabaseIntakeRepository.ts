@@ -23,6 +23,15 @@ export class SupabaseIntakeRepository implements IntakeRepository {
     return data ?? []
   }
 
+  async getIntakeById(id: string): Promise<IntakeDTO | null> {
+    const { data, error } = await supabase.from(TABLE_NAME).select(SELECT_FIELDS).eq("id", id).single()
+    if (error) {
+      if (error.code === "PGRST116") return null
+      throw new Error(error.message)
+    }
+    return data
+  }
+
   async updateIntake(id: string, input: UpdateIntakeInput): Promise<IntakeDTO> {
     const { data, error } = await supabase.from(TABLE_NAME).update(input).eq("id", id).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to update intake")

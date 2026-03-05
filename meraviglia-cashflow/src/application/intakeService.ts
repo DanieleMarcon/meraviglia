@@ -33,7 +33,7 @@ export const convertIntakeToWorkspace = async (
   id: string,
 ): Promise<{ intake: IntakeDTO; workspace: Awaited<ReturnType<typeof createWorkspace>> }> => {
   const intakeId = requireNonEmpty(id, "id")
-  const intake = (await intakeRepository.listIntakes()).find((item) => item.id === intakeId)
+  const intake = await intakeRepository.getIntakeById(intakeId)
   if (!intake) throw new Error("Intake not found")
   if (intake.status === "converted") throw new Error("Intake already converted")
 
