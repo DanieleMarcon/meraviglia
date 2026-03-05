@@ -55,6 +55,17 @@ Meraviglia OS is the coordination engine that:
 
 It is intentionally modular, enabling future intelligence components (e.g., ROI engine, recommendation layers, adaptive planning automation) without collapsing architecture boundaries.
 
+## Strategic Modeling Positioning
+Blueprint is the core strategic modeling aggregate of Meraviglia OS. The platform treats Blueprint modeling as the center of design-to-execution continuity, with objectives, hypotheses, actions, indicators, and simulations maintained as governed strategic components.
+
+The **Blueprint engine** is therefore positioned as the core strategic modeling engine for orchestration decisions.
+
+To accelerate consistent design quality, Meraviglia OS introduces **Strategy Templates** as Knowledge Layer assets: reusable strategic modeling patterns that seed Blueprint structures with governance-ready defaults and measurable logic.
+
+Architectural dependency direction for executable workflows is standardized as:
+`ui → application → domain → repository → infra`
+
+
 ## Strategic Cycle Diagram
 ```text
 [Design]
@@ -97,7 +108,7 @@ Governance constraint:
 ## Long-Term SaaS Evolution Vision
 Meraviglia OS evolves in staged maturity:
 1. **Foundation**: multi-user architecture, shared governance standards, modular domain boundaries.
-2. **Operational orchestration**: workspace-centric planning and intake standardization.
+2. **Operational orchestration**: workspace-centric planning, Domain Layer introduction, and intake standardization.
 3. **Strategic intelligence**: ROI modeling, recommendation capabilities, and adaptive execution guidance.
 4. **Platform readiness**: tenant-aware SaaS architecture, policy controls, compliance posture, and extensible integration contracts.
 
