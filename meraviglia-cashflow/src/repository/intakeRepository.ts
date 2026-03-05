@@ -30,6 +30,7 @@ export type UpdateIntakeInput = Partial<Omit<CreateIntakeInput, "status">> & {
 export interface IntakeRepository {
   createIntake(input: CreateIntakeInput): Promise<IntakeDTO>
   listIntakes(): Promise<IntakeDTO[]>
+  getIntakeById(id: string): Promise<IntakeDTO | null>
   updateIntake(id: string, input: UpdateIntakeInput): Promise<IntakeDTO>
   convertToWorkspace(id: string, workspaceId: string): Promise<IntakeDTO>
 }
