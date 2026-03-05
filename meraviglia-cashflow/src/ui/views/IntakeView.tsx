@@ -1,0 +1,41 @@
+import { useCallback, useEffect, useState } from "react"
+
+import { listIntakes } from "../../application/intakeService"
+import type { IntakeDTO } from "../../repository/intakeRepository"
+import IntakeForm from "../components/IntakeForm"
+import IntakeList from "../components/IntakeList"
+
+function IntakeView() {
+  const [intakes, setIntakes] = useState<IntakeDTO[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const loadIntakes = useCallback(async () => {
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const results = await listIntakes()
+      setIntakes(results)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to load intakes")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadIntakes()
+  }, [loadIntakes])
+
+  return (
+    <section style={{ marginTop: 32 }}>
+      <h1>Intake Operations</h1>
+      <IntakeForm onCreated={loadIntakes} />
+      {isLoading ? <p>Loading intakes...</p> : <IntakeList intakes={intakes} onConverted={loadIntakes} />}
+      {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
+    </section>
+  )
+}
+
+export default IntakeView

@@ -54,6 +54,17 @@ Boundary clarification:
 
 This baseline structure establishes the dependency flow `ui → application → repository → infra → supabase client` for workspace operations.
 
+## Operational UI Layer Introduction
+The first operational UI module (Intake interface) establishes the UI baseline for executable workflows.
+
+Principles:
+- UI modules call application services only (`createIntake`, `listIntakes`, `convertIntakeToWorkspace`).
+- UI modules must not import Supabase clients or infra adapters directly.
+- Application services remain the orchestration boundary for persistence and workflow transitions.
+
+Operational flow remains strictly aligned to the dependency chain:
+`ui → application → repository → infra → supabase`
+
 ## Multi-Tenant Core Data Architecture
 Primary platform entities:
 - `organizations`

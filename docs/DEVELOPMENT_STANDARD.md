@@ -75,6 +75,13 @@ Required:
 
 This ensures replaceability of Supabase and future backends without strategic logic rewrites.
 
+## UI Infrastructure Client Isolation Rule
+UI components must never import infrastructure clients (Supabase clients, infra adapters, SDK-bound gateways).
+
+Required pattern:
+- UI imports only application-layer use-cases/services.
+- Infrastructure access remains encapsulated in infra implementations behind repository/application boundaries.
+
 ## No UI-to-Engine Rule (Future State)
 Future-state rule (enforced as architecture matures):
 - UI must never directly call engine logic.
