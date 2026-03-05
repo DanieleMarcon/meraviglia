@@ -65,6 +65,18 @@ Principles:
 Operational flow remains strictly aligned to the dependency chain:
 `ui → application → repository → infra → supabase`
 
+## Workspace Operational UI
+The Workspace Operational UI represents the execution container for strategic planning.
+
+Positioning:
+- Workspaces expose the operational surface where strategic plans are organized and executed.
+- The UI presents workspace identity and lifecycle context (`workspace_name`, `workspace_slug`, `created_at`) for planning continuity.
+
+Architecture constraints:
+- Workspace UI consumes application services only.
+- No direct infra or Supabase imports are allowed in workspace presentation modules.
+- Dependency chain remains enforced as `ui → application → repository → infra`.
+
 ## Multi-Tenant Core Data Architecture
 Primary platform entities:
 - `organizations`
