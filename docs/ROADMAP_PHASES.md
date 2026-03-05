@@ -4,6 +4,7 @@
 ### Status Update
 - Intake module — baseline implemented (table, RLS isolation, repository/infra/application flow, conversion to workspace).
 - Phase 2A Intake module operational UI baseline implemented (create, list, convert workflow through application layer).
+- Phase 2A Workspace operational UI baseline implemented (workspace list and empty state via application layer).
 
 ### Objective
 Establish production-oriented identity and persistence baseline, and introduce the strategic Intake module as the formal entry point for workspace-level planning.
