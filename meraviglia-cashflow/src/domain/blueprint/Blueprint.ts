@@ -3,6 +3,7 @@ import type { Constraint } from './Constraint'
 import type { Hypothesis } from './Hypothesis'
 import type { Indicator } from './Indicator'
 import type { Objective } from './Objective'
+import type { Scenario } from './Scenario'
 
 export interface BlueprintProps {
   id: string
@@ -12,6 +13,7 @@ export interface BlueprintProps {
   actions: Action[]
   indicators: Indicator[]
   constraints: Constraint[]
+  scenarios: Scenario[]
 }
 
 export class Blueprint {
@@ -22,6 +24,7 @@ export class Blueprint {
   readonly actions: Action[]
   readonly indicators: Indicator[]
   readonly constraints: Constraint[]
+  readonly scenarios: Scenario[]
 
   constructor(props: BlueprintProps) {
     this.id = props.id
@@ -31,6 +34,7 @@ export class Blueprint {
     this.actions = props.actions
     this.indicators = props.indicators
     this.constraints = props.constraints
+    this.scenarios = props.scenarios
   }
 
   validateStructure(): void {
@@ -61,6 +65,12 @@ export class Blueprint {
   ensureIndicatorPresence(): void {
     if (this.indicators.length === 0) {
       throw new Error('Blueprint must include at least one indicator')
+    }
+  }
+
+  ensureScenarioPresence(): void {
+    if (this.scenarios.length === 0) {
+      throw new Error('Blueprint must include at least one scenario before simulation')
     }
   }
 }

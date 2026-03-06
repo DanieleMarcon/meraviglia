@@ -85,12 +85,27 @@ Blueprint aggregate composition:
 - **Hypotheses**: assumptions that connect intended actions to expected outcomes and must be validated through feedback.
 - **Actions**: executable intervention units sequenced for operational activation.
 - **Indicators**: measurable signals used to evaluate effectiveness, variance, and progress against objectives.
-- **Simulations**: modeled scenarios used to test expected impact before operational rollout.
+- **Scenarios**: alternative strategic configurations that select active actions and declare assumption variables for simulation.
+- **Simulation Results**: outputs generated per scenario with projected indicators and risk level for comparison.
 
 Strategic implications:
 - The Blueprint engine is treated as the core strategic modeling aggregate for decision orchestration.
 - Strategy Templates are the reusable blueprint design patterns provided by the Knowledge Layer for accelerated and consistent modeling.
-- Application workflows must preserve Blueprint traceability from intake assumptions through simulation and execution feedback.
+- Application workflows must preserve Blueprint traceability from intake assumptions through scenario simulation and execution feedback.
+
+Scenario-based structure:
+```text
+Blueprint
+   ├ Objectives
+   ├ Hypotheses
+   ├ Actions
+   ├ Indicators
+   ├ Constraints
+   └ Scenarios
+        └ SimulationResult
+```
+
+Each scenario is simulated independently, enabling direct strategic comparison across alternative action/assumption configurations while preserving blueprint traceability.
 
 ## Multi-Tenant Core Data Architecture
 Primary platform entities:
