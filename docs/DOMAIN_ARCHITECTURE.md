@@ -84,3 +84,15 @@ Each scenario can be simulated independently, allowing side-by-side strategic co
 - Introduce domain policy modules for sector-specific governance rules.
 - Support composite workspaces for multi-initiative programs while preserving aggregate boundaries.
 - Add explainability metadata to all model transformations for audit and training use cases.
+
+## Domain Value Objects
+Domain Value Objects strengthen the Meraviglia OS domain model by replacing weak primitive collections with explicit semantic structures.
+
+By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain gains:
+- clearer ubiquitous language in code (`assumptions` instead of generic key/value bags),
+- stronger type safety for simulation contracts,
+- reduced primitive obsession and lower risk of invalid shape propagation across domain boundaries,
+- better extensibility for future invariant validation directly at value object level.
+
+These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
+

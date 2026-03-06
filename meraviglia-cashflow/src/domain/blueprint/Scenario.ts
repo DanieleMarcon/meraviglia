@@ -1,10 +1,12 @@
+import type { Assumption } from '../valueObjects/Assumption'
+
 export interface ScenarioProps {
   id: string
   blueprintId: string
   name: string
   description: string
   actionIds: string[]
-  assumptionSet: Record<string, number | string>
+  assumptions: Assumption[]
   createdAt: string
 }
 
@@ -14,7 +16,7 @@ export class Scenario {
   readonly name: string
   readonly description: string
   readonly actionIds: string[]
-  readonly assumptionSet: Record<string, number | string>
+  readonly assumptions: Assumption[]
   readonly createdAt: string
 
   constructor(props: ScenarioProps) {
@@ -23,7 +25,7 @@ export class Scenario {
     this.name = props.name
     this.description = props.description
     this.actionIds = props.actionIds
-    this.assumptionSet = props.assumptionSet
+    this.assumptions = props.assumptions
     this.createdAt = props.createdAt
   }
 
@@ -32,8 +34,8 @@ export class Scenario {
       throw new Error('Scenario must include at least one actionId')
     }
 
-    if (Object.keys(this.assumptionSet).length === 0) {
-      throw new Error('Scenario assumptionSet must not be empty')
+    if (this.assumptions.length === 0) {
+      throw new Error('Scenario assumptions must not be empty')
     }
   }
 }
