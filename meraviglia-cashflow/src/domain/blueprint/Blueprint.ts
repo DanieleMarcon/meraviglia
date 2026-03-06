@@ -35,7 +35,9 @@ export class Blueprint {
 
   validateStructure(): void {
     this.ensureObjectivePresence()
+    this.ensureHypothesisPresence()
     this.ensureActionPresence()
+    this.ensureIndicatorPresence()
   }
 
   ensureObjectivePresence(): void {
@@ -44,9 +46,21 @@ export class Blueprint {
     }
   }
 
+  ensureHypothesisPresence(): void {
+    if (this.hypotheses.length === 0) {
+      throw new Error('Blueprint must include at least one hypothesis')
+    }
+  }
+
   ensureActionPresence(): void {
     if (this.actions.length === 0) {
       throw new Error('Blueprint must include at least one action')
+    }
+  }
+
+  ensureIndicatorPresence(): void {
+    if (this.indicators.length === 0) {
+      throw new Error('Blueprint must include at least one indicator')
     }
   }
 }
