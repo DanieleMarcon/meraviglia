@@ -7,26 +7,41 @@ Define the simulation engine as the deterministic evaluation subsystem used to t
 The simulation engine follows a staged pipeline:
 
 1. **Scenario Ingestion**
-   - Accepts blueprint-derived scenarios with explicit assumptions, constraints, and parameters.
+   - Accepts blueprint-derived scenarios with explicit assumptions, active action sets, and constraints.
 
 2. **Normalization & Validation**
    - Validates scenario completeness and structural consistency.
-   - Rejects simulations with missing assumptions or invalid parameter ranges.
+   - Rejects simulations with missing assumptions, invalid parameter ranges, or empty scenario action sets.
 
 3. **Deterministic Evaluation**
    - Applies strategy rules and impact functions to estimate scenario outcomes.
    - Generates comparable results across alternative strategic paths.
 
 4. **Result Packaging**
-   - Returns projected indicators, risk flags, variance notes, and confidence framing.
-   - Persists outputs with linkage to blueprint version and assumption set.
+   - Returns projected indicators, risk level, and optional notes.
+   - Persists outputs with linkage to scenario and blueprint context.
+
+## Scenario-Based Simulation Model
+```text
+Blueprint
+   ├ Objectives
+   ├ Hypotheses
+   ├ Actions
+   ├ Indicators
+   ├ Constraints
+   └ Scenarios
+        └ SimulationResult
+```
+
+Blueprint now supports multiple scenarios representing alternative strategic configurations.
+Each Scenario is simulated independently and produces SimulationResult outputs used for strategic comparison.
 
 ## Core Entities and Principles
-- **Simulation Request**: immutable input package bound to blueprint version.
-- **Assumption Set**: explicit variables and baseline conditions.
+- **Scenario**: immutable simulation input profile with `actionIds` and `assumptionSet`.
+- **Assumption Set**: explicit variables and baseline conditions (e.g., `conversion_rate`, `traffic_growth`, `budget`).
 - **Constraint Set**: boundaries such as budget, time, and execution capacity.
 - **Impact Model**: deterministic transformation logic from actions to projected outcomes.
-- **Simulation Result**: structured output with explanations and comparison metadata.
+- **SimulationResult**: structured output with `projectedIndicators`, `riskLevel`, optional `notes`, and timestamp.
 
 Principles:
 - Determinism and reproducibility over opaque prediction.

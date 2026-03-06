@@ -22,8 +22,13 @@ Blueprint is the central aggregate inside a workspace and is composed of tightly
    - Represents limitations or boundaries affecting strategic actions.
    - Includes budget constraints, time constraints, resource constraints, and market constraints.
 
-6. **Scenario & Simulation Structure**
-   - Represents alternative strategy paths, parameters, and expected impacts.
+6. **Scenario Structure**
+   - Represents alternative strategic configurations of a blueprint.
+   - Each scenario activates a subset of actions and declares an explicit assumption set.
+
+7. **Simulation Result Structure**
+   - Represents simulation outputs generated from a single scenario.
+   - Captures projected indicators and simplified risk classification for strategic comparison.
 
 ## Blueprint Composition
 The Blueprint aggregate includes:
@@ -33,7 +38,8 @@ The Blueprint aggregate includes:
 - Indicators
 - Constraints
 - Scenarios
-- Simulation Results
+
+Each Scenario can produce one or more Simulation Results through independent simulation runs.
 
 ## Core Entities
 - **Blueprint**: aggregate root with identity, version, and lifecycle status.
@@ -42,11 +48,31 @@ The Blueprint aggregate includes:
 - **Action**: strategic intervention element.
 - **Indicator**: measurement contract for effectiveness.
 - **Constraint**: limitation or boundary condition that affects scenario feasibility and simulation results (e.g., `budget_limit`, `resource_capacity`, `time_window`, `market_conditions`).
-- **Scenario**: coherent set of strategic assumptions and action variants.
-- **Simulation Result**: deterministic output attached to scenario inputs.
+- **Scenario**: coherent strategic configuration with `actionIds` and `assumptionSet` (`Record<string, number | string>`), scoped to a blueprint.
+- **Simulation Result**: scenario output containing `projectedIndicators` (`Record<string, number>`), `riskLevel` (`low | medium | high`), optional notes, and creation timestamp.
+
+## Scenario-Based Strategic Modeling
+Blueprint now supports multiple scenarios representing alternative strategic configurations.
+
+This enables:
+- Parallel strategic exploration under different assumptions (e.g., conversion rate, traffic growth, budget).
+- Independent simulation of each scenario with comparable indicator outputs.
+- Decision framing through direct comparison of risk and projected outcomes across scenarios.
 
 ## Simulation Governance Rule
-Constraints must be explicitly declared before simulation runs so scenario feasibility and simulation outputs can be evaluated against known operating boundaries.
+Constraints and scenario assumptions must be explicitly declared before simulation runs so scenario feasibility and simulation outputs can be evaluated against known operating boundaries.
+
+## Structural Diagram
+```text
+Blueprint
+   ├ Objectives
+   ├ Hypotheses
+   ├ Actions
+   ├ Indicators
+   ├ Constraints
+   └ Scenarios
+        └ SimulationResult
+```
 
 ## Modeling Principles
 - **Explicit causality**: actions should reference hypotheses and intended objective effects.
