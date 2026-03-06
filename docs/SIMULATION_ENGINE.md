@@ -30,8 +30,22 @@ Blueprint
    ├ Indicators
    ├ Constraints
    └ Scenarios
-        └ SimulationResult
+        ↓
+     SimulationEngine
+        ↓
+     SimulationResult
 ```
+
+## Simulation Engine Layer
+The Simulation Engine layer is responsible for deterministic evaluation of blueprint scenarios.
+
+Its responsibilities are intentionally narrow:
+- validate that the blueprint is simulation-ready,
+- validate scenario structural completeness,
+- execute deterministic scenario evaluation logic,
+- emit comparable `SimulationResult` artifacts.
+
+The engine must only depend on domain entities and remain free from repository, UI, and infrastructure coupling.
 
 Blueprint now supports multiple scenarios representing alternative strategic configurations.
 Each Scenario is simulated independently and produces SimulationResult outputs used for strategic comparison.
