@@ -15,12 +15,29 @@ Meraviglia OS is positioned as a strategic platform composed of four coordinated
    - Maintains continuity from intake assumptions to execution decisions.
 
 3. **Blueprint Modeling Layer**
-   - Formalizes objectives, hypotheses, actions, indicators, and scenarios as strategic models.
+   - Formalizes objectives, hypotheses, actions, indicators, constraints, and scenarios as strategic models.
    - Enables versioning, comparison, and traceability of alternative strategic designs.
 
 4. **Simulation and Knowledge Layer**
    - Uses deterministic simulation logic and reusable strategy templates to evaluate options before execution.
    - Supports consultant decisions with structured precedent and domain-specific pattern reuse.
+
+## Category Definition
+Meraviglia OS is **not a CRM**.
+
+Meraviglia OS is a **Strategic Modeling and Decision Orchestration Platform**.
+
+CRM systems primarily record operational interactions. Meraviglia OS designs and governs strategic decisions.
+
+| CRM Systems | Meraviglia OS |
+|---|---|
+| contacts | objectives |
+| deals | hypotheses |
+| activities | actions |
+| pipelines | indicators |
+| — | simulations |
+
+Meraviglia operates as a **System of Strategic Design** above Systems of Record.
 
 ## Core Principles
 - **Consultant-first interaction model**: workflows are designed for consultants guiding multiple client contexts, not for self-serve end users.
