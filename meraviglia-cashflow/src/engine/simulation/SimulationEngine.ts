@@ -1,6 +1,7 @@
 import { Blueprint } from '../../domain/blueprint/Blueprint'
 import type { Scenario } from '../../domain/blueprint/Scenario'
 import type { SimulationResult } from '../../domain/blueprint/SimulationResult'
+import type { IndicatorValue } from '../../domain/valueObjects/IndicatorValue'
 
 export class SimulationEngine {
   simulateScenario(blueprint: Blueprint, scenario: Scenario): SimulationResult {
@@ -16,13 +17,21 @@ export class SimulationEngine {
 
     scenario.validateStructure()
 
+    const projectedIndicators: IndicatorValue[] = [
+      {
+        name: 'revenue_growth',
+        value: 0,
+      },
+      {
+        name: 'lead_conversion',
+        value: 0,
+      },
+    ]
+
     return {
       id: `simulation-${scenario.id}`,
       scenarioId: scenario.id,
-      projectedIndicators: {
-        revenue_growth: 0,
-        lead_conversion: 0,
-      },
+      projectedIndicators,
       riskLevel: 'medium',
       notes: 'Simulation Engine skeleton result',
       createdAt: new Date().toISOString(),
