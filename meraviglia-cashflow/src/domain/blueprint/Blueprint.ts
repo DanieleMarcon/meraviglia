@@ -44,6 +44,11 @@ export class Blueprint {
     this.ensureIndicatorPresence()
   }
 
+  validateForSimulation(): void {
+    this.validateStructure()
+    this.ensureScenarioPresence()
+  }
+
   ensureObjectivePresence(): void {
     if (this.objectives.length === 0) {
       throw new Error('Blueprint must include at least one objective')

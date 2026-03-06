@@ -54,8 +54,22 @@ Blueprint
    ├ Indicators
    ├ Constraints
    └ Scenarios
-        └ SimulationResult
+        ↓
+     SimulationEngine
+        ↓
+     SimulationResult
 ```
+
+## Simulation Engine Layer
+The Simulation Engine layer is responsible for deterministic evaluation of blueprint scenarios.
+
+It consumes only domain entities and enforces simulation-specific validation before producing a `SimulationResult`.
+
+Boundary constraints:
+- no Supabase imports,
+- no repository usage,
+- no UI logic,
+- domain-only dependencies.
 
 ## Scenario-Based Strategic Modeling
 Blueprint supports multiple scenarios to represent alternative strategic configurations.
