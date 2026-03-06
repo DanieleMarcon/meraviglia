@@ -1,0 +1,52 @@
+import type { Action } from './Action'
+import type { Constraint } from './Constraint'
+import type { Hypothesis } from './Hypothesis'
+import type { Indicator } from './Indicator'
+import type { Objective } from './Objective'
+
+export interface BlueprintProps {
+  id: string
+  workspaceId: string
+  objectives: Objective[]
+  hypotheses: Hypothesis[]
+  actions: Action[]
+  indicators: Indicator[]
+  constraints: Constraint[]
+}
+
+export class Blueprint {
+  readonly id: string
+  readonly workspaceId: string
+  readonly objectives: Objective[]
+  readonly hypotheses: Hypothesis[]
+  readonly actions: Action[]
+  readonly indicators: Indicator[]
+  readonly constraints: Constraint[]
+
+  constructor(props: BlueprintProps) {
+    this.id = props.id
+    this.workspaceId = props.workspaceId
+    this.objectives = props.objectives
+    this.hypotheses = props.hypotheses
+    this.actions = props.actions
+    this.indicators = props.indicators
+    this.constraints = props.constraints
+  }
+
+  validateStructure(): void {
+    this.ensureObjectivePresence()
+    this.ensureActionPresence()
+  }
+
+  ensureObjectivePresence(): void {
+    if (this.objectives.length === 0) {
+      throw new Error('Blueprint must include at least one objective')
+    }
+  }
+
+  ensureActionPresence(): void {
+    if (this.actions.length === 0) {
+      throw new Error('Blueprint must include at least one action')
+    }
+  }
+}
