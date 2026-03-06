@@ -45,6 +45,25 @@ Key invariants:
 - No workspace lifecycle without intake lineage.
 - No simulation output without declared scenario assumptions.
 
+## Composition Root and Application Wiring
+System composition is owned by the application layer through a dedicated composition root.
+
+Composition root location:
+- `src/application/composition/applicationComposition.ts`
+
+Composition responsibilities:
+- instantiate infrastructure adapters,
+- instantiate application services,
+- wire dependencies between repositories and services,
+- register services for UI access.
+
+Current transitional implementation:
+- service registration currently follows a temporary service locator pattern,
+- active examples include `setWorkspaceService` and `setIntakeService`.
+
+Evolution plan:
+- this temporary service locator will be replaced by a service factory or dependency injection container as system complexity grows.
+
 ## Blueprint Simulation Structure
 ```text
 Blueprint
@@ -95,4 +114,3 @@ By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain
 - better extensibility for future invariant validation directly at value object level.
 
 These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
-
