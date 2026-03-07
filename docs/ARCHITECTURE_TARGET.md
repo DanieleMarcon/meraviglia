@@ -54,6 +54,24 @@ Boundary clarification:
 
 This baseline structure establishes the dependency flow `ui → application → domain → repository → infra` for workspace operations, with infrastructure adapters owning Supabase client usage.
 
+## Application Composition Root Pattern
+The application layer now owns the system composition root and is responsible for wiring concrete runtime dependencies.
+
+Composition root location:
+- `src/application/composition/applicationComposition.ts`
+
+Composition root responsibilities:
+- instantiate infrastructure adapters,
+- instantiate application services,
+- wire dependencies between services and repositories,
+- register services for UI access.
+
+Current transitional pattern:
+- the system uses a temporary service locator pattern via application-level setters such as `setWorkspaceService` and `setIntakeService`.
+
+Planned evolution:
+- this service locator pattern is temporary and will be replaced by a service factory or dependency injection container as the application grows.
+
 ## Operational UI Layer Introduction
 The first operational UI module (Intake interface) establishes the UI baseline for executable workflows.
 
@@ -248,4 +266,3 @@ Boundary constraints:
 - no repository usage,
 - no UI logic,
 - domain-only dependencies.
-

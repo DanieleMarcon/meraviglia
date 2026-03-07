@@ -60,6 +60,24 @@ Boundary violations are treated as architectural defects.
 Mandatory dependency chain for feature delivery:
 `ui → application → domain → repository → infra`
 
+## Composition Root Standard
+The application layer owns the system composition root and is responsible for constructing the runtime object graph.
+
+Composition root location:
+- `src/application/composition/applicationComposition.ts`
+
+Required responsibilities:
+- instantiate infrastructure adapters,
+- instantiate application services,
+- wire dependencies between services and repositories,
+- register services for UI access.
+
+Current temporary pattern:
+- service registration currently uses a temporary service locator pattern,
+- concrete examples include `setWorkspaceService` and `setIntakeService`.
+
+Replacement policy:
+- the temporary service locator pattern must be replaced by a service factory or dependency injection container as application scope increases.
 
 ## Tenant Security & Isolation Standard
 Required for tenant-scoped data:
