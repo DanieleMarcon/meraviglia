@@ -1,4 +1,4 @@
-import type { Assumption } from '../valueObjects/Assumption'
+import { Assumption } from '../valueObjects/Assumption'
 
 export interface ScenarioProps {
   id: string
@@ -6,7 +6,7 @@ export interface ScenarioProps {
   name: string
   description: string
   actionIds: string[]
-  assumptions: Assumption[]
+  assumptions: Array<Assumption | { key: string; value: number | string }>
   createdAt: string
 }
 
@@ -25,7 +25,11 @@ export class Scenario {
     this.name = props.name
     this.description = props.description
     this.actionIds = props.actionIds
-    this.assumptions = props.assumptions
+    this.assumptions = props.assumptions.map((assumption) =>
+      assumption instanceof Assumption
+        ? assumption
+        : new Assumption(assumption.key, assumption.value)
+    )
     this.createdAt = props.createdAt
   }
 
