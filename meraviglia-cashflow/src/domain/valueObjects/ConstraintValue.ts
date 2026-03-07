@@ -1,10 +1,12 @@
+import type { ConstraintType } from '../blueprint/Constraint'
+
 export class ConstraintValue {
-  readonly type: string
+  readonly type: ConstraintType
   readonly value: number | string
 
-  constructor(type: string, value: number | string) {
-    if (!type.trim()) {
-      throw new Error('ConstraintValue type cannot be empty')
+  constructor(type: ConstraintType, value: number | string) {
+    if (!type) {
+      throw new Error('ConstraintValue type must be defined')
     }
 
     if (value === undefined) {
