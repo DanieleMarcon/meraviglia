@@ -105,15 +105,14 @@ Each scenario can be simulated independently, allowing side-by-side strategic co
 - Add explainability metadata to all model transformations for audit and training use cases.
 
 ## Domain Value Objects
-Domain Value Objects strengthen the Meraviglia OS domain model by replacing weak primitive collections with explicit semantic structures.
+Meraviglia OS uses immutable value object classes to enforce domain invariants and avoid primitive obsession.
 
-By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain gains:
-- clearer ubiquitous language in code (`assumptions` instead of generic key/value bags),
-- stronger type safety for simulation contracts,
-- reduced primitive obsession and lower risk of invalid shape propagation across domain boundaries,
-- better extensibility for future invariant validation directly at value object level.
+Current value objects:
+- `Assumption`: validates that `key` is not empty.
+- `IndicatorValue`: validates that `name` is not empty and `value` is a valid number.
+- `ConstraintValue`: validates that `type` is not empty and `value` is defined.
 
-These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
+All value object properties are `readonly`, ensuring immutability once created. This keeps invalid primitive payloads from leaking into core entities such as `Scenario`, `SimulationResult`, and `Constraint`, while keeping domain rules independent from UI, repositories, and infrastructure adapters.
 
 ## DTO Transitional Model
 The current DTO layer is intentionally simplified as a transitional contract while UI/application boundaries are stabilized.
