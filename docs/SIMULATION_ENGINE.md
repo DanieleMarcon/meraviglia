@@ -36,6 +36,24 @@ Blueprint
      SimulationResult
 ```
 
+## Simulation Model Architecture
+The simulation engine delegates deterministic scenario evaluation to a pluggable `SimulationModel` implementation.
+
+```text
+SimulationEngine
+   ↓
+SimulationModel
+   ↓
+SimulationResult
+```
+
+This architecture keeps the orchestration and validation responsibilities in `SimulationEngine` while enabling specialized evaluation models over time.
+
+It allows future expansion to:
+- sector-specific simulation models,
+- strategy pack simulation logic,
+- future AI-assisted evaluation.
+
 ## Simulation Engine Layer
 The Simulation Engine layer is responsible for deterministic evaluation of blueprint scenarios.
 
@@ -79,4 +97,3 @@ By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain
 - better extensibility for future invariant validation directly at value object level.
 
 These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
-
