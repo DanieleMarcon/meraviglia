@@ -59,6 +59,24 @@ export interface ServiceDefinitionDTO {
   maxRateConsentite: number
 }
 
+export const ProposalSectionType = {
+  COVER: "COVER",
+  PRESENTATION: "PRESENTATION",
+  INDEX: "INDEX",
+  MERAVIGLIA_NUMBERS: "MERAVIGLIA_NUMBERS",
+  ACTIVATED_SERVICES: "ACTIVATED_SERVICES",
+  STRATEGIC_PLAN: "STRATEGIC_PLAN",
+  OPERATIONAL_ARCHITECTURE: "OPERATIONAL_ARCHITECTURE",
+  FINANCIAL_PROPOSAL: "FINANCIAL_PROPOSAL",
+  CASHFLOW: "CASHFLOW",
+  INVESTMENT_AND_TERMS: "INVESTMENT_AND_TERMS",
+  COMPARISON: "COMPARISON",
+  CLOSING: "CLOSING",
+} as const
+
+export type ProposalSectionTypeDTO =
+  (typeof ProposalSectionType)[keyof typeof ProposalSectionType]
+
 // Transitional aliases to keep UI modules stable while moving to DTO-only imports.
 export type TipoPagamento = PaymentTypeDTO
 export type StrategiaPagamento = PaymentStrategyDTO
@@ -68,3 +86,4 @@ export type Proposta = ProposalDTO
 export type Modulo = ModuleDTO
 export type PianoStrategico = StrategicPlanDTO
 export type ServiceDefinition = ServiceDefinitionDTO
+export type ProposalSectionTypeValue = ProposalSectionTypeDTO

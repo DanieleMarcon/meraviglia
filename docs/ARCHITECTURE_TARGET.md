@@ -52,7 +52,18 @@ Boundary clarification:
 - Repository interfaces define the persistence boundary; infra adapters implement those interfaces with Supabase.
 - Domain and engine remain pure and framework-agnostic, with no Supabase dependencies.
 
-This baseline structure establishes the dependency flow `ui → application → domain → repository → infra` for workspace operations, with infrastructure adapters owning Supabase client usage.
+This baseline structure establishes the dependency flow `ui → application → domain` with repository inversion for persistence operations.
+
+Repository interface ownership clarification:
+- Repository interfaces are owned by the application layer as inbound persistence ports.
+- Application services depend on those repository interfaces.
+- Infrastructure adapters implement the repository interfaces.
+
+Dependency flow therefore is:
+- `ui → application → domain`
+- `application → repository`
+- `infra → repository`
+- `engine → domain`
 
 ## Application Composition Root Pattern
 The application layer now owns the system composition root and is responsible for wiring concrete runtime dependencies.
@@ -81,7 +92,7 @@ Principles:
 - Application services remain the orchestration boundary for persistence and workflow transitions.
 
 Operational flow remains strictly aligned to the dependency chain:
-`ui → application → domain → repository → infra`
+`ui → application → domain`, with repository inversion via `application → repository` and `infra → repository`.
 
 ## Workspace Operational UI
 The Workspace Operational UI represents the execution container for strategic planning.
@@ -93,7 +104,7 @@ Positioning:
 Architecture constraints:
 - Workspace UI consumes application services only.
 - No direct infra or Supabase imports are allowed in workspace presentation modules.
-- Dependency chain remains enforced as `ui → application → domain → repository → infra`.
+- Dependency chain remains enforced as `ui → application → domain`, with repository inversion through `application → repository` and `infra → repository`.
 
 ## Strategic Modeling Core
 The strategic modeling core is centered on **Blueprint** as the primary aggregate root for strategic design and orchestration continuity.
@@ -239,7 +250,7 @@ Planned approach:
 
 ## Boundary Rules (Non-Negotiable Dependencies)
 ### Allowed dependency flow
-`ui → application → domain → repository → infra`
+`ui → application → domain`
 
 `application → engine (deterministic strategic orchestration only)`
 

@@ -8,10 +8,9 @@ UI
 Application
  ↓
 Domain
- ↓
-Repository Interfaces
- ↓
-Infrastructure
+
+Application → Repository Interfaces
+Infrastructure → Repository Interfaces
 ```
 
 Rules:
@@ -79,7 +78,9 @@ Responsibilities:
 Allowed flow:
 
 ```text
-ui → application → domain → repository → infra
+ui → application → domain
+application → repository
+infra → repository
 engine → domain
 ```
 
@@ -106,3 +107,13 @@ Rules:
 The architecture defined in this document represents the frozen architectural baseline of Meraviglia OS.
 
 Future changes that affect architectural boundaries must be reviewed explicitly and documented as a new architecture version.
+
+### Repository Interface Ownership
+
+Repository interfaces are owned by the application layer as persistence ports.
+
+Application services depend on these abstractions to satisfy use-case persistence needs without coupling to infrastructure details.
+
+Infrastructure adapters implement the repository interfaces and can be replaced without changing application orchestration.
+
+This applies the Dependency Inversion Principle: high-level policy (application orchestration) depends on abstractions, while low-level details (infra adapters) depend on the same abstractions.

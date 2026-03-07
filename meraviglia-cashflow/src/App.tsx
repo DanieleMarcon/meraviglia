@@ -1,7 +1,10 @@
 import React, { type Dispatch, type SetStateAction } from "react"
 
-import type { Proposta } from "./domain/models/Proposta"
-import type { PropostaService } from "./domain/models/Proposta"
+import {
+  ProposalSectionType,
+  type ProposalDTO,
+  type ProposalServiceDTO,
+} from "./application/dto/StrategicPlanDTO"
 
 import PaymentEditor from "./ui/components/PaymentEditor"
 import ExportButtons from "./ui/components/ExportButtons"
@@ -16,7 +19,6 @@ import ProtectedRoute from "./auth/ProtectedRoute"
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
 import { clearStorage } from "./state/persistence/storage"
-import { ProposalSectionType } from "./domain/models/ProposalSectionType"
 
 const STORAGE_KEY = "meraviglia-cashflow"
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
@@ -46,13 +48,13 @@ function CashflowApp() {
   } = useAppState()
 
   const moveService = (
-    propostaSetter: Dispatch<SetStateAction<Proposta>>,
+    propostaSetter: Dispatch<SetStateAction<ProposalDTO>>,
     serviceId: string,
     newMonth: number
   ) => {
     propostaSetter((prev) => ({
       ...prev,
-      servizi: prev.servizi.map((s: PropostaService) =>
+      servizi: prev.servizi.map((s: ProposalServiceDTO) =>
         s.service.id === serviceId
           ? {
               ...s,

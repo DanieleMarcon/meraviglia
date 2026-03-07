@@ -1,12 +1,12 @@
 import { useState } from "react"
-import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
-import { useServiceCatalog } from "../../state/appState/useServiceCatalog"
+import type { ServiceDefinitionDTO } from "../../application/dto/StrategicPlanDTO"
+import { useServiceCatalogService } from "../../application/serviceCatalogService"
 
 export default function ServiceCatalogManager() {
 
-  const { services, addService, removeService } = useServiceCatalog()
+  const { services, addService, removeService } = useServiceCatalogService()
 
-  const [form, setForm] = useState<Omit<ServiceDefinition, "id">>({
+  const [form, setForm] = useState<Omit<ServiceDefinitionDTO, "id">>({
     nome: "",
     categoria: "",
     prezzoPieno: 0,
@@ -66,7 +66,7 @@ export default function ServiceCatalogManager() {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        {services.map((s: ServiceDefinition) => (
+        {services.map((s: ServiceDefinitionDTO) => (
           <div
             key={s.id}
             style={{
