@@ -165,3 +165,21 @@ Before creating a new module, complete a pre-module audit:
 - **Governance audit**: docs updated and coherence with master plan confirmed.
 
 A module cannot enter implementation until this audit is documented and approved in the project governance record.
+
+## Dependency Governance
+The Meraviglia OS codebase follows a strict dependency governance policy.
+
+Rules:
+
+- Dependencies must be justified by active usage in the codebase.
+- Unused dependencies must be removed immediately.
+- Infrastructure adapters may depend on external SDKs.
+- Domain and engine layers must never depend on vendor libraries.
+- Type definitions for build environments must be explicitly declared.
+
+Environment typing policy:
+
+- `vite/client` is required for frontend build typing.
+- `@types/node` is required for Node tooling compatibility.
+
+This ensures long-term maintainability and prevents unnecessary bundle growth.
