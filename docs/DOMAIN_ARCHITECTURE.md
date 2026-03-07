@@ -112,6 +112,19 @@ Current value objects:
 - `IndicatorValue`: validates that `name` is not empty and `value` is a valid number.
 - `ConstraintValue`: validates that `type` is not empty and `value` is defined.
 
+### Constraint Type Invariant
+ConstraintValue and Constraint now share the same `ConstraintType` union.
+
+This eliminates domain type drift where constraint values previously accepted arbitrary strings.
+
+Constraint categories are now restricted to:
+
+- budget_limit
+- time_limit
+- resource_limit
+
+This guarantees that simulation models and blueprint constraints operate on a controlled vocabulary, preventing invalid constraint categories from entering the strategic domain model.
+
 All value object properties are `readonly`, ensuring immutability once created. This keeps invalid primitive payloads from leaking into core entities such as `Scenario`, `SimulationResult`, and `Constraint`, while keeping domain rules independent from UI, repositories, and infrastructure adapters.
 
 ## DTO Transitional Model
