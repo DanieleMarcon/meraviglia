@@ -114,3 +114,18 @@ By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain
 - better extensibility for future invariant validation directly at value object level.
 
 These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
+
+## DTO Transitional Model
+The current DTO layer is intentionally simplified as a transitional contract while UI/application boundaries are stabilized.
+
+Current simplifications:
+- `BlueprintDTO` models strategic collections as primitive arrays, for example `objectives: string[]` (and currently `hypotheses`, `actions`, `indicators`, `constraints`, `scenarios` as string arrays).
+- `ScenarioDTO` exposes `assumptions: string[]` even though the domain model uses `Assumption[]`.
+
+Future DTO hierarchy (planned):
+- `ObjectiveDTO[]`
+- `ActionDTO[]`
+- `IndicatorDTO[]`
+- `AssumptionDTO[]`
+
+These flattened DTOs are deliberate in early architecture stages to reduce migration risk and keep boundary contracts stable before introducing full nested DTO structures.

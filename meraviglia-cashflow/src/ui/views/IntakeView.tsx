@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { listIntakes } from "../../application/intakeService"
-import type { IntakeDTO } from "../../repository/intakeRepository"
+import type { IntakeDTO } from "../../application/dto/IntakeDTO"
 import IntakeForm from "../components/IntakeForm"
 import IntakeList from "../components/IntakeList"
 

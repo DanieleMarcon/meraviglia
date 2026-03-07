@@ -259,6 +259,21 @@ These rules are mandatory to preserve modularity, replaceability, and long-term 
 ## Simulation Engine Layer
 The Simulation Engine layer is responsible for deterministic evaluation of blueprint scenarios.
 
+## DTO Transitional Model
+Current DTO structures are intentionally simplified transitional contracts used to stabilize UI boundaries while architecture layering is hardened.
+
+Transitional examples:
+- `BlueprintDTO` currently represents complex domain entities as primitive arrays (e.g., `objectives: string[]`, `hypotheses: string[]`, `actions: string[]`, `indicators: string[]`).
+- `ScenarioDTO` currently exposes `assumptions: string[]` even though the domain model uses `Assumption[]` value objects.
+
+Planned evolution:
+- `objectives: ObjectiveDTO[]`
+- `actions: ActionDTO[]`
+- `indicators: IndicatorDTO[]`
+- `assumptions: AssumptionDTO[]`
+
+These changes are intentionally deferred to a later phase to avoid coupling UI transition work with full DTO hierarchy rollout.
+
 It consumes only domain entities and enforces simulation-specific validation before producing a `SimulationResult`.
 
 Boundary constraints:

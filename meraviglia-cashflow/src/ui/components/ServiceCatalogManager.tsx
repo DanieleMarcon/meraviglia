@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
 import { useServiceCatalog } from "../../state/appState/useServiceCatalog"
 
 export default function ServiceCatalogManager() {

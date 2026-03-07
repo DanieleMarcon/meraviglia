@@ -1,4 +1,4 @@
-import type { WorkspaceDTO } from "../../repository/workspaceRepository"
+import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
 
 type WorkspaceListProps = {
   workspaces: WorkspaceDTO[]
