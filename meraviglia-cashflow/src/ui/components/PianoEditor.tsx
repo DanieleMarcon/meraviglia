@@ -1,4 +1,4 @@
-import type { PianoStrategico, Modulo } from "../../domain/models/PianoStrategico"
+import type { PianoStrategico, Modulo } from "../../application/dto/StrategicPlanDTO"
 
 interface Props {
   piano: PianoStrategico

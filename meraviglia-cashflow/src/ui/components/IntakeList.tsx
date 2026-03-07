@@ -1,4 +1,4 @@
-import type { IntakeDTO } from "../../repository/intakeRepository"
+import type { IntakeDTO } from "../../application/dto/IntakeDTO"
 import ConvertIntakeButton from "./ConvertIntakeButton"
 
 type IntakeListProps = {

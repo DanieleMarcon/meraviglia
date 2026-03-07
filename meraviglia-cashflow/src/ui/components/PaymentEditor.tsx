@@ -1,11 +1,11 @@
 import { useState } from "react"
 
-import type { Proposta } from "../../domain/models/Proposta"
-import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
-import type { TipoPagamento } from "../../domain/models/StrategiaPagamento"
-import type { PianoStrategico } from "../../domain/models/PianoStrategico"
+import type { Proposta } from "../../application/dto/StrategicPlanDTO"
+import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
+import type { TipoPagamento } from "../../application/dto/StrategicPlanDTO"
+import type { PianoStrategico } from "../../application/dto/StrategicPlanDTO"
 
-import { resolvePaymentConstraints } from "../../domain/validation/domainValidation"
+import { resolvePaymentConstraints } from "../../application/strategicPlanningService"
 
 interface Props {
   proposta: Proposta

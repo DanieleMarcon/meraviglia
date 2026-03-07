@@ -1,7 +1,7 @@
 import type { DragEvent } from "react"
 
-import type { PianoStrategico } from "../../domain/models/PianoStrategico"
-import type { Proposta, PropostaService } from "../../domain/models/Proposta"
+import type { PianoStrategico } from "../../application/dto/StrategicPlanDTO"
+import type { Proposta, PropostaService } from "../../application/dto/StrategicPlanDTO"
 
 interface Props {
   proposta: Proposta

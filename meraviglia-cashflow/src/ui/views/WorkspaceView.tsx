@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { listWorkspaces } from "../../application/workspaceService"
-import type { WorkspaceDTO } from "../../repository/workspaceRepository"
+import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
 import WorkspaceList from "../components/WorkspaceList"
 
 function WorkspaceView() {

@@ -1,7 +1,7 @@
 import React from "react"
-import { calcolaCashflow } from "../../engine/cashflow/cashflowEngine"
-import type { PianoStrategico } from "../../domain/models/PianoStrategico"
-import type { Proposta, PropostaService } from "../../domain/models/Proposta"
+import { calcolaCashflow } from "../../application/strategicPlanningService"
+import type { PianoStrategico } from "../../application/dto/StrategicPlanDTO"
+import type { Proposta, PropostaService } from "../../application/dto/StrategicPlanDTO"
 import TimelineView from "./TimelineView"
 
 interface Props {
