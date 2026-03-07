@@ -3,6 +3,7 @@ import type { Scenario } from '../../domain/blueprint/Scenario'
 import { SimulationResult } from '../../domain/blueprint/SimulationResult'
 import { DefaultSimulationModel } from './DefaultSimulationModel'
 import type { SimulationModel } from './SimulationModel'
+import type { SimulationContext } from './SimulationContext'
 
 export class SimulationEngine {
   private readonly simulationModel: SimulationModel
@@ -24,6 +25,10 @@ export class SimulationEngine {
 
     scenario.validateStructure()
 
-    return this.simulationModel.evaluateScenario(blueprint, scenario)
+    const context: SimulationContext = {
+      timestamp: new Date().toISOString(),
+    }
+
+    return this.simulationModel.evaluateScenario(blueprint, scenario, context)
   }
 }

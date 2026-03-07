@@ -97,3 +97,29 @@ By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain
 - better extensibility for future invariant validation directly at value object level.
 
 These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
+
+## Deterministic Simulation Context
+The simulation engine now executes models using an explicit `SimulationContext`.
+
+```text
+SimulationEngine
+   ↓
+SimulationModel
+   ↓
+SimulationContext
+   ↓
+SimulationResult
+```
+
+The context contains deterministic metadata such as timestamps.
+
+This ensures:
+
+* reproducible simulation runs
+* scenario replay
+* future calibration using real-world execution feedback
+* compatibility with AI-assisted evaluation models.
+
+Simulation models must never directly call system time or external randomness.
+
+All temporal values must come from the provided context.
