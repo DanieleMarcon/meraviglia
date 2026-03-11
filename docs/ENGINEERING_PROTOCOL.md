@@ -47,7 +47,7 @@ src/
 ├── domain
 ├── engine
 ├── repository
-├── infrastructure
+├── infra
 ├── state
 ├── auth
 ├── assets
