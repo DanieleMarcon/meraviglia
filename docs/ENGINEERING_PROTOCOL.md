@@ -34,7 +34,32 @@ Forbidden dependencies:
 
 These rules are architecture invariants and must never be violated.
 
-## 3. Layer Responsibilities
+## 3. Project Structure Rules
+
+The repository structure is an official part of the engineering contract and must remain stable to preserve maintainability and support AI-assisted development.
+
+Expected architecture structure inside `src/`:
+
+```text
+src/
+├── ui
+├── application
+├── domain
+├── engine
+├── repository
+├── infrastructure
+├── state
+├── auth
+├── assets
+```
+
+Structure governance rules:
+
+- new folders must not be introduced arbitrarily
+- structural changes must be explicitly documented
+- the architecture layering defined in Architecture Freeze v1 must always be preserved
+
+## 4. Layer Responsibilities
 
 ### UI layer
 
@@ -90,7 +115,36 @@ Responsibilities:
 - external system adapters
 - database implementations
 
-## 4. Naming Conventions
+## 5. Code Ownership and Layer Responsibility
+
+Ownership boundaries between layers are mandatory.
+
+### UI layer ownership rules
+
+- may not modify domain models
+- may not implement business rules
+
+### Application layer ownership rules
+
+- orchestrates use cases
+- must not implement domain invariants
+
+### Domain layer ownership rules
+
+- owns business logic
+- must remain framework independent
+
+### Engine layer ownership rules
+
+- performs deterministic computation
+- must not depend on infrastructure
+
+### Infrastructure layer ownership rules
+
+- may depend on external systems
+- must not contain business rules
+
+## 6. Naming Conventions
 
 Use explicit, role-based naming to make boundaries and intent obvious.
 
@@ -107,7 +161,7 @@ Additional naming rules:
 - avoid mixing languages in domain models
 - prefer English naming for all future code
 
-## 5. File Size and Complexity Limits
+## 7. File Size and Complexity Limits
 
 Maintainability requires small, focused modules.
 
@@ -119,7 +173,7 @@ Recommended limits:
 
 Large files must be split by responsibility. Functions should ideally be `<40` lines.
 
-## 6. Commenting Standards
+## 8. Commenting Standards
 
 Comments must follow an engineering-documentation style.
 
@@ -136,7 +190,7 @@ Example of a good comment:
 
 > This validation is enforced in the domain layer to preserve the aggregate invariant and prevent UI-specific assumptions from leaking into core business behavior.
 
-## 7. Domain Modeling Rules
+## 9. Domain Modeling Rules
 
 Domain modeling must prioritize correctness and explicit business intent.
 
@@ -147,7 +201,7 @@ Rules:
 - avoid primitive obsession
 - business logic must live in domain or engine, never in UI
 
-## 8. DTO Contract Rules
+## 10. DTO Contract Rules
 
 DTOs define the boundary between layers and must be treated as explicit contracts.
 
@@ -158,7 +212,7 @@ Rules:
 - DTOs must remain simple and explicit
 - DTO naming must clearly indicate boundary usage
 
-## 9. Deterministic Engine Rules
+## 11. Deterministic Engine Rules
 
 Simulation behavior must be deterministic and reproducible.
 
@@ -170,7 +224,18 @@ Simulation models must not access:
 
 All external execution metadata must come from `SimulationContext`.
 
-## 10. Dependency Governance
+## 12. Testing Principles
+
+Testing must support reproducibility and architectural stability.
+
+Rules:
+
+- domain logic must be unit-testable
+- engine modules must support deterministic tests
+- application services should be tested through use cases
+- UI tests must not contain business logic
+
+## 13. Dependency Governance
 
 Dependencies must be introduced conservatively and intentionally.
 
@@ -183,7 +248,19 @@ Rules:
 
 All dependencies must be reviewed before introduction.
 
-## 11. AI-Assisted Development Rules
+## 14. Pull Request Governance
+
+Every pull request must verify that:
+
+- architecture boundaries are respected
+- file size limits are respected
+- DTO boundaries are respected
+- deterministic simulation rules are respected
+- dependencies introduced are justified
+
+Large architectural changes must reference architecture documentation updates.
+
+## 15. AI-Assisted Development Rules
 
 Meraviglia OS supports AI-assisted development. To keep AI output reliable, the codebase must remain predictable.
 
@@ -196,12 +273,8 @@ Rules:
 
 AI-generated code must be reviewed against this protocol before merge.
 
-## 12. Evolution of the Protocol
+## 16. Evolution of the Protocol
 
 This protocol may evolve as the codebase grows.
 
 Changes must be deliberate, reviewed, and documented. Major changes require corresponding updates to architecture documentation.
-
----
-
-This change introduces only this new document: `docs/ENGINEERING_PROTOCOL.md`. No source files were modified.
