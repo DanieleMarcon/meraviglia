@@ -153,10 +153,24 @@ Examples:
 
 UI state management.
 
+The state layer is considered **UI infrastructure**, not a business layer.
+
 Responsibilities:
 
 * client-side state
 * persistence helpers
+* UI state
+* caching
+* client persistence
+* local storage interactions
+
+It must NOT contain:
+
+* domain rules
+* business calculations
+* domain entity mutations
+
+State logic must remain presentation-oriented.
 
 Must not implement business rules.
 
@@ -182,7 +196,28 @@ Examples:
 
 ---
 
-## 4. DTO Structure
+## 4. Layer Dependency Rules
+
+Allowed dependency flow:
+
+* `ui → application → domain`
+* `application → repository`
+* `infra → repository`
+* `engine → domain`
+
+Forbidden dependencies:
+
+* `domain → ui`
+* `domain → infra`
+* `engine → infra`
+* `ui → domain`
+* `ui → repository`
+
+These dependency rules are defined by the Architecture Freeze and must always be respected.
+
+---
+
+## 5. DTO Structure
 
 DTOs live in:
 
@@ -199,7 +234,7 @@ Rules:
 
 ---
 
-## 5. Composition Root
+## 6. Composition Root
 
 Location:
 
@@ -215,7 +250,7 @@ Responsibilities:
 
 ---
 
-## 6. Engine Structure
+## 7. Engine Structure
 
 Inside engine:
 
@@ -242,7 +277,26 @@ SimulationResult
 
 ---
 
-## 7. Documentation Structure
+## 8. Test Structure
+
+Tests should live close to the modules they validate.
+
+Preferred structure example:
+
+```
+engine/
+simulation/
+SimulationEngine.ts
+SimulationEngine.test.ts
+```
+
+Alternatively, modules may contain a dedicated `__tests__` directory.
+
+Tests must remain deterministic and aligned with the engineering protocol testing principles.
+
+---
+
+## 9. Documentation Structure
 
 All system documentation lives under:
 
@@ -260,7 +314,30 @@ Key documentation includes:
 
 ---
 
-## 8. Future Modules
+## 10. Module Boundaries
+
+Each module must have a clear and focused responsibility.
+
+Modules should remain small and cohesive.
+
+Large modules combining multiple responsibilities must be avoided.
+
+Example module structure:
+
+```
+simulation/
+SimulationEngine
+SimulationModel
+SimulationContext
+```
+
+The goal is to maintain high readability and predictable architecture.
+
+Modules should favor composition over large monolithic files.
+
+---
+
+## 11. Future Modules
 
 The architecture allows future modules such as:
 
@@ -275,7 +352,7 @@ These modules must still respect the architecture layering.
 
 ---
 
-## 9. Structural Governance
+## 12. Structural Governance
 
 New folders must not be introduced arbitrarily.
 
