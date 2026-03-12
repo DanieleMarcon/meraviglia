@@ -69,4 +69,78 @@ describe("domainValidation", () => {
 
     expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
   })
+
+  it("preferisce il match catalogo per id quando la shape non coincide", () => {
+    const proposta = buildProposta(
+      buildService({
+        id: "svc-catalog-id",
+        nome: "Legacy Name",
+        prezzoPieno: 123,
+        prezzoScontato: 111,
+        maxRateConsentite: undefined,
+      }),
+      { tipo: "rate", numeroRate: 8 },
+    )
+
+    const catalog = [
+      {
+        id: "svc-catalog-id",
+        nome: "Catalog Canonical",
+        categoria: "Ops",
+        prezzoPieno: 1000,
+        prezzoScontato: 850,
+        durataStandard: 6,
+        color: "#16a34a",
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+        maxRateConsentite: 2,
+      },
+    ]
+
+    const sanitized = sanitizePropostaAtBoundary(proposta, piano, catalog)
+
+    expect(sanitized.servizi[0].service.maxRateConsentite).toBe(2)
+    expect(sanitized.servizi[0].service.color).toBe("#16a34a")
+    expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+  })
+
+  it("disattiva fallback shape-based ambiguo quando esistono collisioni", () => {
+    const proposta = buildProposta(
+      buildService({ id: "svc-unmapped", maxRateConsentite: undefined }),
+      { tipo: "rate", numeroRate: 8 },
+    )
+
+    const catalog = [
+      {
+        id: "svc-a",
+        nome: "Ads",
+        categoria: "Ops",
+        prezzoPieno: 1000,
+        prezzoScontato: 850,
+        durataStandard: 6,
+        color: "#16a34a",
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+        maxRateConsentite: 2,
+      },
+      {
+        id: "svc-b",
+        nome: "Ads",
+        categoria: "Ops",
+        prezzoPieno: 1000,
+        prezzoScontato: 850,
+        durataStandard: 6,
+        color: "#0ea5e9",
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+        maxRateConsentite: 5,
+      },
+    ]
+
+    const sanitized = sanitizePropostaAtBoundary(proposta, piano, catalog)
+
+    expect(sanitized.servizi[0].service.maxRateConsentite).toBe(12)
+    expect(sanitized.servizi[0].service.color).toBeUndefined()
+    expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 8 })
+  })
 })
