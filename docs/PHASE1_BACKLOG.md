@@ -260,3 +260,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service shapes without explicit mapper boundaries.
 - `src/App.tsx` composition density reduction remains a planned cleanup target once identity propagation and mapper-boundary slices stabilize.
 - Migration/backfill follow-up remains required for legacy persisted cashflow payloads and imported proposals/services so `catalogServiceId` can be populated deterministically where catalog linkage is known.
+
+### Post-Domain Aggregate Hardening (Step 22 — Persisted Bootstrap `catalogServiceId` Backfill)
+
+- Persisted proposal bootstrap normalization now backfills `service.catalogServiceId` when a legacy service payload lacks it but a deterministic catalog match exists (identity-first via `service.id`, then unique-shape compatibility fallback).
+- This reduces repeated reliance on shape-based matching within the persisted bootstrap slice because once loaded, normalized proposal services carry explicit catalog linkage through subsequent in-memory write normalization.
+- Remaining service-ID propagation gaps are still open for non-bootstrap legacy paths (notably explicit import adapters and any repository/application DTO boundaries that can ingest service payloads without `catalogServiceId`).
+- Remaining shape-based compatibility fallback is still intentionally retained only for unique-shape legacy matches and should be removed after full identity propagation/backfill coverage is in place.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service payloads directly without explicit mapper boundaries.
+- `src/App.tsx` composition density reduction remains planned after identity/backfill and mapper-boundary cleanup slices stabilize.
+- Additional migration follow-up is required to decide whether bootstrap backfilled identities should be eagerly re-persisted and to align import/export contracts so UI no longer needs to construct even partial service identity metadata directly.

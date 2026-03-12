@@ -43,6 +43,16 @@ const resolveCatalogDefinition = (service: Service, catalog: ServiceDefinition[]
   return undefined
 }
 
+const resolveCatalogServiceId = (service: Service, catalog: ServiceDefinition[]): string | undefined => {
+  if (service.catalogServiceId) {
+    return service.catalogServiceId
+  }
+
+  const match = resolveCatalogDefinition(service, catalog)
+
+  return match?.id
+}
+
 const clampInteger = (value: number, minimum: number, maximum: number): number => {
   if (!Number.isFinite(value)) {
     return minimum
@@ -107,12 +117,16 @@ export const normalizePropostaServiceForWrite = (
   pianoDurata: number,
   catalog: ServiceDefinition[],
 ): PropostaService => {
-  const maxRateConsentite = resolveMaxRateConsentite(propostaService.service, catalog)
-  const mesiResidui = Math.max(1, pianoDurata - propostaService.service.meseInizio + 1)
+  const catalogServiceId = resolveCatalogServiceId(propostaService.service, catalog)
+  const serviceWithCatalogIdentity = catalogServiceId
+    ? { ...propostaService.service, catalogServiceId }
+    : propostaService.service
+  const maxRateConsentite = resolveMaxRateConsentite(serviceWithCatalogIdentity, catalog)
+  const mesiResidui = Math.max(1, pianoDurata - serviceWithCatalogIdentity.meseInizio + 1)
 
-  const service = normalizeService(propostaService.service, {
+  const service = normalizeService(serviceWithCatalogIdentity, {
     maxRateConsentite,
-    color: resolveCatalogColor(propostaService.service, catalog),
+    color: resolveCatalogColor(serviceWithCatalogIdentity, catalog),
     maxDurataOperativa: mesiResidui,
   })
 

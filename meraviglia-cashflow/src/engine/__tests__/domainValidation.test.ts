@@ -140,6 +140,37 @@ describe("domainValidation", () => {
     expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
   })
 
+
+  it("backfilla catalogServiceId su payload legacy quando esiste un match shape univoco", () => {
+    const proposta = buildProposta(
+      buildService({
+        id: "legacy-runtime-id",
+        maxRateConsentite: undefined,
+      }),
+      { tipo: "rate", numeroRate: 8 },
+    )
+
+    const catalog = [
+      {
+        id: "svc-catalog-id",
+        nome: "Ads",
+        categoria: "Ops",
+        prezzoPieno: 1000,
+        prezzoScontato: 850,
+        durataStandard: 6,
+        color: "#16a34a",
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+        maxRateConsentite: 2,
+      },
+    ]
+
+    const sanitized = sanitizePropostaAtBoundary(proposta, piano, catalog)
+
+    expect(sanitized.servizi[0].service.catalogServiceId).toBe("svc-catalog-id")
+    expect(sanitized.servizi[0].service.maxRateConsentite).toBe(2)
+  })
+
   it("disattiva fallback shape-based ambiguo quando esistono collisioni", () => {
     const proposta = buildProposta(
       buildService({ id: "svc-unmapped", maxRateConsentite: undefined }),
