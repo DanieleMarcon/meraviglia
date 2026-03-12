@@ -12,7 +12,11 @@ export class SimulationEngine {
     this.simulationModel = simulationModel
   }
 
-  simulateScenario(blueprint: Blueprint, scenario: Scenario): SimulationResult {
+  simulateScenario(
+    blueprint: Blueprint,
+    scenario: Scenario,
+    context: SimulationContext
+  ): SimulationResult {
     blueprint.validateForSimulation()
 
     const isScenarioInBlueprint = blueprint.scenarios.some(
@@ -25,10 +29,14 @@ export class SimulationEngine {
 
     scenario.validateStructure()
 
-    const context: SimulationContext = {
-      timestamp: new Date().toISOString(),
-    }
+    this.ensureValidContext(context)
 
     return this.simulationModel.evaluateScenario(blueprint, scenario, context)
+  }
+
+  private ensureValidContext(context: SimulationContext): void {
+    if (!context.timestamp) {
+      throw new Error('SimulationContext timestamp is required')
+    }
   }
 }
