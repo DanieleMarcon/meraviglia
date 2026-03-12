@@ -115,8 +115,26 @@ Notes:
 Rules:
 
 - simulation models must not access system time directly
-- all temporal values must come from SimulationContext
+- simulation models must not access randomness unless explicitly injected through governed context
+- all temporal values and execution metadata must come from SimulationContext
+- numeric precision and rounding policy must be explicit and consistently applied
+- timezone and locale behavior must be normalized and must not alter simulation computation paths
+- collection traversal and evaluation order must be deterministic
+- side effects are forbidden inside simulation models
+- external data used by simulation must be injected as governed input, never pulled ad hoc
 - simulation must be reproducible
+
+Authority note:
+- detailed simulation execution governance is defined in `docs/SIMULATION_ENGINE.md`
+
+## AI Architecture Constraint (Freeze Alignment)
+
+Rules:
+
+- AI features must respect the same frozen dependency contract as all other modules
+- AI must not introduce boundary bypasses (including direct UI-to-domain or engine-to-infra shortcuts)
+- AI-assisted development does not authorize architecture exceptions
+- future AI modules/components require explicit placement and explicit dependency governance before implementation
 
 ## Architecture Freeze
 

@@ -126,6 +126,7 @@ Rules:
 
 * must be deterministic
 * must depend only on domain
+* simulation-specific determinism rules are governed by `docs/SIMULATION_ENGINE.md`
 
 ---
 
@@ -358,6 +359,14 @@ SimulationContext
 The goal is to maintain high readability and predictable architecture.
 
 Modules should favor composition over large monolithic files.
+
+---
+
+### AI placement rule
+
+AI-related implementation is not a free-form exception to layer rules.
+
+Until an explicit `ai/` module is approved, AI orchestration belongs in `application` and AI provider adapters belong in `infra`, while respecting the frozen dependency contract.
 
 ---
 

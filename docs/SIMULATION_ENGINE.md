@@ -3,6 +3,8 @@
 ## Purpose
 Define the simulation engine as the deterministic evaluation subsystem used to test blueprint scenarios before operational execution.
 
+This document is the primary governance authority for simulation execution behavior and determinism rules.
+
 ## Conceptual Architecture
 The simulation engine follows a staged pipeline:
 
@@ -68,6 +70,54 @@ The engine must only depend on domain entities and remain free from repository, 
 Blueprint now supports multiple scenarios representing alternative strategic configurations.
 Each Scenario is simulated independently and produces SimulationResult outputs used for strategic comparison.
 
+## Deterministic Execution Invariants (Hard Rules)
+These invariants are mandatory for every `SimulationModel` implementation.
+
+1. **Reproducibility is non-negotiable**
+   - Given the same scenario input and `SimulationContext`, the model must produce the same `SimulationResult`.
+
+2. **No direct system time access**
+   - Simulation models must never call system clock APIs directly.
+   - Temporal metadata must enter only through `SimulationContext`.
+
+3. **No unmanaged randomness**
+   - Simulation models must not call random generators directly.
+   - Any stochastic behavior must be explicitly injected via governed context inputs.
+
+4. **Execution metadata enters through context only**
+   - Time, execution identifiers, and run metadata are context responsibilities.
+   - Models must not pull execution metadata from global/system sources.
+
+5. **Numeric precision policy**
+   - Simulation calculations must use explicit numeric precision strategy.
+   - Rounding mode and precision scale must be defined and applied consistently across models.
+   - Silent/implicit rounding differences between paths are forbidden.
+
+6. **Timezone and locale normalization policy**
+   - Temporal interpretation must use a normalized timezone baseline defined by context.
+   - Locale-sensitive parsing/formatting must not affect simulation math or branching behavior.
+
+7. **Deterministic ordering policy**
+   - Collection traversal and rule evaluation order must be explicit and stable.
+   - Model results must not depend on non-deterministic iteration behavior.
+
+8. **No side effects inside models**
+   - Simulation models are pure evaluators.
+   - They must not perform I/O, persistence, network calls, logging with mutable outputs, or shared mutable state mutation.
+
+9. **External data injection only**
+   - Any external signal used during simulation must be injected as an explicit governed input.
+   - Ad hoc data pulls during model execution are forbidden.
+
+## Determinism Enforcement Expectations
+Determinism invariants must be enforced through all of the following:
+
+- architecture/code review checks,
+- deterministic test coverage,
+- coding conventions that prohibit non-governed time/random/external access inside simulation models.
+
+Any change that weakens these invariants is an architecture governance violation.
+
 ## Core Entities and Principles
 - **Scenario**: immutable simulation input profile with `actionIds` and `assumptionSet`.
 - **Assumption Set**: explicit variables and baseline conditions (e.g., `conversion_rate`, `traffic_growth`, `budget`).
@@ -111,7 +161,7 @@ SimulationContext
 SimulationResult
 ```
 
-The context contains deterministic metadata such as timestamps.
+The context contains deterministic metadata such as timestamps and normalized execution parameters.
 
 This ensures:
 
@@ -122,4 +172,4 @@ This ensures:
 
 Simulation models must never directly call system time or external randomness.
 
-All temporal values must come from the provided context.
+All temporal values and execution metadata must come from the provided context.

@@ -27,8 +27,8 @@ The domain architecture is centered on bounded contexts aligned to the consultan
    - Supplies structured guidance for blueprint composition.
 
 6. **Simulation Context**
-   - Executes scenario-based strategic simulation.
-   - Produces SimulationResult outputs from each Scenario independently.
+   - Defines simulation concepts and their relationship to strategic domain entities.
+   - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md`.
 
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.
@@ -79,16 +79,16 @@ Blueprint
      SimulationResult
 ```
 
-## Simulation Engine Layer
-The Simulation Engine layer is responsible for deterministic evaluation of blueprint scenarios.
+## Simulation and Domain Boundary
+The domain architecture defines simulation-related concepts (`Scenario`, `SimulationResult`, assumptions, constraints) and their invariants.
 
-It consumes only domain entities and enforces simulation-specific validation before producing a `SimulationResult`.
+Operational determinism, execution constraints, and simulation engine enforcement rules are governed by `docs/SIMULATION_ENGINE.md`.
 
-Boundary constraints:
+Boundary constraints remain:
 - no Supabase imports,
 - no repository usage,
 - no UI logic,
-- domain-only dependencies.
+- domain-only dependencies for simulation engine logic.
 
 ## Scenario-Based Strategic Modeling
 Blueprint supports multiple scenarios to represent alternative strategic configurations.

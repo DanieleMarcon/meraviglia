@@ -249,13 +249,23 @@ Rules:
 
 Simulation behavior must be deterministic and reproducible.
 
-Simulation models must not access:
+Hard rules:
 
-- system time
-- randomness
-- external state
+- simulation models must not access system time
+- simulation models must not access randomness unless explicitly injected through governed context input
+- simulation models must not pull external state during execution
+- execution metadata must enter through `SimulationContext` only
+- numeric precision and rounding policy must be explicit and consistently applied
+- timezone and locale effects must be normalized and must not alter computation behavior
+- collection traversal and evaluation order must be explicit and deterministic
+- side effects are forbidden inside simulation models
+- external data must be injected as governed input, never fetched ad hoc from inside the model
 
-All external execution metadata must come from `SimulationContext`.
+Enforcement expectations:
+
+- pull request review must verify deterministic invariants
+- deterministic engine behavior must be protected by tests and conventions
+- violations are architecture governance failures
 
 ## 12. Testing Principles
 
@@ -303,8 +313,26 @@ Rules:
 - explicit contracts
 - clear naming
 - stable architecture
+- AI implementation must stay within approved layer boundaries
+- AI features must not bypass `ui → application → domain/engine` flow
+- AI code must not mutate domain rules outside normal domain governance
+- AI-assisted workflows adjacent to simulation must preserve deterministic simulation invariants
 
 AI-generated code must be reviewed against this protocol before merge.
+Human review is mandatory for all AI-generated or AI-assisted changes.
+
+
+## 15.1 AI Architecture Constraints
+
+AI capabilities are subject to the Architecture Freeze dependency contract.
+
+Rules:
+
+- AI orchestration belongs in `application` unless a new module is explicitly approved
+- AI must not introduce direct `ui → domain`, `ui → repository`, or `engine → infra` bypass paths
+- AI adapters to external providers belong in `infra` and must be consumed through approved application/repository boundaries
+- AI components must not write directly into forbidden layers or bypass domain invariants
+- AI-related engine logic must preserve deterministic simulation boundaries defined in `docs/SIMULATION_ENGINE.md`
 
 ## 16. Future Module Governance
 
