@@ -265,7 +265,7 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
-  it("re-sanitizes both proposals when setPiano updates plan duration and persists compare payload", async () => {
+  it("re-normalizes both proposals when setPiano updates plan duration and persists compare payload", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
       services: baseCatalog,
       cashflow: {
