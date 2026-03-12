@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react"
-import type { Session, User } from "@supabase/supabase-js"
 
-import { supabase } from "../lib/supabaseClient"
+import { getSession, onAuthStateChange, signIn, signOut } from "../application/authService"
+import type { AuthSession, AuthUser } from "../repository/authRepository"
 import { AuthContext, type AuthContextValue } from "./authContext"
 
 type AuthProviderProps = {
@@ -9,37 +9,40 @@ type AuthProviderProps = {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let isMounted = true
 
     const loadSession = async () => {
-      const { data, error } = await supabase.auth.getSession()
+      try {
+        const currentSession = await getSession()
 
-      if (!isMounted) {
-        return
-      }
+        if (!isMounted) {
+          return
+        }
 
-      if (error) {
+        setSession(currentSession)
+        setUser(currentSession?.user ?? null)
+      } catch {
+        if (!isMounted) {
+          return
+        }
+
         setSession(null)
         setUser(null)
-        setLoading(false)
-        return
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
       }
-
-      setSession(data.session)
-      setUser(data.session?.user ?? null)
-      setLoading(false)
     }
 
     void loadSession()
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const unsubscribe = onAuthStateChange((nextSession) => {
       setSession(nextSession)
       setUser(nextSession?.user ?? null)
       setLoading(false)
@@ -47,25 +50,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     return () => {
       isMounted = false
-      subscription.unsubscribe()
+      unsubscribe()
     }
   }, [])
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-    if (error) {
-      throw new Error(error.message)
-    }
-  }
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-
-    if (error) {
-      throw new Error(error.message)
-    }
-  }
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -75,7 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       signIn,
       signOut,
     }),
-    [user, session, loading]
+    [user, session, loading],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
