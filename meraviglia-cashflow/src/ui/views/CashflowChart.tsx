@@ -2,6 +2,8 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContaine
 
 interface ServiceSeries {
   key: string
+  runtimeServiceId: string
+  catalogServiceId: string
   name: string
   color: string
 }

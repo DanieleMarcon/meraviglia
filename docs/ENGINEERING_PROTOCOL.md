@@ -188,6 +188,7 @@ Ownership boundaries between layers are mandatory.
 - orchestrates use cases
 - must not implement domain invariants
 - owns identity propagation/orchestration across UI, repository, and domain boundaries
+- when boundary payloads need runtime compatibility keys, application mappers should still emit stable business identity explicitly (for example `catalogServiceId`) instead of relying on shape/key inference
 
 ### Domain layer ownership rules
 

@@ -292,3 +292,15 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `App.tsx` composition density reduction remains an explicit follow-up once identity-propagation and mapper-boundary slices stabilize.
 - Migration/backfill follow-up remains open for legacy imported/persisted payload paths beyond bootstrap so deterministic `catalogServiceId` recovery can be eagerly persisted where appropriate.
 - UI-responsibility reduction follow-up remains open (if still relevant after identity slices): UI should continue sending user intent/selection while application/domain owns identity enrichment and normalized payload construction.
+
+
+### Post-Domain Aggregate Hardening (Step 25 — Compare Mapper Identity Continuity Hardening)
+
+- Application compare-chart mapper (`buildCashflowData`) now emits explicit dual identity per service series: `runtimeServiceId` (chart/data key compatibility) and `catalogServiceId` (stable cross-boundary identity), with deterministic fallback `catalogServiceId := runtimeServiceId` only when catalog identity is absent.
+- This hardens one remaining application-mapper boundary where service identity had been weak/implicit (`key` only), improving export/import/mapper continuity without changing chart runtime behavior.
+- Remaining service-ID propagation gaps are still open for other import/export and repository/application mapping paths that can ingest or emit service payloads without explicit `catalogServiceId`.
+- Remaining shape-based compatibility fallback is intentionally retained only as a narrow legacy bridge (unique-shape match) and should be removed after full identity propagation/backfill coverage across non-bootstrap legacy paths.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application continue exchanging DTO-like service payloads directly without explicit mapper contracts.
+- `src/App.tsx` composition density reduction remains open and should be handled in a focused composition-extraction step after mapper/identity slices stabilize.
+- Additional migration/backfill follow-up remains open for legacy imported/persisted payloads and any downstream consumers of compare/export payloads so `catalogServiceId` is eagerly persisted/emitted when deterministic linkage exists.
+- UI-responsibility reduction follow-up remains open (if still relevant): UI should transport user intent/selection and display keys, while application/domain continue owning identity enrichment/reconciliation and normalized identity emission.
