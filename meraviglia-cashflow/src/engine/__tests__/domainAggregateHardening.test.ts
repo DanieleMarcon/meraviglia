@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { normalizePianoStrategico } from "../../domain/models/PianoStrategico"
+import { normalizePropostaService, type PropostaService } from "../../domain/models/Proposta"
 import { normalizeService } from "../../domain/models/Service"
 import { sanitizePropostaAtBoundary } from "../../domain/validation/domainValidation"
 import type { Proposta } from "../../domain/models/Proposta"
@@ -66,5 +67,26 @@ describe("domain aggregate hardening", () => {
     )
 
     expect(sanitized.servizi[0].service.durataOperativa).toBe(1)
+  })
+
+  it("normalizza strategia pagamento nel dominio propostaService", () => {
+    const propostaService: PropostaService = {
+      service: {
+        id: "svc-2",
+        nome: "Ads",
+        prezzoPieno: 500,
+        prezzoScontato: 400,
+        usaPrezzoScontato: false,
+        durataOperativa: 4,
+        meseInizio: 2,
+        consentiRateizzazione: false,
+        consentiAcconto: false,
+        maxRateConsentite: 6,
+      },
+      strategiaPagamento: { tipo: "accontoRate", numeroRate: 10, percentualeAcconto: 0.5 },
+    }
+
+    const normalized = normalizePropostaService(propostaService, { maxRatePerPiano: 3 })
+    expect(normalized.strategiaPagamento).toEqual({ tipo: "oneShot" })
   })
 })
