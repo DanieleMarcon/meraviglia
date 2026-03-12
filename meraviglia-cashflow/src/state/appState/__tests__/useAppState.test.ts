@@ -149,7 +149,7 @@ describe("useAppState compare/proposal orchestration", () => {
     vi.restoreAllMocks()
   })
 
-  it("sanitizes persisted proposal A/B inputs and enforces mandatory section toggles on load", async () => {
+  it("normalizes persisted proposal A/B inputs through the write path and enforces mandatory section toggles on load", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
       services: baseCatalog,
       cashflow: {
