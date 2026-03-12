@@ -6,6 +6,7 @@ export default defineConfig({
     include: [
       "src/engine/__tests__/**/*.test.ts",
       "src/application/__tests__/**/*.test.ts",
+      "src/state/**/__tests__/**/*.test.ts",
     ],
     globals: false,
   },
