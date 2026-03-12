@@ -1,9 +1,8 @@
 import type {
-  CreateWorkspaceInput,
-  UpdateWorkspaceInput,
-  WorkspaceDTO,
   WorkspaceRepository,
 } from "../repository/workspaceRepository"
+import type { CreateWorkspaceInput, UpdateWorkspaceInput } from "./dto/WorkspaceContracts"
+import type { WorkspaceDTO } from "./dto/WorkspaceDTO"
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
   const normalized = value.trim()

@@ -157,6 +157,12 @@ The engine layer must depend only on domain.
 Responsibilities:
 
 - persistence contracts only
+- persistence-facing record/input shapes only (no application DTO ownership)
+
+Repository contract naming guidance:
+
+- repository payloads should be named as persistence records/contracts (for example `*Record`, `*RecordInput`)
+- application-facing DTO/input/output contracts must live under `src/application` (for example `src/application/dto`)
 
 ### Infrastructure layer
 
