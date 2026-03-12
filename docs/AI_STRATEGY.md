@@ -34,3 +34,20 @@ AI strategy is layered to avoid replacing core strategic semantics:
 - Add organization-specific model tuning using isolated data governance boundaries.
 - Introduce learning loops that compare recommended vs. selected strategies and outcomes.
 - Evolve toward strategic intelligence services that coordinate knowledge, simulation, and governance signals.
+
+
+## AI Architecture Placement and Boundaries
+- AI orchestration must be implemented in the application layer unless a new AI module is explicitly approved through governance docs.
+- AI provider integrations and model adapters belong to infrastructure adapters behind approved contracts.
+- AI features must not bypass the canonical flow: `ui → application → domain/engine` and must not introduce forbidden dependencies.
+- AI components must not directly mutate domain invariants or write domain rules outside the domain governance process.
+
+## AI and Deterministic Simulation Boundary
+- AI may assist scenario preparation, quality checks, or recommendation framing.
+- AI must not weaken deterministic simulation invariants defined in `docs/SIMULATION_ENGINE.md`.
+- When simulation is executed, all deterministic rules remain mandatory regardless of AI involvement in adjacent workflow steps.
+
+## AI Governance and Review Enforcement
+- AI-generated and AI-assisted code is always subject to human review before merge.
+- Any future AI module/component requires explicit placement, explicit allowed/forbidden dependencies, and Architecture Freeze alignment.
+- This strategy remains subordinate to `docs/ARCHITECTURE_FREEZE_v1.md` and enforceable through `docs/ENGINEERING_PROTOCOL.md`.
