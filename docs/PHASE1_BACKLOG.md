@@ -173,3 +173,11 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 
 - Engine-level deterministic test suite introduced for cashflow, validation, and proposal aggregation.
 - UI layer intentionally excluded from Phase 1 automated testing.
+
+### Post-Domain Aggregate Hardening (Step 13)
+
+- Step 13 hardened aggregate construction/normalization for the strategic planning slice by introducing domain-owned normalizers for `Service`, `PianoStrategico`, and `Proposta` and wiring boundary sanitize flows to those constructors.
+- Remaining aggregate hardening is still required for deeper invariants (for example richer payment-strategy invariants and stronger identity/catalog matching semantics) so external sanitize flows can be reduced over time.
+- Coupling-by-shape cleanup remains open where UI/application still share DTO-like shapes directly and should continue via explicit mapper introduction.
+- `src/App.tsx` composition density remains a planned cleanup target after this hardening sequence stabilizes.
+- Transitional compatibility layer remains in place: boundary-level `sanitizePropostaAtBoundary` orchestration still adapts legacy call sites and should be reduced/removed once construction-time invariants are consistently enforced at write boundaries.

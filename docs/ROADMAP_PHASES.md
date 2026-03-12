@@ -92,6 +92,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up confirmed: continue coupling-by-shape cleanup beyond intake/workspace by adding explicit application mappers where repository records are still returned as DTO-shaped objects implicitly.
 - Follow-up confirmed: `src/App.tsx` composition remains intentionally transitional but still dense; plan extraction into smaller composition-oriented UI containers once current application-layer cleanup sequence stabilizes.
 - Follow-up confirmed: domain aggregate hardening still required for strategic planning entities (`Proposta`, `PianoStrategico`, `Service`) so invariants are progressively enforced by aggregate construction rather than relying only on sanitize/validation functions.
+- Follow-up update: first strategic-planning aggregate hardening slice delivered with domain normalizers for `Service`, `PianoStrategico`, and `Proposta`; boundary sanitization remains as a transitional compatibility layer and must be reduced once constructor-owned invariants are adopted at all write paths.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

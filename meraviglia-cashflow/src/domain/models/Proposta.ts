@@ -11,3 +11,11 @@ export interface Proposta {
   nome: string
   servizi: PropostaService[]
 }
+
+export const normalizeProposta = (
+  proposta: Proposta,
+  normalizePropostaService: (propostaService: PropostaService) => PropostaService,
+): Proposta => ({
+  ...proposta,
+  servizi: proposta.servizi.map(normalizePropostaService),
+})
