@@ -94,6 +94,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up confirmed: domain aggregate hardening still required for strategic planning entities (`Proposta`, `PianoStrategico`, `Service`) so invariants are progressively enforced by aggregate construction rather than relying only on sanitize/validation functions.
 - Follow-up update: first strategic-planning aggregate hardening slice delivered with domain normalizers for `Service`, `PianoStrategico`, and `Proposta`; boundary sanitization remains as a transitional compatibility layer and must be reduced once constructor-owned invariants are adopted at all write paths.
 - Follow-up update: payment-strategy hardening slice delivered by moving proposal-service payment normalization into domain-owned constructors (`StrategiaPagamento`/`PropostaService` normalization); further cleanup remains to remove transitional boundary sanitize ownership and replace shape-based catalog matching with stronger identity-based matching.
+- Follow-up update: one high-traffic proposal write path (`setPropostaA` state updates) now routes through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; remaining high-traffic writes (`setPropostaB`, `setPiano`, and catalog-driven re-normalization) are still queued to further narrow `sanitizePropostaAtBoundary`.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

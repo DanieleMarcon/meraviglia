@@ -80,7 +80,7 @@ export const resolvePaymentConstraints = (
   }
 }
 
-const sanitizePropostaService = (
+export const normalizePropostaServiceForWrite = (
   propostaService: PropostaService,
   pianoDurata: number,
   catalog: ServiceDefinition[],
@@ -102,7 +102,7 @@ const sanitizePropostaService = (
   }, { maxRatePerPiano })
 }
 
-export const sanitizePropostaAtBoundary = (
+export const normalizePropostaForWrite = (
   proposta: Proposta,
   piano: PianoStrategico,
   catalog: ServiceDefinition[],
@@ -110,8 +110,16 @@ export const sanitizePropostaAtBoundary = (
   const normalizedPiano = normalizePianoStrategico(piano)
 
   return normalizeProposta(proposta, (propostaService) =>
-    sanitizePropostaService(propostaService, normalizedPiano.durataTotale, catalog),
+    normalizePropostaServiceForWrite(propostaService, normalizedPiano.durataTotale, catalog),
   )
+}
+
+export const sanitizePropostaAtBoundary = (
+  proposta: Proposta,
+  piano: PianoStrategico,
+  catalog: ServiceDefinition[],
+): Proposta => {
+  return normalizePropostaForWrite(proposta, piano, catalog)
 }
 
 export const assertValidPaymentStrategy = (propostaService: PropostaService, piano: PianoStrategico): void => {
