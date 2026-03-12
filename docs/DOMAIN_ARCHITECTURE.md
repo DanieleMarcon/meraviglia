@@ -8,6 +8,8 @@ This document is authoritative for bounded contexts, core entities, and domain i
 ## Conceptual Architecture
 The domain architecture is centered on bounded contexts aligned to the consultant workflow:
 
+Note: the bounded-context term in this document is a domain-modeling concept and is distinct from the runtime `SimulationContext` execution structure defined in `docs/SIMULATION_ENGINE.md`.
+
 1. **Tenant & Access Context**
    - Organization, user membership, and permission semantics.
    - Provides identity and authorization constraints for strategic operations.
