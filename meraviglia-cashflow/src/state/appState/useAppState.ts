@@ -1,16 +1,18 @@
 import { useSyncExternalStore, type SetStateAction } from "react"
 import { v4 as uuidv4 } from "uuid"
 
-import type { PianoStrategico } from "../../domain/models/PianoStrategico"
-import type { Proposta } from "../../domain/models/Proposta"
-import type { ServiceDefinition } from "../../domain/models/ServiceDefinition"
+import type {
+  PianoStrategico,
+  ProposalSectionTypeValue as ProposalSectionType,
+  Proposta,
+  ServiceDefinition,
+} from "../../application/dto/StrategicPlanDTO"
 import {
   createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
   type SectionToggleState,
-} from "../../domain/models/SectionToggleState"
-import type { ProposalSectionType } from "../../domain/models/ProposalSectionType"
-import { sanitizePropostaAtBoundary } from "../../domain/validation/domainValidation"
+} from "../../application/proposalDocumentSectionToggles"
+import { sanitizeProposalAtBoundary } from "../../application/strategicPlanningService"
 import { loadFromStorage, saveToStorage } from "../persistence/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
@@ -130,8 +132,8 @@ const createInitialState = (): AppStateStore => {
   return {
     services,
     piano,
-    propostaA: sanitizePropostaAtBoundary(propostaA, piano, services),
-    propostaB: sanitizePropostaAtBoundary(propostaB, piano, services),
+    propostaA: sanitizeProposalAtBoundary(propostaA, piano, services),
+    propostaB: sanitizeProposalAtBoundary(propostaB, piano, services),
     sectionToggles,
   }
 }
@@ -179,8 +181,8 @@ export function useAppState() {
     setStore({
       ...store,
       piano: nextPiano,
-      propostaA: sanitizePropostaAtBoundary(store.propostaA, nextPiano, store.services),
-      propostaB: sanitizePropostaAtBoundary(store.propostaB, nextPiano, store.services),
+      propostaA: sanitizeProposalAtBoundary(store.propostaA, nextPiano, store.services),
+      propostaB: sanitizeProposalAtBoundary(store.propostaB, nextPiano, store.services),
     })
   }
 
@@ -191,7 +193,7 @@ export function useAppState() {
 
     setStore({
       ...store,
-      propostaA: sanitizePropostaAtBoundary(nextPropostaA, store.piano, store.services),
+      propostaA: sanitizeProposalAtBoundary(nextPropostaA, store.piano, store.services),
     })
   }
 
@@ -202,7 +204,7 @@ export function useAppState() {
 
     setStore({
       ...store,
-      propostaB: sanitizePropostaAtBoundary(nextPropostaB, store.piano, store.services),
+      propostaB: sanitizeProposalAtBoundary(nextPropostaB, store.piano, store.services),
     })
   }
 
@@ -213,8 +215,8 @@ export function useAppState() {
     setStore({
       ...store,
       services: nextServices,
-      propostaA: sanitizePropostaAtBoundary(store.propostaA, store.piano, nextServices),
-      propostaB: sanitizePropostaAtBoundary(store.propostaB, store.piano, nextServices),
+      propostaA: sanitizeProposalAtBoundary(store.propostaA, store.piano, nextServices),
+      propostaB: sanitizeProposalAtBoundary(store.propostaB, store.piano, nextServices),
     })
   }
 
@@ -224,8 +226,8 @@ export function useAppState() {
     setStore({
       ...store,
       services: nextServices,
-      propostaA: sanitizePropostaAtBoundary(store.propostaA, store.piano, nextServices),
-      propostaB: sanitizePropostaAtBoundary(store.propostaB, store.piano, nextServices),
+      propostaA: sanitizeProposalAtBoundary(store.propostaA, store.piano, nextServices),
+      propostaB: sanitizeProposalAtBoundary(store.propostaB, store.piano, nextServices),
     })
   }
 
