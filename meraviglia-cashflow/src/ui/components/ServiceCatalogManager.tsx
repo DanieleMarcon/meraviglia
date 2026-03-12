@@ -1,10 +1,17 @@
 import { useState } from "react"
 import type { ServiceDefinitionDTO } from "../../application/dto/StrategicPlanDTO"
-import { useServiceCatalog } from "../../state/appState/useServiceCatalog"
 
-export default function ServiceCatalogManager() {
+type ServiceCatalogManagerProps = {
+  services: ServiceDefinitionDTO[]
+  addService: (service: Omit<ServiceDefinitionDTO, "id">) => void
+  removeService: (id: string) => void
+}
 
-  const { services, addService, removeService } = useServiceCatalog()
+export default function ServiceCatalogManager({
+  services,
+  addService,
+  removeService,
+}: ServiceCatalogManagerProps) {
 
   const [form, setForm] = useState<Omit<ServiceDefinitionDTO, "id">>({
     nome: "",

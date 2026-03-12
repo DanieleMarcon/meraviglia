@@ -35,7 +35,11 @@ const SECTION_TOGGLE_LABELS = [
 ] as const
 
 function CashflowApp() {
-  const { services: catalog } = useServiceCatalog()
+  const {
+    services: catalog,
+    addService,
+    removeService,
+  } = useServiceCatalog()
   const {
     piano,
     setPiano,
@@ -83,7 +87,11 @@ function CashflowApp() {
         onUpdate={setPiano}
       />
 
-      <ServiceCatalogManager />
+      <ServiceCatalogManager
+        services={catalog}
+        addService={addService}
+        removeService={removeService}
+      />
 
       <AddServiceToProposal
         catalog={catalog}
