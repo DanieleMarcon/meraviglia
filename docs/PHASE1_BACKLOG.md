@@ -240,3 +240,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Identity-hardening follow-up remains open for catalog matching semantics: fallback catalog resolution is still shape-based and should migrate to stronger identity-oriented matching.
 - Coupling-by-shape cleanup remains open where UI/state/application still share DTO-like structures directly; explicit mapper-based boundaries remain planned.
 - `src/App.tsx` composition density remains a planned cleanup target once this normalization handoff sequence is stabilized.
+
+### Post-Domain Aggregate Hardening (Step 20 — Catalog/Service Identity-First Matching)
+
+- Catalog/service matching in domain validation now resolves catalog definitions identity-first (`service.id` ⇢ `definition.id`) and only uses shape-based fallback when exactly one unique shape match exists.
+- Ambiguous shape-based fallback (`nome` + `prezzoPieno` + `prezzoScontato` collisions) is now intentionally disabled and falls back to deterministic defaults instead of selecting an arbitrary catalog entry.
+- Remaining shape-based compatibility is intentionally narrow (unique-shape fallback only) and should be removed once stable catalog identity propagation is complete across legacy payloads.
+- Remaining domain aggregate hardening is still required (constructor-time invariants across additional proposal/service semantics remain open).
+- Coupling-by-shape cleanup remains open where UI/state/application still exchange DTO-like structures directly; mapper-based boundaries remain planned.
+- `src/App.tsx` composition density reduction remains planned after current domain hardening slices.
+- Migration follow-up remains required to propagate and preserve stable catalog/service identities consistently across repository/application/UI persistence and import flows so fallback matching can be fully retired.

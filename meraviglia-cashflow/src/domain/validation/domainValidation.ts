@@ -11,6 +11,30 @@ import type { ServiceDefinition } from "../models/ServiceDefinition"
 
 const FALLBACK_MAX_RATE = 12
 
+const isSameServiceShape = (service: Service, definition: ServiceDefinition): boolean => {
+  return (
+    definition.nome === service.nome &&
+    definition.prezzoPieno === service.prezzoPieno &&
+    definition.prezzoScontato === service.prezzoScontato
+  )
+}
+
+const resolveCatalogDefinition = (service: Service, catalog: ServiceDefinition[]): ServiceDefinition | undefined => {
+  const byId = catalog.find((definition) => definition.id === service.id)
+
+  if (byId) {
+    return byId
+  }
+
+  const shapeMatches = catalog.filter((definition) => isSameServiceShape(service, definition))
+
+  if (shapeMatches.length === 1) {
+    return shapeMatches[0]
+  }
+
+  return undefined
+}
+
 const clampInteger = (value: number, minimum: number, maximum: number): number => {
   if (!Number.isFinite(value)) {
     return minimum
@@ -34,12 +58,7 @@ const resolveMaxRateConsentite = (service: Service, catalog: ServiceDefinition[]
     return clampInteger(service.maxRateConsentite, 1, Number.MAX_SAFE_INTEGER)
   }
 
-  const match = catalog.find(
-    (definition) =>
-      definition.nome === service.nome &&
-      definition.prezzoPieno === service.prezzoPieno &&
-      definition.prezzoScontato === service.prezzoScontato,
-  )
+  const match = resolveCatalogDefinition(service, catalog)
 
   if (!match) {
     return FALLBACK_MAX_RATE
@@ -49,12 +68,7 @@ const resolveMaxRateConsentite = (service: Service, catalog: ServiceDefinition[]
 }
 
 const resolveCatalogColor = (service: Service, catalog: ServiceDefinition[]): string | undefined => {
-  const match = catalog.find(
-    (definition) =>
-      definition.nome === service.nome &&
-      definition.prezzoPieno === service.prezzoPieno &&
-      definition.prezzoScontato === service.prezzoScontato,
-  )
+  const match = resolveCatalogDefinition(service, catalog)
 
   return match?.color
 }
