@@ -3,6 +3,8 @@
 ## Purpose
 Define how AI capabilities are introduced to augment consultant decision quality while preserving deterministic governance and tenant-safe operation.
 
+This document is authoritative for AI operating principles only; dependency boundaries remain authoritative in `docs/ARCHITECTURE_FREEZE_v1.md` and review/enforcement remains authoritative in `docs/ENGINEERING_PROTOCOL.md`.
+
 ## Conceptual Architecture
 AI strategy is layered to avoid replacing core strategic semantics:
 
@@ -39,7 +41,7 @@ AI strategy is layered to avoid replacing core strategic semantics:
 ## AI Architecture Placement and Boundaries
 - AI orchestration must be implemented in the application layer unless a new AI module is explicitly approved through governance docs.
 - AI provider integrations and model adapters belong to infrastructure adapters behind approved contracts.
-- AI features must not bypass the canonical flow: `ui → application → domain/engine` and must not introduce forbidden dependencies.
+- AI features must not bypass the canonical flow: `ui → application → (domain | engine)` and must not introduce forbidden dependencies.
 - AI components must not directly mutate domain invariants or write domain rules outside the domain governance process.
 
 ## AI and Deterministic Simulation Boundary

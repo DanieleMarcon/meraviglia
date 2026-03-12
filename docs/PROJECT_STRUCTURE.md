@@ -30,6 +30,8 @@ root
 
 Contains architecture documentation and system design documents.
 
+Primary authorities: dependency contracts are owned by `docs/ARCHITECTURE_FREEZE_v1.md`; enforcement expectations are owned by `docs/ENGINEERING_PROTOCOL.md`.
+
 Examples:
 
 * architecture freeze
@@ -208,7 +210,7 @@ Examples:
 
 Dependency rules:
 
-* may be consumed by `ui` and `state`
+* may be consumed by `ui`
 * must not introduce runtime coupling to business layers
 
 ---
@@ -220,6 +222,7 @@ Allowed dependency flow:
 * `ui → application`
 * `application → domain`
 * `application → repository`
+* `application → engine`
 * `infra → repository`
 * `engine → domain`
 * `state → ui | application`

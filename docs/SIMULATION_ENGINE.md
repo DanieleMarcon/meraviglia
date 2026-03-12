@@ -21,7 +21,7 @@ The simulation engine follows a staged pipeline:
 
 4. **Result Packaging**
    - Returns projected indicators, risk level, and optional notes.
-   - Persists outputs with linkage to scenario and blueprint context.
+   - Emits outputs for persistence by application/repository flows outside the engine boundary.
 
 ## Scenario-Based Simulation Model
 ```text
@@ -39,6 +39,7 @@ Blueprint
 ```
 
 ## Simulation Model Architecture
+This document is authoritative for simulation execution semantics. Dependency boundaries still defer to `docs/ARCHITECTURE_FREEZE_v1.md` and enforcement expectations defer to `docs/ENGINEERING_PROTOCOL.md`.
 The simulation engine delegates deterministic scenario evaluation to a pluggable `SimulationModel` implementation.
 
 ```text

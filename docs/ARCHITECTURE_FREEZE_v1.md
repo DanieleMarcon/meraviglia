@@ -1,5 +1,21 @@
 # Meraviglia OS — Architecture Freeze v1
 
+## Governance Authority Map
+
+This document is the canonical source for:
+
+- dependency contracts across modules
+- layer boundaries and composition root ownership
+- freeze-level constraints for simulation and AI placement
+
+Authority cross-reference:
+
+- deterministic simulation execution details: `docs/SIMULATION_ENGINE.md`
+- engineering enforcement and review protocol: `docs/ENGINEERING_PROTOCOL.md`
+- repository/folder layout contract: `docs/PROJECT_STRUCTURE.md`
+- domain bounded contexts and invariants: `docs/DOMAIN_ARCHITECTURE.md`
+- AI operating model within freeze boundaries: `docs/AI_STRATEGY.md`
+
 ## Layered Architecture
 
 ```text
@@ -83,6 +99,7 @@ Allowed dependencies:
 ui → application
 application → domain
 application → repository
+application → engine
 infra → repository
 engine → domain
 state → ui | application
