@@ -44,6 +44,20 @@ Canonical forbidden dependencies:
 
 These rules are architecture invariants and must never be violated.
 
+## Governance Enforcement Model
+
+Architecture invariants are non-negotiable constraints and must be protected through a combined governance model, not review-only guidance.
+
+Enforcement must include:
+
+- code review requirements,
+- automated checks where applicable,
+- CI validation where possible,
+- deterministic simulation test requirements for engine behavior,
+- architecture invariants treated as hard constraints for acceptance.
+
+Architecture invariants must be protected through review discipline, automated checks, and deterministic testing.
+
 ## 3. Project Structure Rules
 
 The repository structure is an official part of the engineering contract and must remain stable to preserve maintainability and support AI-assisted development.
