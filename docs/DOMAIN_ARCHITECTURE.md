@@ -65,6 +65,12 @@ Current transitional implementation:
 - service registration currently follows a temporary service locator pattern,
 - active examples include `setWorkspaceService` and `setIntakeService`.
 
+Transitional architecture rule:
+- transitional patterns are allowed only as temporary refactor bridges,
+- they do not redefine the target architecture and must not become steady-state architecture,
+- usage must be explicitly scoped, time-bounded, and removed or replaced before the migration/refactor is considered complete,
+- they remain subject to architecture review plus all non-negotiable invariants defined in architecture/protocol governance.
+
 Evolution plan:
 - this temporary service locator will be replaced by a service factory or dependency injection container as system complexity grows.
 
@@ -151,3 +157,5 @@ Future DTO hierarchy (planned):
 - `AssumptionDTO[]`
 
 These flattened DTOs are deliberate in early architecture stages to reduce migration risk and keep boundary contracts stable before introducing full nested DTO structures.
+
+They are migration-only simplifications and are not precedent for long-term architecture direction.
