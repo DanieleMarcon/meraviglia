@@ -190,3 +190,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Coupling-by-shape cleanup remains open where UI/application still share DTO-like shapes directly and should continue via explicit mapper introduction.
 - `src/App.tsx` composition density remains a planned cleanup target after this hardening sequence stabilizes.
 - Identity-hardening follow-up remains open for service catalog matching: current fallback catalog resolution still contains shape-based matching (`nome` + `prezzoPieno` + `prezzoScontato`) and should migrate to stronger identity-based matching semantics.
+
+### Post-Domain Aggregate Hardening (Step 15 — High-Traffic Proposal A Write Path)
+
+- High-traffic state write path `setPropostaA` now uses domain-owned proposal-write normalization directly via application orchestration (`normalizeProposalForWrite`) instead of routing through transitional `sanitizePropostaAtBoundary`.
+- Transitional compatibility narrowing is now concrete but incomplete: `sanitizePropostaAtBoundary` remains active for persisted-state bootstrap, `setPropostaB`, `setPiano`, and catalog mutation re-normalization flows, which remain pending migration slices.
+- Remaining domain aggregate hardening is still required so additional proposal/service invariants can move to constructor-owned enforcement and reduce boundary adaptation further.
+- Coupling-by-shape cleanup remains open where UI/state/application still share DTO-like structures directly; explicit mapper-based boundaries are still planned.
+- `src/App.tsx` composition density remains a planned cleanup target after this write-path migration sequence stabilizes.
+- Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
+- Next high-traffic write-path candidates for direct domain-owned normalization are `setPropostaB` updates and dual-proposal re-normalization triggered by `setPiano`/catalog mutations (`addService`/`removeService`).

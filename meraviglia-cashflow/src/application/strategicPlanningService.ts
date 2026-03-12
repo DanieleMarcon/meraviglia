@@ -1,6 +1,9 @@
 import { calcolaCashflow as calculateCashflowEngine } from "../engine/cashflow/cashflowEngine"
-import { sanitizePropostaAtBoundary as sanitizePropostaAtBoundaryDomain } from "../domain/validation/domainValidation"
-import { resolvePaymentConstraints as resolvePaymentConstraintsDomain } from "../domain/validation/domainValidation"
+import {
+  normalizePropostaForWrite as normalizePropostaForWriteDomain,
+  sanitizePropostaAtBoundary as sanitizePropostaAtBoundaryDomain,
+  resolvePaymentConstraints as resolvePaymentConstraintsDomain,
+} from "../domain/validation/domainValidation"
 import type {
   ProposalDTO,
   ServiceDTO,
@@ -19,6 +22,15 @@ export const calculateCashflow = (proposta: ProposalDTO, piano: StrategicPlanDTO
 }
 
 export const calcolaCashflow = calculateCashflow
+
+
+export const normalizeProposalForWrite = (
+  proposta: ProposalDTO,
+  piano: StrategicPlanDTO,
+  catalog: ServiceDefinitionDTO[],
+): ProposalDTO => {
+  return normalizePropostaForWriteDomain(proposta, piano, catalog)
+}
 
 export const sanitizeProposalAtBoundary = (
   proposta: ProposalDTO,

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   calculateCashflow,
+  normalizeProposalForWrite,
   resolvePaymentConstraints,
   sanitizeProposalAtBoundary,
 } from "../strategicPlanningService"
@@ -90,6 +91,13 @@ const proposalB: ProposalDTO = {
 }
 
 describe("strategic planning compare/proposal orchestration", () => {
+  it("normalizes proposal writes through domain-owned constructors", () => {
+    const normalized = normalizeProposalForWrite(proposalA, basePlan, catalog)
+
+    expect(normalized.servizi[0]?.service.durataOperativa).toBe(2)
+    expect(normalized.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+  })
+
   it("sanitizes proposal input and keeps compare chart totals aligned with cashflow output", () => {
     const sanitizedA = sanitizeProposalAtBoundary(proposalA, basePlan, catalog)
 
