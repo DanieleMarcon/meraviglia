@@ -168,7 +168,9 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(state.services[0]?.color).toMatch(/^hsl\(/)
     expect(state.propostaA.servizi[0]?.service.durataOperativa).toBe(2)
+    expect(state.propostaA.servizi[0]?.service.catalogServiceId).toBe("svc-rate")
     expect(state.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+    expect(state.propostaB.servizi[0]?.service.catalogServiceId).toBe("svc-one-shot")
     expect(state.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "oneShot" })
     expect(state.sectionToggles[ProposalSectionType.COVER]).toBe(true)
     expect(state.sectionToggles[ProposalSectionType.CLOSING]).toBe(true)
