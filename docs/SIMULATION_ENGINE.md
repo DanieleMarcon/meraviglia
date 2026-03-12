@@ -134,6 +134,7 @@ Any change that weakens these invariants is an architecture governance violation
 - **Constraint Set**: boundaries such as budget, time, and execution capacity.
 - **Impact Model**: deterministic transformation logic from actions to projected outcomes.
 - **SimulationResult**: structured output with `projectedIndicators`, `riskLevel`, optional `notes`, and timestamp (timestamp/execution-time metadata must originate from governed `SimulationContext` input, never direct system time access inside models).
+  - Governed serialized timestamps (results/logs/metadata) must use one canonical UTC ISO 8601 normalized representation across environments.
 
 Principles:
 - Determinism and reproducibility over opaque prediction.
