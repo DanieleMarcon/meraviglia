@@ -222,3 +222,12 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
 - Next best high-traffic write-path target for direct domain-owned normalization is catalog-driven dual-proposal re-normalization (`addService`/`removeService`), followed by persisted bootstrap normalization handoff.
 
+### Post-Domain Aggregate Hardening (Step 18 — Catalog Mutation Write Paths)
+
+- High-traffic catalog mutation write paths `addService` and `removeService` now route both proposal branches through domain-owned proposal-write normalization via application orchestration (`normalizeProposalForWrite`) instead of transitional `sanitizePropostaAtBoundary`.
+- Transitional compatibility narrowing is now advanced again but incomplete: persisted bootstrap normalization remains the last meaningful sanitizer-owned compatibility path and is the next targeted handoff slice.
+- Remaining domain aggregate hardening is still required after this slice so constructor-owned invariants can continue replacing boundary adaptation across proposal/service semantics.
+- Coupling-by-shape cleanup remains open where UI/state/application still share DTO-like structures directly; explicit mapper-based boundaries are still planned.
+- `src/App.tsx` composition density remains a planned cleanup target after this write-path migration sequence stabilizes.
+- Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
+- Next best cleanup target is persisted bootstrap normalization handoff so transitional `sanitizePropostaAtBoundary` runtime ownership can be narrowed to compatibility fallback only (or removed if coverage allows).

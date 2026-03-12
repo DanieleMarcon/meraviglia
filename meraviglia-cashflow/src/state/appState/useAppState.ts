@@ -215,8 +215,8 @@ export function useAppState() {
     setStore({
       ...store,
       services: nextServices,
-      propostaA: sanitizeProposalAtBoundary(store.propostaA, store.piano, nextServices),
-      propostaB: sanitizeProposalAtBoundary(store.propostaB, store.piano, nextServices),
+      propostaA: normalizeProposalForWrite(store.propostaA, store.piano, nextServices),
+      propostaB: normalizeProposalForWrite(store.propostaB, store.piano, nextServices),
     })
   }
 
@@ -226,8 +226,8 @@ export function useAppState() {
     setStore({
       ...store,
       services: nextServices,
-      propostaA: sanitizeProposalAtBoundary(store.propostaA, store.piano, nextServices),
-      propostaB: sanitizeProposalAtBoundary(store.propostaB, store.piano, nextServices),
+      propostaA: normalizeProposalForWrite(store.propostaA, store.piano, nextServices),
+      propostaB: normalizeProposalForWrite(store.propostaB, store.piano, nextServices),
     })
   }
 
