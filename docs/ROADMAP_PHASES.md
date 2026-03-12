@@ -97,6 +97,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up update: one high-traffic proposal write path (`setPropostaA` state updates) now routes through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; remaining high-traffic writes (`setPropostaB`, `setPiano`, and catalog-driven re-normalization) are still queued to further narrow `sanitizePropostaAtBoundary`.
 - Follow-up update: `setPropostaB` state updates now also route through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; remaining transitional-sanitizer-owned high-traffic writes are `setPiano` and catalog-driven dual-proposal re-normalization (`addService`/`removeService`).
 - Follow-up update: `setPiano` orchestration now also routes both proposal branches through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; remaining transitional-sanitizer-owned write flows are catalog-driven dual-proposal re-normalization (`addService`/`removeService`) and persisted bootstrap compatibility normalization.
+- Follow-up update: `addService` and `removeService` catalog mutations now also route both proposal branches through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; persisted bootstrap compatibility normalization remains the primary transitional-sanitizer-owned path pending handoff.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

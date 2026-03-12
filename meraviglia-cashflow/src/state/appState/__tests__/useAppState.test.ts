@@ -298,7 +298,7 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
-  it("re-sanitizes proposals when addService introduces catalog constraints and persists both storage keys", async () => {
+  it("re-normalizes proposals when addService introduces catalog constraints and persists both storage keys", async () => {
     const longPlan: PianoStrategico = {
       durataTotale: 12,
       moduli: [{ nome: "Long", meseInizio: 1, durata: 12 }],
@@ -363,7 +363,7 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
-  it("removeService updates catalog and persists compare payload while preserving sanitized proposals", async () => {
+  it("removeService updates catalog and persists compare payload while preserving normalized proposals", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
       services: baseCatalog,
       cashflow: {
