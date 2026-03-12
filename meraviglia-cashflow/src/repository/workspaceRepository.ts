@@ -1,4 +1,4 @@
-export type WorkspaceDTO = {
+export type WorkspaceRecord = {
   id: string
   workspace_name: string
   workspace_slug: string
@@ -6,17 +6,17 @@ export type WorkspaceDTO = {
   updated_at: string
 }
 
-export type CreateWorkspaceInput = {
+export type CreateWorkspaceRecordInput = {
   workspace_name: string
   workspace_slug: string
 }
 
-export type UpdateWorkspaceInput = {
+export type UpdateWorkspaceRecordInput = {
   workspace_name?: string
 }
 
 export interface WorkspaceRepository {
-  createWorkspace(input: CreateWorkspaceInput): Promise<WorkspaceDTO>
-  listWorkspaces(): Promise<WorkspaceDTO[]>
-  updateWorkspace(id: string, input: UpdateWorkspaceInput): Promise<WorkspaceDTO>
+  createWorkspace(input: CreateWorkspaceRecordInput): Promise<WorkspaceRecord>
+  listWorkspaces(): Promise<WorkspaceRecord[]>
+  updateWorkspace(id: string, input: UpdateWorkspaceRecordInput): Promise<WorkspaceRecord>
 }

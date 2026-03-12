@@ -86,6 +86,7 @@ Refactor current structural model into a project-centric workspace architecture 
 ### Status Update
 - Application Layer Introduction — baseline structure implemented (partial completion).
 - Follow-up confirmed: remaining direct `supabaseClient` usage outside the auth-adapter pattern should be standardized behind explicit infra/repository adapters in a dedicated cleanup step.
+- Follow-up confirmed: as repository/application DTO ownership is clarified, shared primitive unions (for example status enums) should be promoted to explicit cross-layer contract modules only when domain ownership is defined, to avoid duplicated literals and boundary drift.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

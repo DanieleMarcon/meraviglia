@@ -1,15 +1,15 @@
 import { supabase } from "../lib/supabaseClient"
 import type {
-  CreateWorkspaceInput,
-  UpdateWorkspaceInput,
-  WorkspaceDTO,
+  CreateWorkspaceRecordInput,
+  UpdateWorkspaceRecordInput,
+  WorkspaceRecord,
   WorkspaceRepository,
 } from "../repository/workspaceRepository"
 
 const TABLE_NAME = "workspaces"
 
 export class SupabaseWorkspaceRepository implements WorkspaceRepository {
-  async createWorkspace(input: CreateWorkspaceInput): Promise<WorkspaceDTO> {
+  async createWorkspace(input: CreateWorkspaceRecordInput): Promise<WorkspaceRecord> {
     const { data, error } = await supabase
       .from(TABLE_NAME)
       .insert({
@@ -26,7 +26,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
     return data
   }
 
-  async listWorkspaces(): Promise<WorkspaceDTO[]> {
+  async listWorkspaces(): Promise<WorkspaceRecord[]> {
     const { data, error } = await supabase
       .from(TABLE_NAME)
       .select("id, workspace_name, workspace_slug, created_at, updated_at")
@@ -39,7 +39,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
     return data ?? []
   }
 
-  async updateWorkspace(id: string, input: UpdateWorkspaceInput): Promise<WorkspaceDTO> {
+  async updateWorkspace(id: string, input: UpdateWorkspaceRecordInput): Promise<WorkspaceRecord> {
     const { data, error } = await supabase
       .from(TABLE_NAME)
       .update({

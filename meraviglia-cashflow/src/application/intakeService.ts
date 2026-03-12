@@ -1,9 +1,8 @@
 import type {
-  CreateIntakeInput,
-  IntakeDTO,
   IntakeRepository,
-  UpdateIntakeInput,
 } from "../repository/intakeRepository"
+import type { IntakeDTO } from "./dto/IntakeDTO"
+import type { CreateIntakeInput, UpdateIntakeInput } from "./dto/IntakeContracts"
 import type { WorkspaceService } from "./workspaceService"
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
