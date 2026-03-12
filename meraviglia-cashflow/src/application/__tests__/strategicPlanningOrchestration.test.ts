@@ -116,7 +116,7 @@ describe("strategic planning compare/proposal orchestration", () => {
     expect(compareTotal).toBe(cashflow.totale)
     expect(cashflow.mesi).toEqual([0, 0, 0, 0, 300, 300])
     expect(compare.services).toEqual([
-      { key: "proposal-a-s1", name: "Rate Limited Service", color: "#2563eb" },
+      { key: "proposal-a-s1", runtimeServiceId: "proposal-a-s1", catalogServiceId: "svc-rate", name: "Rate Limited Service", color: "#2563eb" },
     ])
   })
 

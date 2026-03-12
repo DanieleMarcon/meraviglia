@@ -45,7 +45,7 @@ describe("proposteCompareService.buildCashflowData", () => {
       { month: "M3" },
       { month: "M4" },
     ])
-    expect(result.services).toEqual([{ key: "svc-1", name: "SEO", color: "#111827" }])
+    expect(result.services).toEqual([{ key: "svc-1", runtimeServiceId: "svc-1", catalogServiceId: "svc-1", name: "SEO", color: "#111827" }])
   })
 
   it("distribuisce rate su numeroRate dal mese di inizio", () => {
@@ -104,8 +104,8 @@ describe("proposteCompareService.buildCashflowData", () => {
       { month: "M3" },
     ])
     expect(result.services).toEqual([
-      { key: "svc-1", name: "SEO", color: "#111827" },
-      { key: "svc-2", name: "Ads", color: "#2563eb" },
+      { key: "svc-1", runtimeServiceId: "svc-1", catalogServiceId: "svc-1", name: "SEO", color: "#111827" },
+      { key: "svc-2", runtimeServiceId: "svc-2", catalogServiceId: "svc-2", name: "Ads", color: "#2563eb" },
     ])
   })
 
@@ -121,4 +121,27 @@ describe("proposteCompareService.buildCashflowData", () => {
 
     expect(result.data).toEqual([{ month: "M1", "svc-1": 900 }, { month: "M2" }])
   })
+
+  it("espone catalogServiceId nella serie mantenendo key runtime per compatibilita chart", () => {
+    const proposta = buildProposta([
+      {
+        service: buildService({ id: "runtime-1", catalogServiceId: "catalog-1", nome: "SEO" }),
+        strategiaPagamento: { tipo: "oneShot" },
+      },
+    ])
+
+    const result = buildCashflowData(proposta, basePiano(1))
+
+    expect(result.services).toEqual([
+      {
+        key: "runtime-1",
+        runtimeServiceId: "runtime-1",
+        catalogServiceId: "catalog-1",
+        name: "SEO",
+        color: "#111827",
+      },
+    ])
+    expect(result.data).toEqual([{ month: "M1", "runtime-1": 1200 }])
+  })
+
 })

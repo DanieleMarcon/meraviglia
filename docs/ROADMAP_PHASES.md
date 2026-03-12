@@ -102,6 +102,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up update: import/legacy bootstrap adaptation now persists normalized proposals after deterministic `catalogServiceId` recovery, reducing repeated shape-based fallback on reloads; remaining identity propagation gaps stay tracked for explicit import/export and mapper boundaries.
 - Follow-up update: proposal-document export adaptation (`ACTIVATED_SERVICES` payload) now emits `catalogServiceId` explicitly while preserving runtime `service.id` for compatibility, reducing downstream need for shape-based service matching in document/export consumers.
 - Follow-up confirmed: remaining identity propagation gaps are still open for other import/export contracts and repository/application mapping paths that can ingest service payloads without `catalogServiceId`.
+- Follow-up update: compare-chart application mapper now emits both `runtimeServiceId` and `catalogServiceId` per service series (with narrow fallback only when catalog identity is missing), reducing one remaining weak identity boundary while preserving existing chart key behavior.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

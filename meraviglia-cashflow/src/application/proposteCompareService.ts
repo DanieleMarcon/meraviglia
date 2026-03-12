@@ -7,8 +7,14 @@ export interface CashflowMonthData {
 
 export interface ServiceSeries {
   key: string
+  runtimeServiceId: string
+  catalogServiceId: string
   name: string
   color: string
+}
+
+const resolveCatalogServiceId = (propostaService: PropostaService): string => {
+  return propostaService.service.catalogServiceId ?? propostaService.service.id
 }
 
 const getServiceMonthlyContribution = (propostaService: PropostaService, durata: number): number[] => {
@@ -81,6 +87,8 @@ export const buildCashflowData = (
 
   const services = proposta.servizi.map((propostaService) => ({
     key: propostaService.service.id,
+    runtimeServiceId: propostaService.service.id,
+    catalogServiceId: resolveCatalogServiceId(propostaService),
     name: propostaService.service.nome,
     color: propostaService.service.color ?? "#111827",
   }))
