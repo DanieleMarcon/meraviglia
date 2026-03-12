@@ -30,7 +30,7 @@ root
 
 Contains architecture documentation and system design documents.
 
-Primary authorities: dependency contracts are owned by `docs/ARCHITECTURE_FREEZE_v1.md`; enforcement expectations are owned by `docs/ENGINEERING_PROTOCOL.md`.
+Primary authorities: dependency contracts are owned by `docs/ARCHITECTURE_FREEZE_v1.md`; mandatory enforcement baseline requirements are owned by `docs/ENGINEERING_PROTOCOL.md`.
 
 Examples:
 
