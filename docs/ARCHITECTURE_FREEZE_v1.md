@@ -16,7 +16,7 @@ Authority cross-reference:
 - domain bounded contexts and invariants: `docs/DOMAIN_ARCHITECTURE.md`
 - AI operating model within freeze boundaries: `docs/AI_STRATEGY.md`
 
-Governance enforcement expectations (review discipline, automated checks, CI validation, and deterministic simulation test protection) are defined in `docs/ENGINEERING_PROTOCOL.md`.
+Governance enforcement expectations are operationalized in the mandatory Governance Enforcement Baseline in `docs/ENGINEERING_PROTOCOL.md`.
 
 ## Layered Architecture
 

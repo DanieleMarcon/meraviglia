@@ -44,19 +44,19 @@ Canonical forbidden dependencies:
 
 These rules are architecture invariants and must never be violated.
 
-## Governance Enforcement Model
+## Governance Enforcement Baseline
 
-Architecture invariants are non-negotiable constraints and must be protected through a combined governance model, not review-only guidance.
+Architecture invariants are non-negotiable constraints and must be protected by mandatory, pre-merge controls.
 
-Enforcement must include:
+Minimum required enforcement classes:
 
-- code review requirements,
-- automated checks where applicable,
-- CI validation where possible,
-- deterministic simulation test requirements for engine behavior,
-- architecture invariants treated as hard constraints for acceptance.
+1. **Dependency and layer-boundary verification**: forbidden imports and forbidden dependency directions must be detectable before merge.
+2. **Deterministic simulation verification**: simulation-critical changes must validate deterministic behavior before merge.
+3. **Domain and invariant protection**: domain invariants and architecture contracts must be validated through required review and tests.
+4. **Static and structural validation**: linting, static validation, and structural checks must prevent silent rule regressions.
+5. **Merge policy**: violations of architecture invariants are merge-blocking, never advisory.
 
-Architecture invariants must be protected through review discipline, automated checks, and deterministic testing.
+Review-only acceptance is prohibited for architecture governance.
 
 ## 3. Project Structure Rules
 
