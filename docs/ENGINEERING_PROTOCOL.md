@@ -259,11 +259,12 @@ Hard rules:
 - simulation models must not access randomness unless explicitly injected through governed context input
 - simulation models must not pull external state during execution
 - execution metadata must enter through `SimulationContext` only
-- numeric precision and rounding policy must be explicit and consistently applied
-- timezone and locale effects must be normalized and must not alter computation behavior
+- canonical numeric baseline: fixed-scale decimal semantics (`scale=6`) with `half-even` rounding for normalized values used in branching, comparisons, and emitted simulation outputs
+- canonical timezone/locale baseline: `SimulationContext` time is UTC and simulation execution is locale-neutral independent of process/user/device/server locale
 - collection traversal and evaluation order must be explicit and deterministic
 - side effects are forbidden inside simulation models
 - external data must be injected as governed input, never fetched ad hoc from inside the model
+- deviations from the canonical numeric/time baselines require explicit governance approval in architecture/protocol documentation before implementation
 
 Enforcement expectations:
 

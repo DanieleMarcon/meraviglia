@@ -296,12 +296,14 @@ Simulation engines must follow:
 ```
 SimulationEngine
     ↓
-SimulationModel
-    ↓
 SimulationContext
+    ↓
+SimulationModel
     ↓
 SimulationResult
 ```
+
+Canonical simulation determinism baselines are authoritative in `docs/SIMULATION_ENGINE.md` (numeric: fixed-scale decimal `scale=6` with `half-even` rounding; temporal/locale: UTC context and locale-neutral execution).
 
 ---
 

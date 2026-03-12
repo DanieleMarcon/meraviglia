@@ -42,9 +42,9 @@ Rules:
 ```text
 SimulationEngine
      ↓
-SimulationModel
-     ↓
 SimulationContext
+     ↓
+SimulationModel
      ↓
 SimulationResult
 ```
@@ -52,8 +52,8 @@ SimulationResult
 Rules:
 
 - SimulationEngine orchestrates simulation.
-- SimulationModel implements strategy evaluation logic.
-- SimulationContext provides deterministic execution metadata.
+- SimulationContext provides mandatory deterministic execution metadata.
+- SimulationModel implements strategy evaluation logic using SimulationContext inputs.
 - SimulationResult contains simulation output.
 
 Simulation models must be deterministic.
@@ -134,12 +134,13 @@ Rules:
 - simulation models must not access system time directly
 - simulation models must not access randomness unless explicitly injected through governed context
 - all temporal values and execution metadata must come from SimulationContext
-- numeric precision and rounding policy must be explicit and consistently applied
-- timezone and locale behavior must be normalized and must not alter simulation computation paths
+- canonical numeric baseline: fixed-scale decimal semantics (`scale=6`) with `half-even` rounding for normalized values used in branching, comparisons, and result emission
+- canonical timezone/locale baseline: UTC in `SimulationContext` and locale-neutral execution independent of process/user/device/server locale
 - collection traversal and evaluation order must be deterministic
 - side effects are forbidden inside simulation models
 - external data used by simulation must be injected as governed input, never pulled ad hoc
 - simulation must be reproducible
+- deviation from canonical numeric/time baselines requires explicit governance approval in architecture/protocol docs before implementation
 
 Authority note:
 - detailed simulation execution governance is defined in `docs/SIMULATION_ENGINE.md`
