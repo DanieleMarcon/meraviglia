@@ -58,6 +58,8 @@ Minimum required enforcement classes:
 
 Review-only acceptance is prohibited for architecture governance.
 
+Temporary patterns or exceptions require explicit justification, must preserve all invariants, are migration-only, and must not be treated as precedent for future architecture decisions.
+
 ## 3. Project Structure Rules
 
 The repository structure is an official part of the engineering contract and must remain stable to preserve maintainability and support AI-assisted development.
