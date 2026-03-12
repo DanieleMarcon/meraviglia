@@ -1,5 +1,6 @@
 export interface Service {
   id: string
+  catalogServiceId?: string
   nome: string
   prezzoPieno: number
   prezzoScontato: number

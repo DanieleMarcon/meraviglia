@@ -20,6 +20,14 @@ const isSameServiceShape = (service: Service, definition: ServiceDefinition): bo
 }
 
 const resolveCatalogDefinition = (service: Service, catalog: ServiceDefinition[]): ServiceDefinition | undefined => {
+  const byCatalogServiceId = service.catalogServiceId
+    ? catalog.find((definition) => definition.id === service.catalogServiceId)
+    : undefined
+
+  if (byCatalogServiceId) {
+    return byCatalogServiceId
+  }
+
   const byId = catalog.find((definition) => definition.id === service.id)
 
   if (byId) {

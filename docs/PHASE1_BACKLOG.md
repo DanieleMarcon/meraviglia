@@ -250,3 +250,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Coupling-by-shape cleanup remains open where UI/state/application still exchange DTO-like structures directly; mapper-based boundaries remain planned.
 - `src/App.tsx` composition density reduction remains planned after current domain hardening slices.
 - Migration follow-up remains required to propagate and preserve stable catalog/service identities consistently across repository/application/UI persistence and import flows so fallback matching can be fully retired.
+
+### Post-Domain Aggregate Hardening (Step 21 — Runtime Service Instance → Catalog Identity Bridge)
+
+- Proposal services created from catalog selections now persist explicit `catalogServiceId` identity while preserving unique runtime `service.id`, allowing identity-first catalog resolution without relying on shape matching for this high-traffic UI write path.
+- Domain catalog resolution now checks `service.catalogServiceId` before `service.id`, reducing shape-based fallback reliance for persisted/application/UI flows where runtime instance IDs intentionally differ from catalog IDs.
+- Remaining service-ID propagation gaps are still open and explicitly tracked for legacy payload ingestion, repository/application DTO mapping, and import/export payloads that do not yet emit or preserve `catalogServiceId`.
+- Remaining shape-based compatibility fallback is intentionally retained only as a narrow compatibility bridge (unique-shape fallback) and should be removed after catalog identity propagation is complete for legacy persisted/import data.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service shapes without explicit mapper boundaries.
+- `src/App.tsx` composition density reduction remains a planned cleanup target once identity propagation and mapper-boundary slices stabilize.
+- Migration/backfill follow-up remains required for legacy persisted cashflow payloads and imported proposals/services so `catalogServiceId` can be populated deterministically where catalog linkage is known.
