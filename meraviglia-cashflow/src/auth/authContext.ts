@@ -1,9 +1,10 @@
 import { createContext } from "react"
-import type { Session, User } from "@supabase/supabase-js"
+
+import type { AuthSession, AuthUser } from "../repository/authRepository"
 
 export type AuthContextValue = {
-  user: User | null
-  session: Session | null
+  user: AuthUser | null
+  session: AuthSession | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
