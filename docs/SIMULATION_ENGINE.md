@@ -157,7 +157,7 @@ By introducing `Assumption`, `IndicatorValue`, and `ConstraintValue`, the domain
 These value objects remain pure domain constructs and preserve architectural boundaries by avoiding repository, database, and UI concerns.
 
 ## Deterministic Simulation Context
-The simulation engine now executes models using an explicit `SimulationContext`.
+The simulation engine now executes models using an explicit `SimulationContext`, a runtime execution metadata structure (not a domain bounded context).
 
 ```text
 SimulationEngine

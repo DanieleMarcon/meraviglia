@@ -28,7 +28,7 @@ The domain architecture is centered on bounded contexts aligned to the consultan
    - Strategy templates, modeling heuristics, and reusable advisory patterns.
    - Supplies structured guidance for blueprint composition.
 
-6. **Simulation Context**
+6. **Strategic Simulation Domain**
    - Defines simulation concepts and their relationship to strategic domain entities.
    - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md` and is not redefined in this domain document.
 
