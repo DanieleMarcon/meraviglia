@@ -69,6 +69,7 @@ Transitional architecture rule:
 - transitional patterns are allowed only as temporary refactor bridges,
 - they do not redefine the target architecture and must not become steady-state architecture,
 - usage must be explicitly scoped, time-bounded, and removed or replaced before the migration/refactor is considered complete,
+- transitional patterns are migration-only and must not survive into the stabilized target architecture baseline or serve as precedent for future architecture decisions,
 - they remain subject to architecture review plus all non-negotiable invariants defined in architecture/protocol governance.
 
 Evolution plan:
