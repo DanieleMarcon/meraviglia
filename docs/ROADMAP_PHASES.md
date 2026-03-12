@@ -87,9 +87,10 @@ Refactor current structural model into a project-centric workspace architecture 
 - Application Layer Introduction — baseline structure implemented (partial completion).
 - Follow-up confirmed: remaining direct `supabaseClient` usage outside the auth-adapter pattern should be standardized behind explicit infra/repository adapters in a dedicated cleanup step.
 - Follow-up confirmed: as repository/application DTO ownership is clarified, shared primitive unions (for example status enums) should be promoted to explicit cross-layer contract modules only when domain ownership is defined, to avoid duplicated literals and boundary drift.
-- Follow-up confirmed: add application-level test hardening for `strategicPlanningService` orchestration paths that feed compare/proposal workflows (cashflow-impacting application orchestration coverage).
+- Follow-up update: baseline orchestration tests now cover `strategicPlanningService` + compare/proposal workflow behavior; remaining coverage target is state-level orchestration in `useAppState` (proposal A/B synchronization, storage persistence interactions, and proposal section toggles under compare flow changes).
 - Follow-up confirmed: continue coupling-by-shape cleanup beyond intake/workspace by adding explicit application mappers where repository records are still returned as DTO-shaped objects implicitly.
 - Follow-up confirmed: `src/App.tsx` composition remains intentionally transitional but still dense; plan extraction into smaller composition-oriented UI containers once current application-layer cleanup sequence stabilizes.
+- Follow-up confirmed: domain aggregate hardening still required for strategic planning entities (`Proposta`, `PianoStrategico`, `Service`) so invariants are progressively enforced by aggregate construction rather than relying only on sanitize/validation functions.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.
