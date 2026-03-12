@@ -85,6 +85,7 @@ Refactor current structural model into a project-centric workspace architecture 
 ## Phase 2C — Application Layer Introduction
 ### Status Update
 - Application Layer Introduction — baseline structure implemented (partial completion).
+- Follow-up confirmed: remaining direct `supabaseClient` usage outside the auth-adapter pattern should be standardized behind explicit infra/repository adapters in a dedicated cleanup step.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.
