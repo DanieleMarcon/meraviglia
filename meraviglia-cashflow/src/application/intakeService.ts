@@ -2,6 +2,7 @@ import type {
   IntakeRepository,
 } from "../repository/intakeRepository"
 import type { IntakeDTO } from "./dto/IntakeDTO"
+import { mapIntakeRecordToDTO } from "./mappers/intakeWorkspaceMappers"
 import type { CreateIntakeInput, UpdateIntakeInput } from "./dto/IntakeContracts"
 import type { WorkspaceService } from "./workspaceService"
 
@@ -25,37 +26,45 @@ export class IntakeService {
   }
 
   async createIntake(input: CreateIntakeInput): Promise<IntakeDTO> {
-    return this.intakeRepository.createIntake({
+    const intakeRecord = await this.intakeRepository.createIntake({
       ...input,
       first_name: requireNonEmpty(input.first_name, "first_name"),
       last_name: requireNonEmpty(input.last_name, "last_name"),
       email: requireNonEmpty(input.email, "email"),
     })
+
+    return mapIntakeRecordToDTO(intakeRecord)
   }
 
   async listIntakes(): Promise<IntakeDTO[]> {
-    return this.intakeRepository.listIntakes()
+    const intakeRecords = await this.intakeRepository.listIntakes()
+
+    return intakeRecords.map(mapIntakeRecordToDTO)
   }
 
   async updateIntake(id: string, input: UpdateIntakeInput): Promise<IntakeDTO> {
-    return this.intakeRepository.updateIntake(requireNonEmpty(id, "id"), input)
+    const intakeRecord = await this.intakeRepository.updateIntake(requireNonEmpty(id, "id"), input)
+
+    return mapIntakeRecordToDTO(intakeRecord)
   }
 
   async convertIntakeToWorkspace(
     id: string,
   ): Promise<{ intake: IntakeDTO; workspace: Awaited<ReturnType<WorkspaceService["createWorkspace"]>> }> {
     const intakeId = requireNonEmpty(id, "id")
-    const intake = await this.intakeRepository.getIntakeById(intakeId)
-    if (!intake) throw new Error("Intake not found")
+    const intakeRecord = await this.intakeRepository.getIntakeById(intakeId)
+    if (!intakeRecord) throw new Error("Intake not found")
+
+    const intake = mapIntakeRecordToDTO(intakeRecord)
     if (intake.status === "converted") throw new Error("Intake already converted")
 
     const workspace = await this.workspaceService.createWorkspace({
       workspace_name: `${intake.first_name} ${intake.last_name}`.trim(),
       workspace_slug: `${intake.first_name}-${intake.last_name}`.toLowerCase().replace(/\s+/g, "-"),
     })
-    const updatedIntake = await this.intakeRepository.convertToWorkspace(intake.id, workspace.id)
+    const updatedIntakeRecord = await this.intakeRepository.convertToWorkspace(intake.id, workspace.id)
 
-    return { intake: updatedIntake, workspace }
+    return { intake: mapIntakeRecordToDTO(updatedIntakeRecord), workspace }
   }
 }
 

@@ -87,6 +87,9 @@ Refactor current structural model into a project-centric workspace architecture 
 - Application Layer Introduction — baseline structure implemented (partial completion).
 - Follow-up confirmed: remaining direct `supabaseClient` usage outside the auth-adapter pattern should be standardized behind explicit infra/repository adapters in a dedicated cleanup step.
 - Follow-up confirmed: as repository/application DTO ownership is clarified, shared primitive unions (for example status enums) should be promoted to explicit cross-layer contract modules only when domain ownership is defined, to avoid duplicated literals and boundary drift.
+- Follow-up confirmed: add application-level test hardening for `strategicPlanningService` orchestration paths that feed compare/proposal workflows (cashflow-impacting application orchestration coverage).
+- Follow-up confirmed: continue coupling-by-shape cleanup beyond intake/workspace by adding explicit application mappers where repository records are still returned as DTO-shaped objects implicitly.
+- Follow-up confirmed: `src/App.tsx` composition remains intentionally transitional but still dense; plan extraction into smaller composition-oriented UI containers once current application-layer cleanup sequence stabilizes.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

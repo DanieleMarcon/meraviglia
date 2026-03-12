@@ -3,6 +3,7 @@ import type {
 } from "../repository/workspaceRepository"
 import type { CreateWorkspaceInput, UpdateWorkspaceInput } from "./dto/WorkspaceContracts"
 import type { WorkspaceDTO } from "./dto/WorkspaceDTO"
+import { mapWorkspaceRecordToDTO } from "./mappers/intakeWorkspaceMappers"
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
   const normalized = value.trim()
@@ -25,23 +26,31 @@ export class WorkspaceService {
     const workspace_name = requireNonEmpty(input.workspace_name, "workspace_name")
     const workspace_slug = requireNonEmpty(input.workspace_slug, "workspace_slug")
 
-    return this.workspaceRepository.createWorkspace({ workspace_name, workspace_slug })
+    const workspaceRecord = await this.workspaceRepository.createWorkspace({ workspace_name, workspace_slug })
+
+    return mapWorkspaceRecordToDTO(workspaceRecord)
   }
 
   async listWorkspaces(): Promise<WorkspaceDTO[]> {
-    return this.workspaceRepository.listWorkspaces()
+    const workspaceRecords = await this.workspaceRepository.listWorkspaces()
+
+    return workspaceRecords.map(mapWorkspaceRecordToDTO)
   }
 
   async updateWorkspace(id: string, input: UpdateWorkspaceInput): Promise<WorkspaceDTO> {
     const workspaceId = requireNonEmpty(id, "id")
 
     if (input.workspace_name !== undefined) {
-      return this.workspaceRepository.updateWorkspace(workspaceId, {
+      const workspaceRecord = await this.workspaceRepository.updateWorkspace(workspaceId, {
         workspace_name: requireNonEmpty(input.workspace_name, "workspace_name"),
       })
+
+      return mapWorkspaceRecordToDTO(workspaceRecord)
     }
 
-    return this.workspaceRepository.updateWorkspace(workspaceId, input)
+    const workspaceRecord = await this.workspaceRepository.updateWorkspace(workspaceId, input)
+
+    return mapWorkspaceRecordToDTO(workspaceRecord)
   }
 }
 
