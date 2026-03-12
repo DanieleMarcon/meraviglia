@@ -86,6 +86,27 @@ const propostaBSeed: Proposta = {
   ],
 }
 
+const propostaBRateSeed: Proposta = {
+  id: "proposal-b-rate",
+  nome: "B-rate",
+  servizi: [
+    {
+      service: {
+        id: "proposal-b-rate-s1",
+        nome: "Rate Limited Service",
+        prezzoPieno: 1200,
+        prezzoScontato: 1000,
+        usaPrezzoScontato: false,
+        durataOperativa: 6,
+        meseInizio: 2,
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+      },
+      strategiaPagamento: { tipo: "rate", numeroRate: 6 },
+    },
+  ],
+}
+
 const loadUseAppState = async (fixtures: PersistedFixtures = {}) => {
   vi.resetModules()
 
@@ -230,6 +251,131 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "oneShot" })
     expect(updated.sectionToggles[ProposalSectionType.PRESENTATION]).toBe(false)
     expect(updated.sectionToggles[ProposalSectionType.COVER]).toBe(true)
+
+    expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      piano: updated.piano,
+      propostaA: updated.propostaA,
+      propostaB: updated.propostaB,
+      sectionToggles: updated.sectionToggles,
+    })
+  })
+
+  it("re-sanitizes both proposals when setPiano updates plan duration and persists compare payload", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBRateSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.setPiano((current) => ({
+      ...current,
+      durataTotale: 3,
+      moduli: [{ nome: "Compressed", meseInizio: 1, durata: 3 }],
+    }))
+
+    const updated = useAppState()
+
+    expect(updated.propostaA.servizi[0]?.service.durataOperativa).toBe(1)
+    expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 1 })
+    expect(updated.propostaB.servizi[0]?.service.durataOperativa).toBe(2)
+    expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+
+    expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      piano: updated.piano,
+      propostaA: updated.propostaA,
+      propostaB: updated.propostaB,
+      sectionToggles: updated.sectionToggles,
+    })
+  })
+
+  it("re-sanitizes proposals when addService introduces catalog constraints and persists both storage keys", async () => {
+    const longPlan: PianoStrategico = {
+      durataTotale: 12,
+      moduli: [{ nome: "Long", meseInizio: 1, durata: 12 }],
+    }
+
+    const propostaALongSeed: Proposta = {
+      ...propostaASeed,
+      servizi: [
+        {
+          ...propostaASeed.servizi[0]!,
+          service: {
+            ...propostaASeed.servizi[0]!.service,
+            meseInizio: 1,
+            durataOperativa: 12,
+            maxRateConsentite: undefined,
+          },
+          strategiaPagamento: { tipo: "rate", numeroRate: 8 },
+        },
+      ],
+    }
+
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: [],
+      cashflow: {
+        piano: longPlan,
+        propostaA: propostaALongSeed,
+        propostaB: propostaBRateSeed,
+      },
+    })
+
+    const state = useAppState()
+    expect(state.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 8 })
+    expect(state.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 6 })
+    expect(state.propostaA.servizi[0]?.service.color).toBeUndefined()
+
+    state.addService({
+      nome: "Rate Limited Service",
+      categoria: "Ops",
+      prezzoPieno: 1200,
+      prezzoScontato: 1000,
+      durataStandard: 4,
+      consentiRateizzazione: true,
+      consentiAcconto: true,
+      maxRateConsentite: 3,
+    })
+
+    const updated = useAppState()
+
+    expect(updated.services).toEqual([
+      expect.objectContaining({ id: "generated-id", color: expect.stringMatching(/^hsl\(/) }),
+    ])
+    expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 8 })
+    expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 6 })
+    expect(updated.propostaA.servizi[0]?.service.color).toMatch(/^hsl\(/)
+
+    expect(saveToStorage).toHaveBeenNthCalledWith(1, "meraviglia-service-catalog", updated.services)
+    expect(saveToStorage).toHaveBeenNthCalledWith(2, "meraviglia-cashflow", {
+      piano: updated.piano,
+      propostaA: updated.propostaA,
+      propostaB: updated.propostaB,
+      sectionToggles: updated.sectionToggles,
+    })
+  })
+
+  it("removeService updates catalog and persists compare payload while preserving sanitized proposals", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBRateSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.removeService("svc-rate")
+
+    const updated = useAppState()
+    expect(updated.services.map((service) => service.id)).toEqual(["svc-one-shot"])
+    expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+    expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 3 })
 
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
       piano: updated.piano,
