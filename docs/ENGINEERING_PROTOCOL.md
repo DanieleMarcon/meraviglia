@@ -18,11 +18,12 @@ All new code must comply with this protocol.
 
 Meraviglia OS follows the Architecture Freeze v1 dependency contract.
 
-Canonical allowed dependencies:
+Canonical allowed dependencies (authority: `docs/ARCHITECTURE_FREEZE_v1.md`):
 
 - `ui → application`
 - `application → domain`
 - `application → repository`
+- `application → engine`
 - `infra → repository`
 - `engine → domain`
 - `state → ui | application`
@@ -32,11 +33,11 @@ Canonical allowed dependencies:
 Canonical forbidden dependencies:
 
 - `domain → repository`
-- `domain → infrastructure`
+- `domain → infra`
 - `domain → ui`
 - `ui → domain`
 - `ui → repository`
-- `engine → infrastructure`
+- `engine → infra`
 - `state → domain | repository | infra`
 - `auth → domain | infra`
 - `assets → domain | application | repository | infra | engine`
@@ -47,7 +48,7 @@ These rules are architecture invariants and must never be violated.
 
 The repository structure is an official part of the engineering contract and must remain stable to preserve maintainability and support AI-assisted development.
 
-Expected architecture structure inside `src/`:
+Expected architecture structure inside `meraviglia-cashflow/src`:
 
 ```text
 src/
@@ -73,18 +74,19 @@ Structure governance rules:
 
 | From \ To | UI | Application | Domain | Repository | Infra | Engine | State | Auth | Assets |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| UI | — | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Application | ❌ | — | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ |
+| UI | — | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Application | ❌ | — | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
 | Domain | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Repository | ❌ | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Infra | ❌ | ❌ | ❌ | ✅ | — | ❌ | ❌ | ❌ | ❌ |
 | Engine | ❌ | ❌ | ✅ | ❌ | ❌ | — | ❌ | ❌ | ❌ |
-| State | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ✅ |
-| Auth | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ✅ | — | ❌ |
+| State | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ❌ |
+| Auth | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | — | ❌ |
 | Assets | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — |
 
 Notes:
 
+- This matrix is a direct rendering of the freeze contract; undefined paths are treated as forbidden until explicitly governed.
 - `repository` is a contract module (ports), not an implementation module.
 - Infra may depend on repository contracts to implement adapters.
 - Composition root wiring stays in application composition, outside domain logic.
@@ -247,6 +249,8 @@ Rules:
 
 ## 11. Deterministic Engine Rules
 
+Primary authority for simulation determinism rules is `docs/SIMULATION_ENGINE.md`; this section is enforceable protocol-level restatement for implementation and review.
+
 Simulation behavior must be deterministic and reproducible.
 
 Hard rules:
@@ -314,7 +318,7 @@ Rules:
 - clear naming
 - stable architecture
 - AI implementation must stay within approved layer boundaries
-- AI features must not bypass `ui → application → domain/engine` flow
+- AI features must not bypass `ui → application → (domain | engine)` flow
 - AI code must not mutate domain rules outside normal domain governance
 - AI-assisted workflows adjacent to simulation must preserve deterministic simulation invariants
 

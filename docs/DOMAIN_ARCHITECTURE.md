@@ -3,6 +3,8 @@
 ## Purpose
 Describe the domain architecture that encodes Meraviglia's strategic semantics independently from transport, UI, and infrastructure concerns.
 
+This document is authoritative for bounded contexts, core entities, and domain invariants. Dependency contracts remain authoritative in `docs/ARCHITECTURE_FREEZE_v1.md`.
+
 ## Conceptual Architecture
 The domain architecture is centered on bounded contexts aligned to the consultant workflow:
 
@@ -83,6 +85,8 @@ Blueprint
 The domain architecture defines simulation-related concepts (`Scenario`, `SimulationResult`, assumptions, constraints) and their invariants.
 
 Operational determinism, execution constraints, and simulation engine enforcement rules are governed by `docs/SIMULATION_ENGINE.md`.
+
+Application orchestration remains responsible for invoking engine workflows; domain and engine layers do not own repository or infrastructure persistence logic.
 
 Boundary constraints remain:
 - no Supabase imports,
