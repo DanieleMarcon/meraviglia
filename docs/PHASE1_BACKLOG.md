@@ -231,3 +231,12 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density remains a planned cleanup target after this write-path migration sequence stabilizes.
 - Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
 - Next best cleanup target is persisted bootstrap normalization handoff so transitional `sanitizePropostaAtBoundary` runtime ownership can be narrowed to compatibility fallback only (or removed if coverage allows).
+
+### Post-Domain Aggregate Hardening (Step 19 — Persisted Bootstrap Normalization Handoff)
+
+- Persisted bootstrap normalization in `useAppState` now routes both proposal branches through the same domain-owned write-normalization orchestration (`normalizeProposalForWrite`) already used by runtime proposal updates.
+- Transitional sanitizer runtime ownership is now effectively closed for strategic-planning proposal flows: `sanitizePropostaAtBoundary` remains only as compatibility naming/alias wrapper and no longer owns distinct runtime normalization logic.
+- Remaining domain aggregate hardening is still required so constructor-owned invariants continue to replace compatibility adaptation across proposal/service semantics.
+- Identity-hardening follow-up remains open for catalog matching semantics: fallback catalog resolution is still shape-based and should migrate to stronger identity-oriented matching.
+- Coupling-by-shape cleanup remains open where UI/state/application still share DTO-like structures directly; explicit mapper-based boundaries remain planned.
+- `src/App.tsx` composition density remains a planned cleanup target once this normalization handoff sequence is stabilized.

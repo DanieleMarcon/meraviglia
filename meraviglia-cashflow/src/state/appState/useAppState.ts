@@ -12,7 +12,7 @@ import {
   MANDATORY_PROPOSAL_SECTIONS,
   type SectionToggleState,
 } from "../../application/proposalDocumentSectionToggles"
-import { normalizeProposalForWrite, sanitizeProposalAtBoundary } from "../../application/strategicPlanningService"
+import { normalizeProposalForWrite } from "../../application/strategicPlanningService"
 import { loadFromStorage, saveToStorage } from "../persistence/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
@@ -132,8 +132,8 @@ const createInitialState = (): AppStateStore => {
   return {
     services,
     piano,
-    propostaA: sanitizeProposalAtBoundary(propostaA, piano, services),
-    propostaB: sanitizeProposalAtBoundary(propostaB, piano, services),
+    propostaA: normalizeProposalForWrite(propostaA, piano, services),
+    propostaB: normalizeProposalForWrite(propostaB, piano, services),
     sectionToggles,
   }
 }
