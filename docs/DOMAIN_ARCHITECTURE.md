@@ -30,7 +30,7 @@ The domain architecture is centered on bounded contexts aligned to the consultan
 
 6. **Simulation Context**
    - Defines simulation concepts and their relationship to strategic domain entities.
-   - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md`.
+   - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md` and is not redefined in this domain document.
 
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.
@@ -78,13 +78,17 @@ Blueprint
         ↓
      SimulationEngine
         ↓
+     SimulationContext
+        ↓
+     SimulationModel
+        ↓
      SimulationResult
 ```
 
 ## Simulation and Domain Boundary
 The domain architecture defines simulation-related concepts (`Scenario`, `SimulationResult`, assumptions, constraints) and their invariants.
 
-Operational determinism, execution constraints, and simulation engine enforcement rules are governed by `docs/SIMULATION_ENGINE.md`.
+Operational determinism, execution constraints, and simulation engine enforcement rules are governed by `docs/SIMULATION_ENGINE.md`, including canonical numeric/temporal baselines.
 
 Application orchestration remains responsible for invoking engine workflows; domain and engine layers do not own repository or infrastructure persistence logic.
 

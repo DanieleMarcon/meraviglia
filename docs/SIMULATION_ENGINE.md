@@ -35,6 +35,10 @@ Blueprint
         ↓
      SimulationEngine
         ↓
+     SimulationContext
+        ↓
+     SimulationModel
+        ↓
      SimulationResult
 ```
 
@@ -44,6 +48,8 @@ The simulation engine delegates deterministic scenario evaluation to a pluggable
 
 ```text
 SimulationEngine
+   ↓
+SimulationContext
    ↓
 SimulationModel
    ↓
@@ -90,13 +96,14 @@ These invariants are mandatory for every `SimulationModel` implementation.
    - Models must not pull execution metadata from global/system sources.
 
 5. **Numeric precision policy**
-   - Simulation calculations must use explicit numeric precision strategy.
-   - Rounding mode and precision scale must be defined and applied consistently across models.
-   - Silent/implicit rounding differences between paths are forbidden.
+   - Canonical baseline: simulation calculations use fixed-scale decimal semantics with scale `6` and rounding mode `half-even`.
+   - All simulation models must apply this baseline consistently for normalized values used in comparisons, branching, and emitted `SimulationResult` fields.
+   - Any deviation from this baseline is forbidden unless explicitly declared, justified, and governance-approved in architecture/protocol documentation before implementation.
 
 6. **Timezone and locale normalization policy**
-   - Temporal interpretation must use a normalized timezone baseline defined by context.
-   - Locale-sensitive parsing/formatting must not affect simulation math or branching behavior.
+   - Canonical baseline: `SimulationContext` must provide time in UTC and simulation execution must remain timezone-invariant.
+   - Simulation execution must be locale-neutral; behavior must not depend on process, user, device, or server locale settings.
+   - Locale-sensitive parsing/formatting must not affect simulation math, branching, or ordering.
 
 7. **Deterministic ordering policy**
    - Collection traversal and rule evaluation order must be explicit and stable.
@@ -155,14 +162,14 @@ The simulation engine now executes models using an explicit `SimulationContext`.
 ```text
 SimulationEngine
    ↓
-SimulationModel
-   ↓
 SimulationContext
+   ↓
+SimulationModel
    ↓
 SimulationResult
 ```
 
-The context contains deterministic metadata such as timestamps and normalized execution parameters.
+The context contains deterministic metadata such as UTC timestamps, numeric policy baseline (`scale=6`, `half-even`), and normalized execution parameters.
 
 This ensures:
 

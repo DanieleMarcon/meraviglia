@@ -46,7 +46,7 @@ AI strategy is layered to avoid replacing core strategic semantics:
 
 ## AI and Deterministic Simulation Boundary
 - AI may assist scenario preparation, quality checks, or recommendation framing.
-- AI must not weaken deterministic simulation invariants defined in `docs/SIMULATION_ENGINE.md`.
+- AI must not weaken deterministic simulation invariants defined in `docs/SIMULATION_ENGINE.md`, including canonical numeric (`scale=6`, `half-even`) and UTC/locale-neutral baselines.
 - When simulation is executed, all deterministic rules remain mandatory regardless of AI involvement in adjacent workflow steps.
 
 ## AI Governance and Review Enforcement
