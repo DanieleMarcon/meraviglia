@@ -174,6 +174,11 @@ State logic must remain presentation-oriented.
 
 Must not implement business rules.
 
+Dependency rules:
+
+* may depend on `ui` and `application`
+* must not depend on `domain`, `repository`, or `infra`
+
 ---
 
 ### auth/
@@ -181,6 +186,12 @@ Must not implement business rules.
 Authentication boundary.
 
 Handles login flows and session state.
+
+Dependency rules:
+
+* may depend on `application` for use-case level authentication flows
+* may depend on `repository` contracts when persistence/session ports are required
+* must not depend on `domain` or `infra` directly
 
 ---
 
@@ -194,24 +205,37 @@ Examples:
 * icons
 * static files
 
+Dependency rules:
+
+* may be consumed by `ui` and `state`
+* must not introduce runtime coupling to business layers
+
 ---
 
 ## 4. Layer Dependency Rules
 
 Allowed dependency flow:
 
-* `ui → application → domain`
+* `ui → application`
+* `application → domain`
 * `application → repository`
 * `infra → repository`
 * `engine → domain`
+* `state → ui | application`
+* `auth → application | repository`
+* `assets → ui`
 
 Forbidden dependencies:
 
+* `domain → repository`
 * `domain → ui`
 * `domain → infra`
 * `engine → infra`
 * `ui → domain`
 * `ui → repository`
+* `state → domain | repository | infra`
+* `auth → domain | infra`
+* `assets → domain | application | repository | infra | engine`
 
 These dependency rules are defined by the Architecture Freeze and must always be respected.
 
@@ -339,7 +363,7 @@ Modules should favor composition over large monolithic files.
 
 ## 11. Future Modules
 
-The architecture allows future modules such as:
+Potential future modules may include:
 
 ```
 knowledge/
@@ -348,7 +372,12 @@ integration/
 analytics/
 ```
 
-These modules must still respect the architecture layering.
+These names are not an authorization to add folders. A future module may be introduced only when all of the following are documented and approved:
+
+* exact placement in the project structure
+* explicit responsibility scope
+* explicit dependency contract (allowed and forbidden dependencies)
+* alignment with Architecture Freeze v1 and Engineering Protocol
 
 ---
 

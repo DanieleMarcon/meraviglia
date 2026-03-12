@@ -16,21 +16,30 @@ All new code must comply with this protocol.
 
 ## 2. Architecture Invariants
 
-Meraviglia OS follows the Architecture Freeze v1 layer model. The mandatory dependency flow is:
+Meraviglia OS follows the Architecture Freeze v1 dependency contract.
 
-`ui → application → domain → repository → infrastructure`
+Canonical allowed dependencies:
 
-Allowed additional dependency rule:
+- `ui → application`
+- `application → domain`
+- `application → repository`
+- `infra → repository`
+- `engine → domain`
+- `state → ui | application`
+- `auth → application | repository`
+- `assets → ui`
 
-`engine → domain`
+Canonical forbidden dependencies:
 
-Forbidden dependencies:
-
-- `domain → ui`
+- `domain → repository`
 - `domain → infrastructure`
-- `engine → infrastructure`
+- `domain → ui`
 - `ui → domain`
 - `ui → repository`
+- `engine → infrastructure`
+- `state → domain | repository | infra`
+- `auth → domain | infra`
+- `assets → domain | application | repository | infra | engine`
 
 These rules are architecture invariants and must never be violated.
 
@@ -59,6 +68,27 @@ Structure governance rules:
 - structural changes must be explicitly documented
 - the architecture layering defined in Architecture Freeze v1 must always be preserved
 
+
+## 3.1 Canonical Dependency Matrix
+
+| From \ To | UI | Application | Domain | Repository | Infra | Engine | State | Auth | Assets |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| UI | — | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Application | ❌ | — | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ |
+| Domain | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Repository | ❌ | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Infra | ❌ | ❌ | ❌ | ✅ | — | ❌ | ❌ | ❌ | ❌ |
+| Engine | ❌ | ❌ | ✅ | ❌ | ❌ | — | ❌ | ❌ | ❌ |
+| State | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ✅ |
+| Auth | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ✅ | — | ❌ |
+| Assets | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — |
+
+Notes:
+
+- `repository` is a contract module (ports), not an implementation module.
+- Infra may depend on repository contracts to implement adapters.
+- Composition root wiring stays in application composition, outside domain logic.
+
 ## 4. Layer Responsibilities
 
 ### UI layer
@@ -71,6 +101,8 @@ Responsibilities:
 - calling application services
 
 The UI layer must never implement business logic.
+
+UI must access business capabilities through application, not domain directly.
 
 ### Application layer
 
@@ -114,6 +146,7 @@ Responsibilities:
 
 - external system adapters
 - database implementations
+- repository contract implementations
 
 ## 5. Code Ownership and Layer Responsibility
 
@@ -273,7 +306,17 @@ Rules:
 
 AI-generated code must be reviewed against this protocol before merge.
 
-## 16. Evolution of the Protocol
+## 16. Future Module Governance
+
+Future modules (for example `ai`, `knowledge`, `integration`, `analytics`) must not be added without:
+
+- explicit placement in `src/` structure
+- an explicit dependency contract (allowed + forbidden dependencies)
+- alignment with Architecture Freeze v1 and this protocol
+
+No new module is implicitly allowed by naming it in planning documents.
+
+## 17. Evolution of the Protocol
 
 This protocol may evolve as the codebase grows.
 

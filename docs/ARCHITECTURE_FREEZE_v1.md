@@ -73,26 +73,42 @@ Responsibilities:
 - instantiate application services
 - wire repository interfaces to implementations
 
-## Dependency Rules
+## Dependency Rules (Frozen Contract)
 
-Allowed flow:
+The dependency contract below is non-negotiable for Architecture Freeze v1.
+
+Allowed dependencies:
 
 ```text
-ui → application → domain
+ui → application
+application → domain
 application → repository
 infra → repository
 engine → domain
+state → ui | application
+auth → application | repository
+assets → ui
 ```
 
-Forbidden:
+Forbidden dependencies:
 
 ```text
-domain → ui
+domain → repository
 domain → infra
-engine → infra
-ui → repository
+domain → ui
 ui → domain
+ui → repository
+engine → infra
+state → domain | repository | infra
+auth → domain | infra
+assets → domain | application | repository | infra | engine
 ```
+
+Notes:
+
+- Domain remains pure business semantics and must never depend on repository or infrastructure.
+- Repository remains a contract boundary used by application and implemented by infrastructure.
+- Composition root wiring remains outside domain logic.
 
 ## Deterministic Simulation Rule
 
