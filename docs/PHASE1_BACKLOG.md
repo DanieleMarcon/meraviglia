@@ -140,6 +140,9 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - **Ensure no UI-layer dependency leaks into domain/engine**  
   This matters architecturally because keeping domain/engine pure preserves clear boundaries, avoids circular dependencies, and maintains deterministic behavior across rendering surfaces (UI, PDF, APIs). This is a **Phase 1 hardening task before SaaS transition** to preserve long-term maintainability.
 
+- **Add SimulationContext normalization/validation utility at engine boundary**  
+  This matters architecturally because canonical UTC ISO-8601 timestamp shape and deterministic execution metadata validation should be enforced before model execution to prevent environment drift and hidden non-determinism. This is a **Phase 1 hardening follow-up** to strengthen reproducibility guarantees without spreading validation into UI/application call sites.
+
 
 ### Post-UI Precision Micro Observations — Phase 1
 
