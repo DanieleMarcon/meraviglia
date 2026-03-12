@@ -270,3 +270,15 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service payloads directly without explicit mapper boundaries.
 - `src/App.tsx` composition density reduction remains planned after identity/backfill and mapper-boundary cleanup slices stabilize.
 - Additional migration follow-up is required to decide whether bootstrap backfilled identities should be eagerly re-persisted and to align import/export contracts so UI no longer needs to construct even partial service identity metadata directly.
+
+
+### Post-Domain Aggregate Hardening (Step 23 — Import/Legacy Bootstrap Identity Persistence)
+
+- Persisted bootstrap import/legacy adaptation now re-persists normalized proposal payloads when legacy services are backfilled with deterministic `catalogServiceId`, reducing repeated shape-based matching on subsequent reloads.
+- This slice keeps shape fallback only as a narrow compatibility bridge (unique-shape match) for legacy services that still lack stable identity metadata.
+- Governance clarified: UI may transport selected catalog identifiers but must not originate identity enrichment/reconciliation/normalization; this remains application/domain-owned.
+- Remaining service-ID propagation gaps are still open for explicit import/export payload contracts and any repository/application mapping paths that can still ingest services without `catalogServiceId`.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service payloads directly without explicit mappers.
+- `App.tsx` composition density reduction remains open and should be addressed in a focused composition extraction step.
+- Migration/backfill follow-up remains: decide whether additional persisted/imported legacy paths should be eagerly rewritten once deterministic identity recovery is possible.
+- If still relevant after identity propagation hardening, follow-up should reduce UI responsibility further so UI sends intent/selection while application/state constructs service payload identity consistently.

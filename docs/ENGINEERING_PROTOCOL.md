@@ -180,11 +180,14 @@ Ownership boundaries between layers are mandatory.
 
 - may not modify domain models
 - may not implement business rules
+- may transport user-selected identity references (for example selected catalog service IDs) as DTO fields only
+- must not originate identity enrichment, identity reconciliation, or business normalization logic
 
 ### Application layer ownership rules
 
 - orchestrates use cases
 - must not implement domain invariants
+- owns identity propagation/orchestration across UI, repository, and domain boundaries
 
 ### Domain layer ownership rules
 

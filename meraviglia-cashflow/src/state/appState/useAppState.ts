@@ -109,6 +109,10 @@ const ensureServiceColors = (services: ServiceDefinition[]): { services: Service
   return { services: nextServices, changed }
 }
 
+const areValuesEqual = (left: unknown, right: unknown): boolean => {
+  return JSON.stringify(left) === JSON.stringify(right)
+}
+
 const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
   const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
@@ -129,11 +133,30 @@ const createInitialState = (): AppStateStore => {
     sectionToggles[sectionType] = true
   })
 
+  const normalizedPropostaA = normalizeProposalForWrite(propostaA, piano, services)
+  const normalizedPropostaB = normalizeProposalForWrite(propostaB, piano, services)
+
+  if (persistedCashflow) {
+    const shouldPersistNormalizedCashflow =
+      !areValuesEqual(persistedCashflow.propostaA, normalizedPropostaA)
+      || !areValuesEqual(persistedCashflow.propostaB, normalizedPropostaB)
+      || !isSectionToggleState(persistedCashflow.sectionToggles)
+
+    if (shouldPersistNormalizedCashflow) {
+      saveToStorage(CASHFLOW_STORAGE_KEY, {
+        piano,
+        propostaA: normalizedPropostaA,
+        propostaB: normalizedPropostaB,
+        sectionToggles,
+      })
+    }
+  }
+
   return {
     services,
     piano,
-    propostaA: normalizeProposalForWrite(propostaA, piano, services),
-    propostaB: normalizeProposalForWrite(propostaB, piano, services),
+    propostaA: normalizedPropostaA,
+    propostaB: normalizedPropostaB,
     sectionToggles,
   }
 }
