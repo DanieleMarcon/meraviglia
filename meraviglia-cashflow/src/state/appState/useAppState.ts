@@ -204,7 +204,7 @@ export function useAppState() {
 
     setStore({
       ...store,
-      propostaB: sanitizeProposalAtBoundary(nextPropostaB, store.piano, store.services),
+      propostaB: normalizeProposalForWrite(nextPropostaB, store.piano, store.services),
     })
   }
 

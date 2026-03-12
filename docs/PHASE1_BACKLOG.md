@@ -200,3 +200,14 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density remains a planned cleanup target after this write-path migration sequence stabilizes.
 - Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
 - Next high-traffic write-path candidates for direct domain-owned normalization are `setPropostaB` updates and dual-proposal re-normalization triggered by `setPiano`/catalog mutations (`addService`/`removeService`).
+
+
+### Post-Domain Aggregate Hardening (Step 16 — High-Traffic Proposal B Write Path)
+
+- High-traffic state write path `setPropostaB` now uses domain-owned proposal-write normalization directly via application orchestration (`normalizeProposalForWrite`) instead of routing through transitional `sanitizePropostaAtBoundary`.
+- Transitional compatibility narrowing is now advanced again but incomplete: `sanitizePropostaAtBoundary` remains active for persisted-state bootstrap, `setPiano`, and catalog mutation re-normalization flows (`addService`/`removeService`), which remain pending migration slices.
+- Remaining domain aggregate hardening is still required after this slice so constructor-owned invariants can continue to replace boundary adaptation across proposal/service semantics.
+- Coupling-by-shape cleanup remains open where UI/state/application still share DTO-like structures directly; explicit mapper-based boundaries are still planned.
+- `src/App.tsx` composition density remains a planned cleanup target after this write-path migration sequence stabilizes.
+- Identity-hardening remains open for catalog matching semantics: fallback matching is still shape-based and should migrate to stronger identity-oriented matching.
+- Next best high-traffic write-path target for direct domain-owned normalization is dual-proposal re-normalization triggered by `setPiano`, then catalog-driven re-normalization (`addService`/`removeService`).

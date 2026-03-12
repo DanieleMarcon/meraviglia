@@ -221,7 +221,7 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
-  it("sanitizes proposal B updates and keeps mandatory section types enabled", async () => {
+  it("sanitizes proposal B on write via domain normalization and keeps mandatory section types enabled", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
       services: baseCatalog,
       cashflow: {
@@ -238,6 +238,10 @@ describe("useAppState compare/proposal orchestration", () => {
       servizi: [
         {
           ...current.servizi[0]!,
+          service: {
+            ...current.servizi[0]!.service,
+            durataOperativa: 99,
+          },
           strategiaPagamento: { tipo: "accontoRate", numeroRate: 7, percentualeAcconto: 0.3 },
         },
       ],
@@ -248,6 +252,7 @@ describe("useAppState compare/proposal orchestration", () => {
 
     const updated = useAppState()
 
+    expect(updated.propostaB.servizi[0]?.service.durataOperativa).toBe(3)
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "oneShot" })
     expect(updated.sectionToggles[ProposalSectionType.PRESENTATION]).toBe(false)
     expect(updated.sectionToggles[ProposalSectionType.COVER]).toBe(true)
