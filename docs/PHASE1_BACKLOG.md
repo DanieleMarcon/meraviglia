@@ -282,3 +282,13 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `App.tsx` composition density reduction remains open and should be addressed in a focused composition extraction step.
 - Migration/backfill follow-up remains: decide whether additional persisted/imported legacy paths should be eagerly rewritten once deterministic identity recovery is possible.
 - If still relevant after identity propagation hardening, follow-up should reduce UI responsibility further so UI sends intent/selection while application/state constructs service payload identity consistently.
+
+### Post-Domain Aggregate Hardening (Step 24 — Proposal Export Payload Identity Hardening)
+
+- Proposal-document export adaptation now emits `catalogServiceId` in `ACTIVATED_SERVICES` payload entries while preserving runtime `service.id`, improving identity continuity across proposal-service → export boundaries with minimal compatibility risk.
+- Remaining service-ID propagation gaps are still open for other import/export slices and repository/application mapper boundaries that can still accept service payloads without `catalogServiceId`.
+- Remaining shape-based compatibility fallback stays intentionally narrow (unique-shape legacy match only) and should be removed after full identity propagation/backfill coverage is complete across non-bootstrap paths.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service payloads directly without explicit mapper boundaries.
+- `App.tsx` composition density reduction remains an explicit follow-up once identity-propagation and mapper-boundary slices stabilize.
+- Migration/backfill follow-up remains open for legacy imported/persisted payload paths beyond bootstrap so deterministic `catalogServiceId` recovery can be eagerly persisted where appropriate.
+- UI-responsibility reduction follow-up remains open (if still relevant after identity slices): UI should continue sending user intent/selection while application/domain owns identity enrichment and normalized payload construction.

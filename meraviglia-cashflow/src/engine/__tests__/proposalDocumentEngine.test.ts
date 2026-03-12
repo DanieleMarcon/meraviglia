@@ -39,6 +39,51 @@ const meta = {
 }
 
 describe("proposalDocumentEngine", () => {
+  it("espone catalogServiceId nel payload ACTIVATED_SERVICES mantenendo id runtime per compatibilità", () => {
+    const propostaConCatalogId: Proposta = {
+      id: "A",
+      nome: "Proposta A",
+      servizi: [
+        {
+          service: {
+            id: "runtime-service-id",
+            catalogServiceId: "catalog-service-id",
+            nome: "SEO Pack",
+            prezzoPieno: 1000,
+            prezzoScontato: 1000,
+            usaPrezzoScontato: false,
+            durataOperativa: 1,
+            meseInizio: 1,
+            consentiRateizzazione: true,
+            consentiAcconto: true,
+            maxRateConsentite: 12,
+          },
+          strategiaPagamento: { tipo: "oneShot" },
+        },
+      ],
+    }
+
+    const doc = buildProposalDocument({
+      propostaA: propostaConCatalogId,
+      piano,
+      meta,
+    })
+
+    const activatedServices = doc.sections.find(
+      (section) => section.type === ProposalSectionType.ACTIVATED_SERVICES
+    )
+
+    expect(activatedServices?.payload).toMatchObject({
+      services: [
+        {
+          id: "runtime-service-id",
+          catalogServiceId: "catalog-service-id",
+          nome: "SEO Pack",
+        },
+      ],
+    })
+  })
+
   it("include tutte le sezioni attese con comparison disabilitata se assente", () => {
     const doc = buildProposalDocument({
       propostaA: baseProposal("A", 1000),
