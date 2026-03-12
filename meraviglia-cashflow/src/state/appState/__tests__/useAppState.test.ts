@@ -176,13 +176,70 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(state.sectionToggles[ProposalSectionType.CLOSING]).toBe(true)
     expect(state.sectionToggles[ProposalSectionType.PRESENTATION]).toBe(false)
 
-    expect(saveToStorage).toHaveBeenCalledTimes(1)
     expect(saveToStorage).toHaveBeenCalledWith(
       "meraviglia-service-catalog",
       expect.arrayContaining([
         expect.objectContaining({ id: "svc-rate", color: expect.stringMatching(/^hsl\(/) }),
       ])
     )
+  })
+
+
+
+  it("persists normalized legacy proposals on bootstrap so catalogServiceId is retained for subsequent loads", async () => {
+    const legacyCatalog: ServiceDefinition[] = [
+      {
+        id: "svc-legacy",
+        nome: "Legacy Service",
+        categoria: "Ops",
+        prezzoPieno: 500,
+        prezzoScontato: 450,
+        durataStandard: 3,
+        consentiRateizzazione: true,
+        consentiAcconto: false,
+        maxRateConsentite: 2,
+      },
+    ]
+
+    const legacyProposta: Proposta = {
+      id: "proposal-legacy",
+      nome: "Legacy",
+      servizi: [
+        {
+          service: {
+            id: "runtime-legacy",
+            nome: "Legacy Service",
+            prezzoPieno: 500,
+            prezzoScontato: 450,
+            usaPrezzoScontato: false,
+            durataOperativa: 3,
+            meseInizio: 1,
+            consentiRateizzazione: true,
+            consentiAcconto: false,
+          },
+          strategiaPagamento: { tipo: "rate", numeroRate: 2 },
+        },
+      ],
+    }
+
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: legacyCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: legacyProposta,
+        propostaB: legacyProposta,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.propostaA.servizi[0]?.service.catalogServiceId).toBe("svc-legacy")
+    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-cashflow", {
+      piano: state.piano,
+      propostaA: state.propostaA,
+      propostaB: state.propostaB,
+      sectionToggles: state.sectionToggles,
+    })
   })
 
   it("sanitizes proposal A on write and persists the full compare payload", async () => {
@@ -356,8 +413,8 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 6 })
     expect(updated.propostaA.servizi[0]?.service.color).toMatch(/^hsl\(/)
 
-    expect(saveToStorage).toHaveBeenNthCalledWith(1, "meraviglia-service-catalog", updated.services)
-    expect(saveToStorage).toHaveBeenNthCalledWith(2, "meraviglia-cashflow", {
+    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-service-catalog", updated.services)
+    expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,

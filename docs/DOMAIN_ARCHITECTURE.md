@@ -159,4 +159,6 @@ Future DTO hierarchy (planned):
 
 These flattened DTOs are deliberate in early architecture stages to reduce migration risk and keep boundary contracts stable before introducing full nested DTO structures.
 
+Identity ownership clarification (governance rule): UI/state may transport user-selected identity references (for example catalog IDs) in DTO payloads, but identity enrichment/reconciliation/normalization must originate in approved application/domain boundaries, never in UI components.
+
 They are migration-only simplifications and are not precedent for long-term architecture direction.
