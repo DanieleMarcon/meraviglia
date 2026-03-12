@@ -56,6 +56,8 @@ SimulationModel
 SimulationResult
 ```
 
+`SimulationContext` is a mandatory runtime execution structure for every simulation run and is not optional.
+
 This architecture keeps the orchestration and validation responsibilities in `SimulationEngine` while enabling specialized evaluation models over time.
 
 It allows future expansion to:
@@ -131,7 +133,7 @@ Any change that weakens these invariants is an architecture governance violation
 - **Assumption Set**: explicit variables and baseline conditions (e.g., `conversion_rate`, `traffic_growth`, `budget`).
 - **Constraint Set**: boundaries such as budget, time, and execution capacity.
 - **Impact Model**: deterministic transformation logic from actions to projected outcomes.
-- **SimulationResult**: structured output with `projectedIndicators`, `riskLevel`, optional `notes`, and timestamp.
+- **SimulationResult**: structured output with `projectedIndicators`, `riskLevel`, optional `notes`, and timestamp (timestamp/execution-time metadata must originate from governed `SimulationContext` input, never direct system time access inside models).
 
 Principles:
 - Determinism and reproducibility over opaque prediction.
@@ -140,7 +142,10 @@ Principles:
 - Human review remains authoritative for strategy approval.
 
 ## Future Extensibility Considerations
-- Add probabilistic and sensitivity analysis modes alongside deterministic core.
+- Probabilistic or sensitivity-analysis behavior, if introduced, must be governed as explicit separate execution modes.
+- Such modes must not weaken, alter, or contaminate the deterministic execution path.
+- Deterministic simulation remains the canonical execution contract unless governance is explicitly expanded in architecture/protocol documentation.
+- Probabilistic features must never be introduced implicitly into deterministic models.
 - Introduce calibration workflows using observed execution feedback.
 - Support domain-specific simulation plugins with shared validation contracts.
 - Provide portfolio-level simulation orchestration for cross-workspace planning.
@@ -180,4 +185,4 @@ This ensures:
 
 Simulation models must never directly call system time or external randomness.
 
-All temporal values and execution metadata must come from the provided context.
+All temporal values and execution metadata (including any `SimulationResult` timestamp fields) must come from the provided context.
