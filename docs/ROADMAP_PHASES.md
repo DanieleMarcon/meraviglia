@@ -100,6 +100,8 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up update: `addService` and `removeService` catalog mutations now also route both proposal branches through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; persisted bootstrap compatibility normalization remains the primary transitional-sanitizer-owned path pending handoff.
 - Follow-up update: persisted bootstrap proposal normalization now also routes through application-orchestrated domain normalization (`normalizeProposalForWrite`) directly; transitional `sanitizePropostaAtBoundary` ownership is reduced to compatibility aliasing only for this strategic-planning flow.
 - Follow-up update: import/legacy bootstrap adaptation now persists normalized proposals after deterministic `catalogServiceId` recovery, reducing repeated shape-based fallback on reloads; remaining identity propagation gaps stay tracked for explicit import/export and mapper boundaries.
+- Follow-up update: proposal-document export adaptation (`ACTIVATED_SERVICES` payload) now emits `catalogServiceId` explicitly while preserving runtime `service.id` for compatibility, reducing downstream need for shape-based service matching in document/export consumers.
+- Follow-up confirmed: remaining identity propagation gaps are still open for other import/export contracts and repository/application mapping paths that can ingest service payloads without `catalogServiceId`.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

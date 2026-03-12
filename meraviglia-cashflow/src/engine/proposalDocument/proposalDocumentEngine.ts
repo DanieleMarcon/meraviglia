@@ -43,6 +43,7 @@ function isSectionEnabled(
 interface ActivatedServicesPayload {
   services: Array<{
     id: string
+    catalogServiceId: string | null
     nome: string
     modulo: string
     prezzo: number
@@ -100,6 +101,7 @@ function buildActivatedServicesPayload(proposta: Proposta): ActivatedServicesPay
   return {
     services: proposta.servizi.map(({ service, strategiaPagamento }) => ({
       id: service.id,
+      catalogServiceId: service.catalogServiceId ?? null,
       nome: service.nome,
       modulo: service.nome,
       prezzo: getServicePrice({ service, strategiaPagamento }),
