@@ -1,9 +1,13 @@
 import { DomainValidationError } from "../errors/DomainValidationError"
 import { normalizePianoStrategico, type PianoStrategico } from "../models/PianoStrategico"
-import { normalizeProposta, type Proposta, type PropostaService } from "../models/Proposta"
+import {
+  normalizeProposta,
+  normalizePropostaService,
+  type Proposta,
+  type PropostaService,
+} from "../models/Proposta"
 import { normalizeService, type Service } from "../models/Service"
 import type { ServiceDefinition } from "../models/ServiceDefinition"
-import type { StrategiaPagamento } from "../models/StrategiaPagamento"
 
 const FALLBACK_MAX_RATE = 12
 
@@ -76,39 +80,6 @@ export const resolvePaymentConstraints = (
   }
 }
 
-const sanitizeStrategiaPagamento = (
-  strategiaPagamento: StrategiaPagamento,
-  service: Service,
-  pianoDurata: number,
-  catalog: ServiceDefinition[],
-): StrategiaPagamento => {
-  const { maxRatePerPiano } = resolvePaymentConstraints(service, pianoDurata, catalog)
-
-  if (!service.consentiRateizzazione && (strategiaPagamento.tipo === "rate" || strategiaPagamento.tipo === "accontoRate")) {
-    return { tipo: "oneShot" }
-  }
-
-  if (!service.consentiAcconto && strategiaPagamento.tipo === "accontoRate") {
-    return { tipo: "rate", numeroRate: clampInteger(strategiaPagamento.numeroRate ?? 1, 1, maxRatePerPiano) }
-  }
-
-  if (strategiaPagamento.tipo === "rate") {
-    return {
-      ...strategiaPagamento,
-      numeroRate: clampInteger(strategiaPagamento.numeroRate ?? 1, 1, maxRatePerPiano),
-    }
-  }
-
-  if (strategiaPagamento.tipo === "accontoRate") {
-    return {
-      ...strategiaPagamento,
-      numeroRate: clampInteger(strategiaPagamento.numeroRate ?? 1, 1, maxRatePerPiano),
-    }
-  }
-
-  return strategiaPagamento
-}
-
 const sanitizePropostaService = (
   propostaService: PropostaService,
   pianoDurata: number,
@@ -123,13 +94,12 @@ const sanitizePropostaService = (
     maxDurataOperativa: mesiResidui,
   })
 
-  const strategiaPagamento = sanitizeStrategiaPagamento(propostaService.strategiaPagamento, service, pianoDurata, catalog)
+  const { maxRatePerPiano } = resolvePaymentConstraints(service, pianoDurata, catalog)
 
-  return {
+  return normalizePropostaService({
     ...propostaService,
     service,
-    strategiaPagamento,
-  }
+  }, { maxRatePerPiano })
 }
 
 export const sanitizePropostaAtBoundary = (

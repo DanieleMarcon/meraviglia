@@ -93,6 +93,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up confirmed: `src/App.tsx` composition remains intentionally transitional but still dense; plan extraction into smaller composition-oriented UI containers once current application-layer cleanup sequence stabilizes.
 - Follow-up confirmed: domain aggregate hardening still required for strategic planning entities (`Proposta`, `PianoStrategico`, `Service`) so invariants are progressively enforced by aggregate construction rather than relying only on sanitize/validation functions.
 - Follow-up update: first strategic-planning aggregate hardening slice delivered with domain normalizers for `Service`, `PianoStrategico`, and `Proposta`; boundary sanitization remains as a transitional compatibility layer and must be reduced once constructor-owned invariants are adopted at all write paths.
+- Follow-up update: payment-strategy hardening slice delivered by moving proposal-service payment normalization into domain-owned constructors (`StrategiaPagamento`/`PropostaService` normalization); further cleanup remains to remove transitional boundary sanitize ownership and replace shape-based catalog matching with stronger identity-based matching.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.

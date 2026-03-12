@@ -181,3 +181,12 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Coupling-by-shape cleanup remains open where UI/application still share DTO-like shapes directly and should continue via explicit mapper introduction.
 - `src/App.tsx` composition density remains a planned cleanup target after this hardening sequence stabilizes.
 - Transitional compatibility layer remains in place: boundary-level `sanitizePropostaAtBoundary` orchestration still adapts legacy call sites and should be reduced/removed once construction-time invariants are consistently enforced at write boundaries.
+
+### Post-Domain Aggregate Hardening (Step 14 — Payment Strategy Slice)
+
+- Payment-strategy normalization has been moved closer to the strategic-planning domain aggregate by introducing domain-owned `normalizeStrategiaPagamento` and `normalizePropostaService`, then delegating boundary sanitize flow to these domain constructors.
+- Remaining aggregate hardening is still required after this slice (for example stronger constructor-time invariants across additional proposal/service semantics) so the model remains harder to place in invalid states without transitional boundary adaptation.
+- Transitional compatibility layer reduction is still pending: `sanitizePropostaAtBoundary` remains active as migration bridge and should be narrowed/removed once all write paths use aggregate-owned constructors directly.
+- Coupling-by-shape cleanup remains open where UI/application still share DTO-like shapes directly and should continue via explicit mapper introduction.
+- `src/App.tsx` composition density remains a planned cleanup target after this hardening sequence stabilizes.
+- Identity-hardening follow-up remains open for service catalog matching: current fallback catalog resolution still contains shape-based matching (`nome` + `prezzoPieno` + `prezzoScontato`) and should migrate to stronger identity-based matching semantics.

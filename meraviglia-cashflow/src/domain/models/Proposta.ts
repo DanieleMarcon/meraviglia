@@ -1,5 +1,8 @@
 import type { Service } from "./Service"
-import type { StrategiaPagamento } from "./StrategiaPagamento"
+import {
+  normalizeStrategiaPagamento,
+  type StrategiaPagamento,
+} from "./StrategiaPagamento"
 
 export interface PropostaService {
   service: Service
@@ -18,4 +21,20 @@ export const normalizeProposta = (
 ): Proposta => ({
   ...proposta,
   servizi: proposta.servizi.map(normalizePropostaService),
+})
+
+export interface NormalizePropostaServiceOptions {
+  maxRatePerPiano: number
+}
+
+export const normalizePropostaService = (
+  propostaService: PropostaService,
+  options: NormalizePropostaServiceOptions,
+): PropostaService => ({
+  ...propostaService,
+  strategiaPagamento: normalizeStrategiaPagamento(propostaService.strategiaPagamento, {
+    consentiRateizzazione: propostaService.service.consentiRateizzazione,
+    consentiAcconto: propostaService.service.consentiAcconto,
+    maxRate: options.maxRatePerPiano,
+  }),
 })

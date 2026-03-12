@@ -58,4 +58,15 @@ describe("domainValidation", () => {
     expect(sanitized.servizi[0].strategiaPagamento.tipo).toBe("rate")
     expect(sanitized.servizi[0].strategiaPagamento.numeroRate).toBe(3)
   })
+
+  it("acconto non consentito viene normalizzato a rate nel dominio", () => {
+    const proposta = buildProposta(
+      buildService({ consentiAcconto: false, maxRateConsentite: 2 }),
+      { tipo: "accontoRate", numeroRate: 9, percentualeAcconto: 0.6 },
+    )
+
+    const sanitized = sanitizePropostaAtBoundary(proposta, piano, [])
+
+    expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+  })
 })
