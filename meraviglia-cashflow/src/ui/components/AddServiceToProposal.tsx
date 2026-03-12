@@ -20,6 +20,7 @@ export default function AddServiceToProposal({
     const newService = {
       service: {
         id: uuidv4(),
+        catalogServiceId: serviceDef.id,
         nome: serviceDef.nome,
         prezzoPieno: serviceDef.prezzoPieno,
         prezzoScontato: serviceDef.prezzoScontato,

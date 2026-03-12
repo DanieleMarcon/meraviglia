@@ -104,6 +104,42 @@ describe("domainValidation", () => {
     expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
   })
 
+  it("propaga l'identita catalogo via catalogServiceId quando l'id runtime differisce", () => {
+    const proposta = buildProposta(
+      buildService({
+        id: "runtime-instance-id",
+        catalogServiceId: "svc-catalog-id",
+        nome: "Legacy Name",
+        prezzoPieno: 123,
+        prezzoScontato: 111,
+        maxRateConsentite: undefined,
+      }),
+      { tipo: "rate", numeroRate: 8 },
+    )
+
+    const catalog = [
+      {
+        id: "svc-catalog-id",
+        nome: "Catalog Canonical",
+        categoria: "Ops",
+        prezzoPieno: 1000,
+        prezzoScontato: 850,
+        durataStandard: 6,
+        color: "#16a34a",
+        consentiRateizzazione: true,
+        consentiAcconto: true,
+        maxRateConsentite: 2,
+      },
+    ]
+
+    const sanitized = sanitizePropostaAtBoundary(proposta, piano, catalog)
+
+    expect(sanitized.servizi[0].service.catalogServiceId).toBe("svc-catalog-id")
+    expect(sanitized.servizi[0].service.maxRateConsentite).toBe(2)
+    expect(sanitized.servizi[0].service.color).toBe("#16a34a")
+    expect(sanitized.servizi[0].strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
+  })
+
   it("disattiva fallback shape-based ambiguo quando esistono collisioni", () => {
     const proposta = buildProposta(
       buildService({ id: "svc-unmapped", maxRateConsentite: undefined }),
