@@ -1,9 +1,7 @@
-import React, { type Dispatch, type SetStateAction } from "react"
+import React from "react"
 
 import {
   ProposalSectionType,
-  type ProposalDTO,
-  type ProposalServiceDTO,
 } from "./application/dto/StrategicPlanDTO"
 
 import PaymentEditor from "./ui/components/PaymentEditor"
@@ -44,35 +42,14 @@ function CashflowApp() {
     piano,
     setPiano,
     propostaA,
-    setPropostaA,
     propostaB,
-    setPropostaB,
     addCatalogServiceToPropostaA,
     updatePropostaAServicePaymentStrategy,
+    updatePropostaAServiceStartMonth,
+    updatePropostaBServiceStartMonth,
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
-
-  const moveService = (
-    propostaSetter: Dispatch<SetStateAction<ProposalDTO>>,
-    serviceId: string,
-    newMonth: number
-  ) => {
-    propostaSetter((prev) => ({
-      ...prev,
-      servizi: prev.servizi.map((s: ProposalServiceDTO) =>
-        s.service.id === serviceId
-          ? {
-              ...s,
-              service: {
-                ...s.service,
-                meseInizio: newMonth,
-              },
-            }
-          : s
-      ),
-    }))
-  }
 
   const resetAll = () => {
     clearStorage(STORAGE_KEY)
@@ -142,10 +119,10 @@ function CashflowApp() {
           propostaA={propostaA}
           propostaB={propostaB}
           onMoveServiceA={(id, month) =>
-            moveService(setPropostaA, id, month)
+            updatePropostaAServiceStartMonth({ serviceId: id, month })
           }
           onMoveServiceB={(id, month) =>
-            moveService(setPropostaB, id, month)
+            updatePropostaBServiceStartMonth({ serviceId: id, month })
           }
         />
       </React.Suspense>

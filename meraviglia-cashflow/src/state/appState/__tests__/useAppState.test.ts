@@ -477,6 +477,62 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaA.servizi).toHaveLength(0)
   })
 
+  it("applies timeline month-move intent for proposal A through app-state orchestration", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.updatePropostaAServiceStartMonth({
+      serviceId: "proposal-a-s1",
+      month: 2,
+    })
+
+    const updated = useAppState()
+
+    expect(updated.propostaA.servizi[0]?.service.meseInizio).toBe(2)
+    expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      piano: updated.piano,
+      propostaA: updated.propostaA,
+      propostaB: updated.propostaB,
+      sectionToggles: updated.sectionToggles,
+    })
+  })
+
+  it("applies timeline month-move intent for proposal B through app-state orchestration", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.updatePropostaBServiceStartMonth({
+      serviceId: "proposal-b-s1",
+      month: 3,
+    })
+
+    const updated = useAppState()
+
+    expect(updated.propostaB.servizi[0]?.service.meseInizio).toBe(3)
+    expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      piano: updated.piano,
+      propostaA: updated.propostaA,
+      propostaB: updated.propostaB,
+      sectionToggles: updated.sectionToggles,
+    })
+  })
+
   it("re-normalizes proposals when addService introduces catalog constraints and persists both storage keys", async () => {
     const longPlan: PianoStrategico = {
       durataTotale: 12,

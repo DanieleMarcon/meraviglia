@@ -175,6 +175,11 @@ interface PaymentStrategyIntent {
   numeroRate?: number
 }
 
+interface ServiceStartMonthIntent {
+  serviceId: string
+  month: number
+}
+
 const applyPaymentStrategyIntent = (
   proposta: Proposta,
   intent: PaymentStrategyIntent,
@@ -191,6 +196,26 @@ const applyPaymentStrategyIntent = (
         ...propostaService.strategiaPagamento,
         ...(intent.tipo ? { tipo: intent.tipo } : {}),
         ...(intent.numeroRate !== undefined ? { numeroRate: intent.numeroRate } : {}),
+      },
+    }
+  }),
+})
+
+const applyServiceStartMonthIntent = (
+  proposta: Proposta,
+  intent: ServiceStartMonthIntent,
+): Proposta => ({
+  ...proposta,
+  servizi: proposta.servizi.map((propostaService) => {
+    if (propostaService.service.id !== intent.serviceId) {
+      return propostaService
+    }
+
+    return {
+      ...propostaService,
+      service: {
+        ...propostaService.service,
+        meseInizio: intent.month,
       },
     }
   }),
@@ -349,6 +374,28 @@ export function useAppState() {
     })
   }
 
+  const updatePropostaAServiceStartMonth = (intent: ServiceStartMonthIntent) => {
+    setStore({
+      ...store,
+      propostaA: normalizeProposalForWrite(
+        applyServiceStartMonthIntent(store.propostaA, intent),
+        store.piano,
+        store.services,
+      ),
+    })
+  }
+
+  const updatePropostaBServiceStartMonth = (intent: ServiceStartMonthIntent) => {
+    setStore({
+      ...store,
+      propostaB: normalizeProposalForWrite(
+        applyServiceStartMonthIntent(store.propostaB, intent),
+        store.piano,
+        store.services,
+      ),
+    })
+  }
+
   const addService = (data: Omit<ServiceDefinition, "id">) => {
     const id = uuidv4()
     const nextServices = [...store.services, { ...data, id, color: data.color ?? generateDeterministicColorFromId(id) }]
@@ -393,6 +440,8 @@ export function useAppState() {
     setPropostaB,
     addCatalogServiceToPropostaA,
     updatePropostaAServicePaymentStrategy,
+    updatePropostaAServiceStartMonth,
+    updatePropostaBServiceStartMonth,
     addService,
     removeService,
     setSectionEnabled,
