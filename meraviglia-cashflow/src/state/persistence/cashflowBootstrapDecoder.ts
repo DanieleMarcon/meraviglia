@@ -12,6 +12,13 @@ export interface PersistedCashflowState {
   sectionToggles?: SectionToggleState
 }
 
+export const CASHFLOW_BOOTSTRAP_VERSION = 1 as const
+
+interface PersistedCashflowEnvelopeV1 {
+  version: typeof CASHFLOW_BOOTSTRAP_VERSION
+  payload: PersistedCashflowState
+}
+
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null
 
@@ -21,6 +28,14 @@ const hasPersistedCashflowShape = (value: unknown): value is PersistedCashflowSt
   }
 
   return "piano" in value && "propostaA" in value && "propostaB" in value
+}
+
+const hasPersistedCashflowEnvelopeShape = (value: unknown): value is PersistedCashflowEnvelopeV1 => {
+  if (!isObject(value)) {
+    return false
+  }
+
+  return value.version === CASHFLOW_BOOTSTRAP_VERSION && "payload" in value
 }
 
 const isSectionToggleState = (value: unknown): value is SectionToggleState => {
@@ -74,7 +89,7 @@ export interface DecodedCashflowBootstrap {
   sectionToggles: SectionToggleState
 }
 
-export const decodeCashflowBootstrapPayload = (raw: unknown): DecodedCashflowBootstrap => {
+const decodePersistedCashflowState = (raw: unknown): DecodedCashflowBootstrap => {
   if (!hasPersistedCashflowShape(raw)) {
     return {
       payload: null,
@@ -84,15 +99,35 @@ export const decodeCashflowBootstrapPayload = (raw: unknown): DecodedCashflowBoo
 
   const normalizedSectionToggles = normalizePersistedSectionToggles(raw.sectionToggles)
 
-  const decodedPayload: PersistedCashflowState = {
-    piano: raw.piano,
-    propostaA: canonicalizePersistedProposalAliases(raw.propostaA),
-    propostaB: canonicalizePersistedProposalAliases(raw.propostaB),
+  return {
+    payload: {
+      piano: raw.piano,
+      propostaA: canonicalizePersistedProposalAliases(raw.propostaA),
+      propostaB: canonicalizePersistedProposalAliases(raw.propostaB),
+      sectionToggles: normalizedSectionToggles,
+    },
     sectionToggles: normalizedSectionToggles,
+  }
+}
+
+export const createCashflowBootstrapEnvelope = (
+  payload: PersistedCashflowState,
+): PersistedCashflowEnvelopeV1 => ({
+  version: CASHFLOW_BOOTSTRAP_VERSION,
+  payload,
+})
+
+export const decodeCashflowBootstrapPayload = (raw: unknown): DecodedCashflowBootstrap => {
+  if (hasPersistedCashflowEnvelopeShape(raw)) {
+    return decodePersistedCashflowState(raw.payload)
   }
 
-  return {
-    payload: decodedPayload,
-    sectionToggles: normalizedSectionToggles,
+  if (isObject(raw) && "version" in raw) {
+    return {
+      payload: null,
+      sectionToggles: createDefaultSectionToggleState(),
+    }
   }
+
+  return decodePersistedCashflowState(raw)
 }

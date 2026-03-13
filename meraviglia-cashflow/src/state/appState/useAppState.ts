@@ -13,7 +13,10 @@ import {
   type SectionToggleState,
 } from "../../application/proposalDocumentSectionToggles"
 import { normalizeProposalForWrite } from "../../application/strategicPlanningService"
-import { decodeCashflowBootstrapPayload } from "../persistence/cashflowBootstrapDecoder"
+import {
+  createCashflowBootstrapEnvelope,
+  decodeCashflowBootstrapPayload,
+} from "../persistence/cashflowBootstrapDecoder"
 import { decodeServiceCatalogBootstrapPayload } from "../persistence/serviceCatalogBootstrapDecoder"
 import { loadRawFromStorage, saveToStorage } from "../persistence/storage"
 
@@ -201,12 +204,15 @@ const createInitialState = (): AppStateStore => {
       || !areValuesEqual(persistedCashflow.sectionToggles, sectionToggles)
 
     if (shouldPersistNormalizedCashflow) {
-      saveToStorage(CASHFLOW_STORAGE_KEY, {
-        piano,
-        propostaA: normalizedPropostaA,
-        propostaB: normalizedPropostaB,
-        sectionToggles,
-      })
+      saveToStorage(
+        CASHFLOW_STORAGE_KEY,
+        createCashflowBootstrapEnvelope({
+          piano,
+          propostaA: normalizedPropostaA,
+          propostaB: normalizedPropostaB,
+          sectionToggles,
+        })
+      )
     }
   }
 
@@ -231,12 +237,15 @@ const setStore = (nextStore: AppStateStore) => {
   store = nextStore
 
   saveToStorage(SERVICE_CATALOG_STORAGE_KEY, store.services)
-  saveToStorage(CASHFLOW_STORAGE_KEY, {
-    piano: store.piano,
-    propostaA: store.propostaA,
-    propostaB: store.propostaB,
-    sectionToggles: store.sectionToggles,
-  })
+  saveToStorage(
+    CASHFLOW_STORAGE_KEY,
+    createCashflowBootstrapEnvelope({
+      piano: store.piano,
+      propostaA: store.propostaA,
+      propostaB: store.propostaB,
+      sectionToggles: store.sectionToggles,
+    })
+  )
 
   notifyListeners()
 }

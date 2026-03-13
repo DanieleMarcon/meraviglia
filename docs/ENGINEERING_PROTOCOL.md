@@ -195,6 +195,7 @@ Ownership boundaries between layers are mandatory.
 - proposal-document orchestration must prepare high-value section payloads (at minimum `ACTIVATED_SERVICES`, `STRATEGIC_PLAN`, `FINANCIAL_PROPOSAL`, and `COMPARISON`) through application-owned mappers/projections before engine emission, preserving explicit contract ownership and reducing shape coupling
 - import/repository adapters that ingest legacy payloads may accept legacy alias keys only as narrow compatibility bridges (for example `catalog_service_id`) but must normalize them immediately to canonical application fields (`catalogServiceId`) before business orchestration
 - local persistence bootstrap ingress must pass through an explicit decode/compatibility adapter boundary (parse → shape guard → legacy alias canonicalization) before application orchestration; bootstrap adapters may not rely on broad cast-based acceptance
+- versioned local persistence families must decode through an explicit envelope/version-dispatch ingress seam (raw parse → envelope/version detection → version-specific decoder/adaptation → handoff to existing application/domain normalization), and unknown envelope versions must fail closed to a safe fallback instead of shape-based acceptance
 
 ### Domain layer ownership rules
 

@@ -1,9 +1,36 @@
 import { describe, expect, it } from "vitest"
 
 import { ProposalSectionType } from "../../../application/dto/StrategicPlanDTO"
-import { decodeCashflowBootstrapPayload } from "../cashflowBootstrapDecoder"
+import {
+  createCashflowBootstrapEnvelope,
+  decodeCashflowBootstrapPayload,
+} from "../cashflowBootstrapDecoder"
 
 describe("cashflowBootstrapDecoder", () => {
+
+  it("accepts current versioned envelope payload", () => {
+    const decoded = decodeCashflowBootstrapPayload(createCashflowBootstrapEnvelope({
+      piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+      propostaA: { id: "a", nome: "A", servizi: [] },
+      propostaB: { id: "b", nome: "B", servizi: [] },
+    }))
+
+    expect(decoded.payload?.piano.durataTotale).toBe(6)
+  })
+
+  it("rejects unsupported versioned envelope payload", () => {
+    const decoded = decodeCashflowBootstrapPayload({
+      version: 999,
+      payload: {
+        piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+        propostaA: { id: "a", nome: "A", servizi: [] },
+        propostaB: { id: "b", nome: "B", servizi: [] },
+      },
+    })
+
+    expect(decoded.payload).toBeNull()
+  })
+
   it("canonicalizes legacy catalog_service_id aliases", () => {
     const decoded = decodeCashflowBootstrapPayload({
       piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
