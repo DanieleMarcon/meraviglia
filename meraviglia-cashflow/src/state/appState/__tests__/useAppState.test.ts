@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ProposalSectionType, type PianoStrategico, type Proposta, type ServiceDefinition } from "../../../application/dto/StrategicPlanDTO"
 
 interface PersistedFixtures {
-  services?: ServiceDefinition[]
+  services?: unknown
   rawCashflow?: unknown
   cashflow?: {
     propostaA: Proposta
@@ -118,23 +118,13 @@ const loadUseAppState = async (fixtures: PersistedFixtures = {}) => {
       return rawCashflow
     }
 
-    return undefined
-  })
-
-  const loadFromStorage = vi.fn((key: string, isValid?: (value: unknown) => boolean) => {
     if (key === "meraviglia-service-catalog") {
-      const persistedServices = fixtures.services
-      if (persistedServices === undefined) {
-        return undefined
-      }
-
-      return isValid && !isValid(persistedServices)
-        ? null
-        : persistedServices
+      return fixtures.services
     }
 
     return undefined
   })
+
   const saveToStorage = vi.fn()
 
   vi.doMock("react", () => ({
@@ -146,7 +136,6 @@ const loadUseAppState = async (fixtures: PersistedFixtures = {}) => {
   }))
 
   vi.doMock("../../persistence/storage", () => ({
-    loadFromStorage,
     loadRawFromStorage,
     saveToStorage,
   }))
@@ -313,6 +302,61 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(state.propostaA.nome).toBe("Piano Completo")
     expect(state.propostaB.nome).toBe("Piano Modulato")
     expect(saveToStorage).not.toHaveBeenCalledWith("meraviglia-cashflow", expect.anything())
+  })
+
+
+  it("drops invalid persisted catalog entries through service-catalog decode boundary", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: [
+        {
+          id: "svc-valid",
+          nome: "Valid Service",
+          categoria: "Ops",
+          prezzoPieno: 500,
+          prezzoScontato: 450,
+          durataStandard: 3,
+          consentiRateizzazione: true,
+          consentiAcconto: false,
+          maxRateConsentite: 2,
+        },
+        {
+          id: "svc-invalid",
+          nome: "Invalid Service",
+          categoria: "Ops",
+          prezzoPieno: "500",
+          prezzoScontato: 450,
+          durataStandard: 3,
+          consentiRateizzazione: true,
+          consentiAcconto: false,
+          maxRateConsentite: 2,
+        },
+      ],
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.services).toHaveLength(1)
+    expect(state.services[0]?.id).toBe("svc-valid")
+  })
+
+  it("falls back to empty catalog when persisted service-catalog payload is not an array", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: { not: "an-array" },
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.services).toEqual([])
   })
 
   it("falls back to defaults when persisted cashflow JSON decode yields null", async () => {

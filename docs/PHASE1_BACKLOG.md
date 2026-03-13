@@ -434,3 +434,24 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Persisted payload migration/versioning/backfill follow-up still needed:
   - introduce a minimal versioned envelope/decoder dispatch for local persisted contracts once adjacent slices are hardened.
   - define deterministic migration/backfill for legacy alias keys and identity continuity fields across local/import/repository ingress.
+
+### Post-Domain Aggregate Hardening (Step 36 — Service Catalog Local Persistence Decoder Hardening)
+
+- Service catalog local persistence ingress now uses an explicit decode/adaptation boundary (`serviceCatalogBootstrapDecoder`) that isolates raw payload read, array-level gating, and per-entry decode before app-state orchestration uses the catalog.
+- Runtime behavior remains coherent and incremental: valid persisted catalog entries continue loading, invalid entries now fall back safely by being dropped, and non-array payloads resolve deterministically to an empty catalog.
+- Durable clarification: persistence ingress adapters own compatibility and structural acceptance concerns; application/domain normalization continues owning business invariants and catalog/proposal semantic reconciliation.
+- Remaining persistence/import contract hardening gaps after this slice:
+  - non-local import/export payload ingestion still needs explicit decode adapters with schema/version-aware dispatch.
+  - repository/infrastructure runtime ingress still needs explicit decoder enforcement instead of structural acceptance.
+- Remaining identity continuity gaps at persistence/import boundaries:
+  - non-local service payloads can still cross boundaries without guaranteed `catalogServiceId` continuity.
+  - deterministic identity backfill/migration is still required for already persisted/imported legacy records.
+- Remaining shape-based compatibility fallback still retained:
+  - unique-shape catalog matching fallback remains active in domain validation as a temporary legacy bridge.
+  - compatibility fallback remains on adjacent import/export/repository seams pending targeted decoder slices.
+- Remaining repository/infra runtime decode hardening still needed:
+  - repository adapter ingress should adopt explicit per-record decode/fallback behavior aligned with local persistence decoders.
+- `src/App.tsx` composition density reduction remains open and should stay a dedicated follow-up slice after persistence/import boundary hardening stabilizes.
+- Persisted payload migration/versioning/backfill follow-up still needed:
+  - introduce minimal persisted-envelope versioning/decoder dispatch across local/import/repository contracts.
+  - define deterministic backfill for legacy service identity fields and compatibility aliases during ingestion.

@@ -14,7 +14,8 @@ import {
 } from "../../application/proposalDocumentSectionToggles"
 import { normalizeProposalForWrite } from "../../application/strategicPlanningService"
 import { decodeCashflowBootstrapPayload } from "../persistence/cashflowBootstrapDecoder"
-import { loadFromStorage, loadRawFromStorage, saveToStorage } from "../persistence/storage"
+import { decodeServiceCatalogBootstrapPayload } from "../persistence/serviceCatalogBootstrapDecoder"
+import { loadRawFromStorage, saveToStorage } from "../persistence/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
 const CASHFLOW_STORAGE_KEY = "meraviglia-cashflow"
@@ -49,8 +50,6 @@ interface AppStateStore {
   sectionToggles: SectionToggleState
 }
 
-const isServiceDefinitionArray = (value: unknown): value is ServiceDefinition[] =>
-  Array.isArray(value)
 
 const normalizeHue = (value: number): number => ((value % 360) + 360) % 360
 
@@ -175,7 +174,8 @@ const createInitialState = (): AppStateStore => {
   const rawPersistedCashflow = loadRawFromStorage(CASHFLOW_STORAGE_KEY)
   const decodedBootstrap = decodeCashflowBootstrapPayload(rawPersistedCashflow)
   const persistedCashflow = decodedBootstrap.payload
-  const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
+  const rawPersistedServiceCatalog = loadRawFromStorage(SERVICE_CATALOG_STORAGE_KEY)
+  const persistedServices = decodeServiceCatalogBootstrapPayload(rawPersistedServiceCatalog)
   const { services, changed } = ensureServiceColors(persistedServices)
 
   if (changed) {
