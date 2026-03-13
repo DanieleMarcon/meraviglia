@@ -327,3 +327,14 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density reduction remains open and should be handled in a dedicated composition extraction slice after identity-boundary hardening stabilizes.
 - Additional migration/backfill remains open for other import/export/repository/persisted paths so deterministic `catalogServiceId` recovery is eagerly normalized and persisted where possible.
 - Further UI-responsibility reduction is still desirable after this slice: continue shifting non-interaction payload-shaping responsibilities out of UI components and into application/state orchestration boundaries.
+
+### Post-Domain Aggregate Hardening (Step 28 — Strategic Planning Explicit Application Mapper Boundary)
+
+- `strategicPlanningService` now routes one coherent strategic-planning slice through explicit application-owned mappers for DTO→domain ingress and domain→DTO egress (`calculateCashflow`, `normalizeProposalForWrite`, `resolvePaymentConstraints`) instead of relying on structural compatibility.
+- This local slice clarifies semantic ownership (application contract mapping vs domain normalization) while preserving current runtime behavior and avoiding broad DTO redesign.
+- Remaining strategic-planning DTO/domain mapper gaps are still open for adjacent services/orchestrators that continue exchanging shape-compatible contracts without explicit mapper seams.
+- Remaining UI deep-shape mutation cleanup is still required where UI/state paths construct or mutate nested proposal-service payloads instead of transporting user intent only.
+- Remaining shape-based compatibility fallback is still retained as a narrow legacy bridge (domain `resolveCatalogDefinition` unique-shape match) and should be retired after identity propagation/backfill coverage is complete.
+- Persistence/import contract hardening remains open for non-bootstrap import/export/repository boundaries so canonical identity and explicit mapper adaptation are enforced consistently.
+- `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition-extraction slice after mapper boundary stabilization.
+- Further identity propagation and boundary tightening remain open where service payloads can still cross boundaries without deterministic `catalogServiceId` continuity.

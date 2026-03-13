@@ -104,6 +104,14 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up confirmed: remaining identity propagation gaps are still open for other import/export contracts and repository/application mapping paths that can ingest service payloads without `catalogServiceId`.
 - Follow-up update: compare-chart application mapper now emits both `runtimeServiceId` and `catalogServiceId` per service series (with narrow fallback only when catalog identity is missing), reducing one remaining weak identity boundary while preserving existing chart key behavior.
 - Follow-up update: persisted cashflow import adaptation now consumes legacy `catalog_service_id` and normalizes it to canonical `catalogServiceId` before domain write normalization, reducing one remaining explicit repository/import identity-loss boundary without widening fallback behavior.
+- Follow-up update: strategic-planning application orchestration now uses explicit mapper boundaries for `strategicPlanningService` domain ingress/egress (`calculateCashflow`, `normalizeProposalForWrite`, `resolvePaymentConstraints`) via dedicated application mappers instead of implicit DTO/domain shape compatibility.
+- Follow-up clarification: this slice intentionally remains local to one high-leverage service seam and does not yet migrate all strategic-planning consumers (for example compare/document/state flows) to explicit domain mapper contracts.
+- Follow-up confirmed: remaining strategic-planning DTO/domain mapper gaps are still open for adjacent services and orchestrators that continue to rely on shape-compatible contracts outside this service slice.
+- Follow-up confirmed: remaining UI deep-shape mutation cleanup is still required where components/state paths continue constructing rich proposal-service payloads or mutating nested DTO shapes beyond pure intent transport.
+- Follow-up confirmed: remaining shape-based compatibility fallback is still retained in domain validation (`resolveCatalogDefinition` unique-shape matching bridge) and should be removed once identity propagation/backfill coverage is complete.
+- Follow-up confirmed: persistence/import contract hardening is still required beyond current slices (explicit mapper boundaries and canonical identity normalization/backfill for non-bootstrap import/export/repository paths).
+- Follow-up confirmed: `src/App.tsx` composition density reduction remains open as a dedicated composition extraction task after mapper/identity stabilization.
+- Follow-up confirmed: further identity propagation and boundary tightening remain open for service payloads that still cross boundaries without guaranteed `catalogServiceId` continuity.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.
