@@ -8,7 +8,11 @@ import {
   type ProposalSectionType as ProposalSectionTypeValue,
 } from "../../domain/models/ProposalSectionType"
 import type { Proposta } from "../../domain/models/Proposta"
-import type { ActivatedServicesPayload } from "./proposalDocumentPayloads"
+import type {
+  ActivatedServicesPayload,
+  ComparisonPayload,
+  FinancialProposalPayload,
+} from "./proposalDocumentPayloads"
 import {
   createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
@@ -29,6 +33,8 @@ export interface BuildProposalDocumentInput {
   meta: BuildProposalDocumentMeta
   sectionToggles?: SectionToggleState
   preparedActivatedServicesPayload?: ActivatedServicesPayload
+  preparedFinancialProposalPayload?: FinancialProposalPayload
+  preparedComparisonPayload?: ComparisonPayload | null
 }
 
 function isSectionEnabled(
@@ -51,34 +57,11 @@ interface StrategicPlanPayload {
   }>
 }
 
-interface FinancialProposalPayload {
-  totaleAnno1: number
-  totaleAnno2: number
-  totale24Mesi: number
-  totaleAcconti: number
-  numeroServizi: number
-}
-
 interface CashflowPayload {
   monthly: number[]
   cumulative: number[]
   peakMonth: number
   peakValue: number
-}
-
-interface ComparisonPayload {
-  propostaA: {
-    totale24Mesi: number
-    totaleAnno1: number
-    totaleAnno2: number
-  }
-  propostaB: {
-    totale24Mesi: number
-    totaleAnno1: number
-    totaleAnno2: number
-  }
-  delta24Mesi: number
-  deltaPercentuale: number
 }
 
 function getServicePrice(propostaService: Proposta["servizi"][number]): number {
@@ -143,7 +126,7 @@ function buildCashflowPayload(cashflow: CashflowResult): CashflowPayload {
   }
 }
 
-function buildComparisonPayload(
+function buildComparisonPayloadFromFinancials(
   financialA: FinancialProposalPayload,
   financialB: FinancialProposalPayload
 ): ComparisonPayload {
@@ -176,6 +159,8 @@ export function buildProposalDocument({
   meta,
   sectionToggles: sectionTogglesInput,
   preparedActivatedServicesPayload,
+  preparedFinancialProposalPayload,
+  preparedComparisonPayload,
 }: BuildProposalDocumentInput): ProposalDocument {
   const sectionToggles: SectionToggleState = {
     ...createDefaultSectionToggleState(),
@@ -186,7 +171,9 @@ export function buildProposalDocument({
     preparedActivatedServicesPayload ?? buildActivatedServicesPayload(propostaA)
   const strategicPlanPayload = buildStrategicPlanPayload(piano)
   const cashflowA = calcolaCashflow(propostaA, piano)
-  const financialProposalPayload = buildFinancialProposalPayload(propostaA, cashflowA)
+  const financialProposalPayload =
+    preparedFinancialProposalPayload ??
+    buildFinancialProposalPayload(propostaA, cashflowA)
   const cashflowPayload = buildCashflowPayload(cashflowA)
 
   const cashflowB = propostaB ? calcolaCashflow(propostaB, piano) : undefined
@@ -275,9 +262,11 @@ export function buildProposalDocument({
         Boolean(propostaB),
       order: 11,
       payload:
-        propostaB && financialProposalPayloadB
-          ? buildComparisonPayload(financialProposalPayload, financialProposalPayloadB)
-          : null,
+        preparedComparisonPayload !== undefined
+          ? preparedComparisonPayload
+          : propostaB && financialProposalPayloadB
+            ? buildComparisonPayloadFromFinancials(financialProposalPayload, financialProposalPayloadB)
+            : null,
     },
     {
       type: ProposalSectionType.CLOSING,

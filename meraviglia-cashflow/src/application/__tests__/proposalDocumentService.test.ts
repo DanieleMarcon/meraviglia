@@ -60,4 +60,69 @@ describe("proposalDocumentService", () => {
       ],
     })
   })
+
+
+  it("usa mappers application-owned per FINANCIAL_PROPOSAL e COMPARISON", () => {
+    const proposalB: ProposalDTO = {
+      ...proposta,
+      id: "proposal-b",
+      nome: "Proposta B",
+      servizi: [
+        {
+          ...proposta.servizi[0],
+          service: {
+            ...proposta.servizi[0].service,
+            id: "runtime-service-b",
+            prezzoPieno: 600,
+            prezzoScontato: 600,
+            usaPrezzoScontato: false,
+          },
+          strategiaPagamento: { tipo: "oneShot" },
+        },
+      ],
+    }
+
+    const document = buildProposalDocument({
+      propostaA: proposta,
+      propostaB: proposalB,
+      piano,
+      meta: {
+        clientName: "Client",
+        contactPerson: "Owner",
+        version: "v1",
+      },
+    })
+
+    const financialSection = document.sections.find(
+      (section) => section.type === ProposalSectionType.FINANCIAL_PROPOSAL,
+    )
+
+    const comparisonSection = document.sections.find(
+      (section) => section.type === ProposalSectionType.COMPARISON,
+    )
+
+    expect(financialSection?.payload).toEqual({
+      totaleAnno1: 750,
+      totaleAnno2: 0,
+      totale24Mesi: 750,
+      totaleAcconti: 0,
+      numeroServizi: 1,
+    })
+
+    expect(comparisonSection?.payload).toEqual({
+      propostaA: {
+        totale24Mesi: 750,
+        totaleAnno1: 750,
+        totaleAnno2: 0,
+      },
+      propostaB: {
+        totale24Mesi: 600,
+        totaleAnno1: 600,
+        totaleAnno2: 0,
+      },
+      delta24Mesi: 150,
+      deltaPercentuale: 25,
+    })
+  })
+
 })

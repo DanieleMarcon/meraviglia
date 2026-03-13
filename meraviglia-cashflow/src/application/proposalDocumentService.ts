@@ -1,4 +1,5 @@
 import { buildProposalDocument as buildProposalDocumentEngine, type BuildProposalDocumentMeta } from "../engine/proposalDocument/proposalDocumentEngine"
+import { calcolaCashflow } from "../engine/cashflow/cashflowEngine"
 import type { ProposalDocument } from "../domain/models/ProposalDocument"
 import type {
   ProposalDTO,
@@ -9,7 +10,11 @@ import {
   mapProposalDTOToDomain,
   mapStrategicPlanDTOToDomain,
 } from "./mappers/strategicPlanningDomainMappers"
-import { mapProposalDTOToActivatedServicesPayload } from "./mappers/proposalDocumentMappers"
+import {
+  mapFinancialProposalsToComparisonPayload,
+  mapFinancialTotalsProjectionToFinancialProposalPayload,
+  mapProposalDTOToActivatedServicesPayload,
+} from "./mappers/proposalDocumentMappers"
 import { createDefaultSectionToggleState } from "./proposalDocumentSectionToggles"
 
 export interface BuildProposalDocumentInputDTO {
@@ -32,12 +37,51 @@ export const buildProposalDocument = ({
     ...sectionToggles,
   }
 
+  const propostaADomain = mapProposalDTOToDomain(propostaA)
+  const pianoDomain = mapStrategicPlanDTOToDomain(piano)
+  const propostaBDomain = propostaB ? mapProposalDTOToDomain(propostaB) : undefined
+
+  const cashflowA = calcolaCashflow(propostaADomain, pianoDomain)
+  const financialProposalPayloadA = mapFinancialTotalsProjectionToFinancialProposalPayload(
+    {
+      totaleAnno1: cashflowA.totaleAnno1,
+      totaleAnno2: cashflowA.totaleAnno2,
+      totale24Mesi: cashflowA.totale,
+      totaleAcconti: cashflowA.totaleAcconti,
+    },
+    propostaA.servizi.length,
+  )
+
+  const financialProposalPayloadB = propostaBDomain
+    ? (() => {
+        const cashflowB = calcolaCashflow(propostaBDomain, pianoDomain)
+
+        return mapFinancialTotalsProjectionToFinancialProposalPayload(
+          {
+            totaleAnno1: cashflowB.totaleAnno1,
+            totaleAnno2: cashflowB.totaleAnno2,
+            totale24Mesi: cashflowB.totale,
+            totaleAcconti: cashflowB.totaleAcconti,
+          },
+          propostaBDomain.servizi.length,
+        )
+      })()
+    : undefined
+
   return buildProposalDocumentEngine({
-    propostaA: mapProposalDTOToDomain(propostaA),
-    piano: mapStrategicPlanDTOToDomain(piano),
-    propostaB: propostaB ? mapProposalDTOToDomain(propostaB) : undefined,
+    propostaA: propostaADomain,
+    piano: pianoDomain,
+    propostaB: propostaBDomain,
     meta,
     sectionToggles: resolvedSectionToggles,
     preparedActivatedServicesPayload: mapProposalDTOToActivatedServicesPayload(propostaA),
+    preparedFinancialProposalPayload: financialProposalPayloadA,
+    preparedComparisonPayload:
+      financialProposalPayloadB !== undefined
+        ? mapFinancialProposalsToComparisonPayload(
+            financialProposalPayloadA,
+            financialProposalPayloadB,
+          )
+        : undefined,
   })
 }
