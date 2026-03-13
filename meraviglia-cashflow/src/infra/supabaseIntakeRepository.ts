@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { decodeIntakeRow, decodeIntakeRows } from "./intakeRowDecoder"
 import type {
   CreateIntakeRecordInput,
   IntakeRecord,
@@ -14,13 +15,13 @@ export class SupabaseIntakeRepository implements IntakeRepository {
   async createIntake(input: CreateIntakeRecordInput): Promise<IntakeRecord> {
     const { data, error } = await supabase.from(TABLE_NAME).insert(input).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to create intake")
-    return data
+    return decodeIntakeRow(data, "createIntake")
   }
 
   async listIntakes(): Promise<IntakeRecord[]> {
     const { data, error } = await supabase.from(TABLE_NAME).select(SELECT_FIELDS).order("created_at", { ascending: false })
     if (error) throw new Error(error.message)
-    return data ?? []
+    return decodeIntakeRows(data ?? [], "listIntakes")
   }
 
   async getIntakeById(id: string): Promise<IntakeRecord | null> {
@@ -29,13 +30,13 @@ export class SupabaseIntakeRepository implements IntakeRepository {
       if (error.code === "PGRST116") return null
       throw new Error(error.message)
     }
-    return data
+    return data ? decodeIntakeRow(data, "getIntakeById") : null
   }
 
   async updateIntake(id: string, input: UpdateIntakeRecordInput): Promise<IntakeRecord> {
     const { data, error } = await supabase.from(TABLE_NAME).update(input).eq("id", id).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to update intake")
-    return data
+    return decodeIntakeRow(data, "updateIntake")
   }
 
   async convertToWorkspace(id: string, workspaceId: string): Promise<IntakeRecord> {
