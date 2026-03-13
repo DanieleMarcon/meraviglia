@@ -413,3 +413,24 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries to guarantee canonical identity propagation and mapper adaptation before orchestration.
 - `src/App.tsx` composition density reduction remains open and should be handled in a focused composition-extraction slice after current UI intent-boundary cleanup stabilizes.
 - Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers where deterministic `catalogServiceId` continuity is not yet guaranteed.
+
+### Post-Domain Aggregate Hardening (Step 35 — Local Persistence Bootstrap Contract Hardening)
+
+- Local cashflow bootstrap ingress now uses an explicit persistence decode boundary (`cashflowBootstrapDecoder`) that isolates parse/shape-gate/legacy-alias canonicalization before proposal normalization orchestration.
+- Durable clarification: local persisted payload ingestion follows the same boundary rule as import/repository adapters—compatibility alias handling belongs inside narrow decode adapters, while business normalization remains in application/domain orchestration.
+- Remaining persistence/import contract hardening gaps after this slice:
+  - service-catalog local payloads still rely on shallow array-shape acceptance and need explicit element-level decoding.
+  - import/export payload ingress still needs equivalent decode adapters and explicit schema/version-aware dispatch.
+  - repository/infrastructure runtime decode boundaries still need explicit adapter enforcement at non-local persistence edges.
+- Remaining identity continuity gaps at persistence/import boundaries:
+  - legacy/externally-ingested payloads can still arrive without deterministic `catalogServiceId` propagation.
+  - stable identity backfill/migration coverage remains incomplete for existing persisted/imported records.
+- Remaining shape-based compatibility fallback retained:
+  - unique-shape catalog matching fallback remains active as a temporary bridge for legacy records.
+  - compatibility acceptance still exists for non-cashflow persisted payloads pending targeted decoder slices.
+- Remaining repository/infra runtime decode hardening still needed:
+  - infrastructure adapters still require explicit runtime decoders and rejection/fallback semantics instead of implicit structural acceptance.
+- `src/App.tsx` composition density reduction remains an open cleanup target and should stay scoped as a dedicated composition extraction slice.
+- Persisted payload migration/versioning/backfill follow-up still needed:
+  - introduce a minimal versioned envelope/decoder dispatch for local persisted contracts once adjacent slices are hardened.
+  - define deterministic migration/backfill for legacy alias keys and identity continuity fields across local/import/repository ingress.

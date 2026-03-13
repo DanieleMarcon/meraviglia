@@ -4,6 +4,7 @@ import { ProposalSectionType, type PianoStrategico, type Proposta, type ServiceD
 
 interface PersistedFixtures {
   services?: ServiceDefinition[]
+  rawCashflow?: unknown
   cashflow?: {
     propostaA: Proposta
     propostaB: Proposta
@@ -110,13 +111,26 @@ const propostaBRateSeed: Proposta = {
 const loadUseAppState = async (fixtures: PersistedFixtures = {}) => {
   vi.resetModules()
 
-  const loadFromStorage = vi.fn((key: string) => {
+  const rawCashflow = fixtures.rawCashflow ?? fixtures.cashflow
+
+  const loadRawFromStorage = vi.fn((key: string) => {
     if (key === "meraviglia-cashflow") {
-      return fixtures.cashflow
+      return rawCashflow
     }
 
+    return undefined
+  })
+
+  const loadFromStorage = vi.fn((key: string, isValid?: (value: unknown) => boolean) => {
     if (key === "meraviglia-service-catalog") {
-      return fixtures.services
+      const persistedServices = fixtures.services
+      if (persistedServices === undefined) {
+        return undefined
+      }
+
+      return isValid && !isValid(persistedServices)
+        ? null
+        : persistedServices
     }
 
     return undefined
@@ -133,6 +147,7 @@ const loadUseAppState = async (fixtures: PersistedFixtures = {}) => {
 
   vi.doMock("../../persistence/storage", () => ({
     loadFromStorage,
+    loadRawFromStorage,
     saveToStorage,
   }))
 
@@ -277,6 +292,42 @@ describe("useAppState compare/proposal orchestration", () => {
       sectionToggles: state.sectionToggles,
     })
   })
+
+  it("falls back to defaults when persisted cashflow payload shape is invalid", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      rawCashflow: { piano: basePlan },
+    })
+
+    const state = useAppState()
+
+    expect(state.piano).toEqual({
+      durataTotale: 12,
+      moduli: [
+        { nome: "Strutturazione", meseInizio: 1, durata: 3 },
+        { nome: "Attivazione", meseInizio: 4, durata: 3 },
+        { nome: "Ottimizzazione", meseInizio: 7, durata: 3 },
+        { nome: "Scaling", meseInizio: 10, durata: 3 },
+      ],
+    })
+    expect(state.propostaA.nome).toBe("Piano Completo")
+    expect(state.propostaB.nome).toBe("Piano Modulato")
+    expect(saveToStorage).not.toHaveBeenCalledWith("meraviglia-cashflow", expect.anything())
+  })
+
+  it("falls back to defaults when persisted cashflow JSON decode yields null", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: baseCatalog,
+      rawCashflow: null,
+    })
+
+    const state = useAppState()
+
+    expect(state.piano.durataTotale).toBe(12)
+    expect(state.propostaA.servizi).toEqual([])
+    expect(state.propostaB.servizi).toEqual([])
+  })
+
 
   it("sanitizes proposal A on write and persists the full compare payload", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
