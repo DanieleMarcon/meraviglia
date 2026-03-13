@@ -455,3 +455,25 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Persisted payload migration/versioning/backfill follow-up still needed:
   - introduce minimal persisted-envelope versioning/decoder dispatch across local/import/repository contracts.
   - define deterministic backfill for legacy service identity fields and compatibility aliases during ingestion.
+
+### Post-Domain Aggregate Hardening (Step 37 — Intake Repository/Infra Runtime Decode Hardening)
+
+- Supabase intake repository ingress now uses an explicit runtime decode/adaptation boundary (`intakeRowDecoder`) that isolates raw persistence row shape from canonical `IntakeRecord` emission before repository data re-enters application flow.
+- Runtime behavior remains coherent and incremental: valid intake rows are accepted and returned unchanged semantically, while malformed row shapes now fail fast with explicit decode errors instead of relying on static typing assumptions.
+- Durable clarification: repository/infra adapters must own external row decoding and compatibility normalization at ingress; business normalization remains outside infra in application/domain orchestration.
+- Remaining persistence/import contract hardening gaps after this slice:
+  - workspace repository ingress still relies on structural trust and needs an equivalent runtime row decoder.
+  - additional repository/infra adapters (auth and any future external adapters) still need explicit decode boundaries where external payloads enter the app.
+  - non-local import/export payload ingress still needs explicit decoder dispatch and schema/version-aware adaptation.
+- Remaining identity continuity gaps at persistence/import boundaries:
+  - non-intake payload seams still have incomplete deterministic identity propagation/backfill (for example catalog-linked IDs across import/export and repository boundaries).
+  - historical persisted/imported records still need deterministic identity backfill strategy where canonical IDs are missing.
+- Remaining shape-based compatibility fallback still retained:
+  - unique-shape catalog matching fallback in domain validation remains a temporary bridge for legacy payloads.
+  - compatibility acceptance fallback is still present in non-intake repository/import seams until targeted decoders are added.
+- Remaining repository/infra runtime decode hardening still needed in other slices:
+  - workspace repository is the next high-leverage ingress candidate for explicit runtime decode/adaptation.
+- `src/App.tsx` composition density reduction remains open and should stay scoped as a dedicated composition extraction step after persistence/repository ingress hardening stabilizes.
+- Migration/versioning/backfill follow-up still needed for persisted/imported payloads:
+  - define a minimal versioned envelope and decoder dispatch strategy across local persistence, import/export payloads, and repository ingress contracts.
+  - define deterministic migration/backfill for legacy compatibility keys and identity continuity fields during ingestion.
