@@ -112,6 +112,9 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up confirmed: persistence/import contract hardening is still required beyond current slices (explicit mapper boundaries and canonical identity normalization/backfill for non-bootstrap import/export/repository paths).
 - Follow-up confirmed: `src/App.tsx` composition density reduction remains open as a dedicated composition extraction task after mapper/identity stabilization.
 - Follow-up confirmed: further identity propagation and boundary tightening remain open for service payloads that still cross boundaries without guaranteed `catalogServiceId` continuity.
+- Follow-up update: compare/document-adjacent orchestration now includes an explicit application-owned mapper seam in `proposteCompareService` (`proposteCompareMappers`) so proposal-service DTOs are projected intentionally before compare series DTO emission.
+- Follow-up clarification: this mapper slice is intentionally narrow; proposal-document section payload composition still requires its own explicit application mapping boundary in a future step.
+- Follow-up confirmed: remaining UI deep-shape mutation cleanup, shape-based compatibility fallback retirement, persistence/import contract hardening, `src/App.tsx` composition density reduction, and broader identity-propagation tightening remain active follow-ups.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.
