@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { decodeWorkspaceRow, decodeWorkspaceRows } from "./workspaceRowDecoder"
 import type {
   CreateWorkspaceRecordInput,
   UpdateWorkspaceRecordInput,
@@ -23,7 +24,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       throw new Error(error?.message ?? "Failed to create workspace")
     }
 
-    return data
+    return decodeWorkspaceRow(data, "createWorkspace")
   }
 
   async listWorkspaces(): Promise<WorkspaceRecord[]> {
@@ -36,7 +37,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       throw new Error(error.message)
     }
 
-    return data ?? []
+    return decodeWorkspaceRows(data ?? [], "listWorkspaces")
   }
 
   async updateWorkspace(id: string, input: UpdateWorkspaceRecordInput): Promise<WorkspaceRecord> {
@@ -53,6 +54,6 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       throw new Error(error?.message ?? "Failed to update workspace")
     }
 
-    return data
+    return decodeWorkspaceRow(data, "updateWorkspace")
   }
 }
