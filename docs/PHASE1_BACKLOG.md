@@ -316,3 +316,14 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density reduction remains an explicit follow-up and should be handled in a dedicated composition extraction slice.
 - Additional migration/backfill follow-up remains open for legacy imported/persisted paths beyond this adapter key-alias bridge so deterministic `catalogServiceId` recovery can be eagerly persisted where possible.
 - UI-responsibility reduction follow-up remains open (if still relevant): UI should transport intent/selection while application/domain own identity enrichment/reconciliation and canonical identity emission.
+
+### Post-Domain Aggregate Hardening (Step 27 — Add-from-Catalog UI Identity Ownership Boundary)
+
+- Add-from-catalog UI path (`AddServiceToProposal`) now transports only user intent/selection (`catalogServiceId`) and proposal display name; rich proposal-service payload assembly moved into app-state orchestration (`useAppState`) to align with UI boundary ownership.
+- Runtime behavior is preserved: app-state orchestration still creates runtime `service.id`, applies catalog-linked defaults, and immediately routes the result through domain/application write normalization.
+- Remaining service-ID propagation gaps after this local fix remain open for other import/export and repository/application mapper boundaries that can still ingest or emit service payloads without explicit `catalogServiceId` continuity.
+- Remaining shape-based compatibility fallback is still retained (unique-shape catalog matching bridge in domain validation) and should be removed once identity propagation/backfill coverage is complete across legacy paths.
+- Remaining coupling-by-shape cleanup is still required where UI/state/application exchange DTO-like service shapes directly without explicit mapper contracts.
+- `src/App.tsx` composition density reduction remains open and should be handled in a dedicated composition extraction slice after identity-boundary hardening stabilizes.
+- Additional migration/backfill remains open for other import/export/repository/persisted paths so deterministic `catalogServiceId` recovery is eagerly normalized and persisted where possible.
+- Further UI-responsibility reduction is still desirable after this slice: continue shifting non-interaction payload-shaping responsibilities out of UI components and into application/state orchestration boundaries.

@@ -137,6 +137,36 @@ const areValuesEqual = (left: unknown, right: unknown): boolean => {
   return JSON.stringify(left) === JSON.stringify(right)
 }
 
+
+const buildProposalServiceFromCatalogSelection = (
+  catalogServiceId: string,
+  services: ServiceDefinition[],
+): Proposta["servizi"][number] | null => {
+  const serviceDefinition = services.find((service) => service.id === catalogServiceId)
+
+  if (!serviceDefinition) {
+    return null
+  }
+
+  return {
+    service: {
+      id: uuidv4(),
+      catalogServiceId,
+      nome: serviceDefinition.nome,
+      prezzoPieno: serviceDefinition.prezzoPieno,
+      prezzoScontato: serviceDefinition.prezzoScontato,
+      usaPrezzoScontato: true,
+      durataOperativa: serviceDefinition.durataStandard,
+      meseInizio: 1,
+      consentiRateizzazione: serviceDefinition.consentiRateizzazione,
+      consentiAcconto: serviceDefinition.consentiAcconto,
+      color: serviceDefinition.color,
+    },
+    strategiaPagamento: {
+      tipo: "oneShot",
+    },
+  }
+}
 const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
   const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
@@ -259,6 +289,26 @@ export function useAppState() {
     })
   }
 
+  const addCatalogServiceToPropostaA = (catalogServiceId: string) => {
+    const newService = buildProposalServiceFromCatalogSelection(catalogServiceId, store.services)
+
+    if (!newService) {
+      return
+    }
+
+    setStore({
+      ...store,
+      propostaA: normalizeProposalForWrite(
+        {
+          ...store.propostaA,
+          servizi: [...store.propostaA.servizi, newService],
+        },
+        store.piano,
+        store.services,
+      ),
+    })
+  }
+
   const addService = (data: Omit<ServiceDefinition, "id">) => {
     const id = uuidv4()
     const nextServices = [...store.services, { ...data, id, color: data.color ?? generateDeterministicColorFromId(id) }]
@@ -301,6 +351,7 @@ export function useAppState() {
     setPiano,
     setPropostaA,
     setPropostaB,
+    addCatalogServiceToPropostaA,
     addService,
     removeService,
     setSectionEnabled,

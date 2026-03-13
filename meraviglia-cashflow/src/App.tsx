@@ -47,6 +47,7 @@ function CashflowApp() {
     setPropostaA,
     propostaB,
     setPropostaB,
+    addCatalogServiceToPropostaA,
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
@@ -95,8 +96,8 @@ function CashflowApp() {
 
       <AddServiceToProposal
         catalog={catalog}
-        proposta={propostaA}
-        onUpdate={setPropostaA}
+        propostaName={propostaA.nome}
+        onAddCatalogService={addCatalogServiceToPropostaA}
       />
 
       <div style={{ marginBottom: 20 }}>
