@@ -84,6 +84,46 @@ describe("proposalDocumentEngine", () => {
     })
   })
 
+
+  it("usa payload ACTIVATED_SERVICES preparato quando fornito", () => {
+    const doc = buildProposalDocument({
+      propostaA: baseProposal("A", 1000),
+      piano,
+      meta,
+      preparedActivatedServicesPayload: {
+        services: [
+          {
+            id: "prepared-runtime-id",
+            catalogServiceId: "prepared-catalog-id",
+            nome: "Prepared Service",
+            modulo: "Prepared Module",
+            prezzo: 123,
+            durataOperativa: 3,
+            paymentType: "oneShot",
+          },
+        ],
+      },
+    })
+
+    const activatedServices = doc.sections.find(
+      (section) => section.type === ProposalSectionType.ACTIVATED_SERVICES
+    )
+
+    expect(activatedServices?.payload).toEqual({
+      services: [
+        {
+          id: "prepared-runtime-id",
+          catalogServiceId: "prepared-catalog-id",
+          nome: "Prepared Service",
+          modulo: "Prepared Module",
+          prezzo: 123,
+          durataOperativa: 3,
+          paymentType: "oneShot",
+        },
+      ],
+    })
+  })
+
   it("include tutte le sezioni attese con comparison disabilitata se assente", () => {
     const doc = buildProposalDocument({
       propostaA: baseProposal("A", 1000),
