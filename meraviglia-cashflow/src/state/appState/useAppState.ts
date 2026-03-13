@@ -9,12 +9,12 @@ import type {
   TipoPagamento,
 } from "../../application/dto/StrategicPlanDTO"
 import {
-  createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
   type SectionToggleState,
 } from "../../application/proposalDocumentSectionToggles"
 import { normalizeProposalForWrite } from "../../application/strategicPlanningService"
-import { loadFromStorage, saveToStorage } from "../persistence/storage"
+import { decodeCashflowBootstrapPayload } from "../persistence/cashflowBootstrapDecoder"
+import { loadFromStorage, loadRawFromStorage, saveToStorage } from "../persistence/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
 const CASHFLOW_STORAGE_KEY = "meraviglia-cashflow"
@@ -41,13 +41,6 @@ const createDefaultPropostaB = (): Proposta => ({
   servizi: [],
 })
 
-interface PersistedCashflowState {
-  propostaA: Proposta
-  propostaB: Proposta
-  piano: PianoStrategico
-  sectionToggles?: SectionToggleState
-}
-
 interface AppStateStore {
   services: ServiceDefinition[]
   piano: PianoStrategico
@@ -56,51 +49,8 @@ interface AppStateStore {
   sectionToggles: SectionToggleState
 }
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null
-
-const normalizePersistedProposalIdentity = (proposta: Proposta): Proposta => {
-  return {
-    ...proposta,
-    servizi: proposta.servizi.map((propostaService) => {
-      const persistedService = propostaService.service as unknown as Record<string, unknown>
-      const legacyCatalogServiceId = typeof persistedService.catalog_service_id === "string"
-        ? persistedService.catalog_service_id
-        : undefined
-
-      if (!legacyCatalogServiceId || propostaService.service.catalogServiceId) {
-        return propostaService
-      }
-
-      return {
-        ...propostaService,
-        service: {
-          ...propostaService.service,
-          catalogServiceId: legacyCatalogServiceId,
-        },
-      }
-    }),
-  }
-}
-
-const isPersistedCashflowState = (value: unknown): value is PersistedCashflowState => {
-  if (!isObject(value)) {
-    return false
-  }
-
-  return "piano" in value && "propostaA" in value && "propostaB" in value
-}
-
 const isServiceDefinitionArray = (value: unknown): value is ServiceDefinition[] =>
   Array.isArray(value)
-
-const isSectionToggleState = (value: unknown): value is SectionToggleState => {
-  if (!isObject(value)) {
-    return false
-  }
-
-  return Object.values(value).every((toggleValue) => typeof toggleValue === "boolean")
-}
 
 const normalizeHue = (value: number): number => ((value % 360) + 360) % 360
 
@@ -222,7 +172,9 @@ const applyServiceStartMonthIntent = (
 })
 
 const createInitialState = (): AppStateStore => {
-  const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
+  const rawPersistedCashflow = loadRawFromStorage(CASHFLOW_STORAGE_KEY)
+  const decodedBootstrap = decodeCashflowBootstrapPayload(rawPersistedCashflow)
+  const persistedCashflow = decodedBootstrap.payload
   const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
   const { services, changed } = ensureServiceColors(persistedServices)
 
@@ -231,15 +183,9 @@ const createInitialState = (): AppStateStore => {
   }
 
   const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
-  const propostaA = persistedCashflow?.propostaA
-    ? normalizePersistedProposalIdentity(persistedCashflow.propostaA)
-    : createDefaultPropostaA()
-  const propostaB = persistedCashflow?.propostaB
-    ? normalizePersistedProposalIdentity(persistedCashflow.propostaB)
-    : createDefaultPropostaB()
-  const sectionToggles = isSectionToggleState(persistedCashflow?.sectionToggles)
-    ? { ...createDefaultSectionToggleState(), ...persistedCashflow.sectionToggles }
-    : createDefaultSectionToggleState()
+  const propostaA = persistedCashflow?.propostaA ?? createDefaultPropostaA()
+  const propostaB = persistedCashflow?.propostaB ?? createDefaultPropostaB()
+  const sectionToggles = decodedBootstrap.sectionToggles
 
   MANDATORY_PROPOSAL_SECTIONS.forEach((sectionType) => {
     sectionToggles[sectionType] = true
@@ -252,7 +198,7 @@ const createInitialState = (): AppStateStore => {
     const shouldPersistNormalizedCashflow =
       !areValuesEqual(persistedCashflow.propostaA, normalizedPropostaA)
       || !areValuesEqual(persistedCashflow.propostaB, normalizedPropostaB)
-      || !isSectionToggleState(persistedCashflow.sectionToggles)
+      || !areValuesEqual(persistedCashflow.sectionToggles, sectionToggles)
 
     if (shouldPersistNormalizedCashflow) {
       saveToStorage(CASHFLOW_STORAGE_KEY, {
