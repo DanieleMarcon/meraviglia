@@ -8,6 +8,7 @@ import {
   type ProposalSectionType as ProposalSectionTypeValue,
 } from "../../domain/models/ProposalSectionType"
 import type { Proposta } from "../../domain/models/Proposta"
+import type { ActivatedServicesPayload } from "./proposalDocumentPayloads"
 import {
   createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
@@ -27,6 +28,7 @@ export interface BuildProposalDocumentInput {
   propostaB?: Proposta
   meta: BuildProposalDocumentMeta
   sectionToggles?: SectionToggleState
+  preparedActivatedServicesPayload?: ActivatedServicesPayload
 }
 
 function isSectionEnabled(
@@ -38,18 +40,6 @@ function isSectionEnabled(
   }
 
   return sectionToggles[sectionType]
-}
-
-interface ActivatedServicesPayload {
-  services: Array<{
-    id: string
-    catalogServiceId: string | null
-    nome: string
-    modulo: string
-    prezzo: number
-    durataOperativa: number
-    paymentType: string
-  }>
 }
 
 interface StrategicPlanPayload {
@@ -185,13 +175,15 @@ export function buildProposalDocument({
   propostaB,
   meta,
   sectionToggles: sectionTogglesInput,
+  preparedActivatedServicesPayload,
 }: BuildProposalDocumentInput): ProposalDocument {
   const sectionToggles: SectionToggleState = {
     ...createDefaultSectionToggleState(),
     ...sectionTogglesInput,
   }
 
-  const activatedServicesPayload = buildActivatedServicesPayload(propostaA)
+  const activatedServicesPayload =
+    preparedActivatedServicesPayload ?? buildActivatedServicesPayload(propostaA)
   const strategicPlanPayload = buildStrategicPlanPayload(piano)
   const cashflowA = calcolaCashflow(propostaA, piano)
   const financialProposalPayload = buildFinancialProposalPayload(propostaA, cashflowA)
