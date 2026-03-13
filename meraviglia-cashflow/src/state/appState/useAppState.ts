@@ -17,7 +17,10 @@ import {
   createCashflowBootstrapEnvelope,
   decodeCashflowBootstrapPayload,
 } from "../persistence/cashflowBootstrapDecoder"
-import { decodeServiceCatalogBootstrapPayload } from "../persistence/serviceCatalogBootstrapDecoder"
+import {
+  createServiceCatalogBootstrapEnvelope,
+  decodeServiceCatalogBootstrapPayload,
+} from "../persistence/serviceCatalogBootstrapDecoder"
 import { loadRawFromStorage, saveToStorage } from "../persistence/storage"
 
 const SERVICE_CATALOG_STORAGE_KEY = "meraviglia-service-catalog"
@@ -182,7 +185,7 @@ const createInitialState = (): AppStateStore => {
   const { services, changed } = ensureServiceColors(persistedServices)
 
   if (changed) {
-    saveToStorage(SERVICE_CATALOG_STORAGE_KEY, services)
+    saveToStorage(SERVICE_CATALOG_STORAGE_KEY, createServiceCatalogBootstrapEnvelope(services))
   }
 
   const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
@@ -236,7 +239,10 @@ const notifyListeners = () => {
 const setStore = (nextStore: AppStateStore) => {
   store = nextStore
 
-  saveToStorage(SERVICE_CATALOG_STORAGE_KEY, store.services)
+  saveToStorage(
+    SERVICE_CATALOG_STORAGE_KEY,
+    createServiceCatalogBootstrapEnvelope(store.services),
+  )
   saveToStorage(
     CASHFLOW_STORAGE_KEY,
     createCashflowBootstrapEnvelope({

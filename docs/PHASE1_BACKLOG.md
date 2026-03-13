@@ -522,3 +522,28 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - define rollout strategy for adding versioned envelopes/decoder dispatch to remaining local persisted families (starting with service catalog).
   - define import/export versioned envelope contracts and migration/backfill policy for legacy payloads.
   - define deterministic backfill/rewrite policy for legacy persisted cashflow entries currently accepted via unversioned fallback (including any eventual sunset of shape-based fallback).
+
+### Post-Domain Aggregate Hardening (Step 40 — Service Catalog Versioned Envelope / Decoder Dispatch)
+
+- Service catalog local persistence now uses an explicit version-aware ingress seam (`serviceCatalogBootstrapDecoder`) with envelope/version detection and version-specific dispatch (`version: 1`) before per-item decode/canonicalization enters app-state orchestration.
+- Runtime behavior remains incremental and coherent: legacy unversioned array payloads continue to decode, new service-catalog writes persist in a `version: 1` envelope, and unsupported/unknown versioned envelopes fail closed to an empty-catalog fallback.
+- Durable clarification: local persisted payload families should evolve via explicit envelope/version dispatch at ingress; retained shape-based fallback is compatibility-only for legacy data and not the forward contract.
+- Remaining persisted/import families still lacking versioned envelope or decoder dispatch:
+  - non-local import/export payload ingress contracts.
+  - remaining external repository ingress contracts beyond currently hardened slices.
+- Remaining persistence/import contract hardening gaps after this slice:
+  - import/export boundaries still need explicit runtime decoders and schema/version-aware dispatch.
+  - cross-boundary mapper contracts still need tighter canonical identity guarantees before orchestration.
+- Remaining identity continuity gaps at persistence/import boundaries:
+  - non-local payload seams can still ingest/emit service payloads without deterministic `catalogServiceId` continuity.
+  - deterministic legacy identity backfill policy across persisted/imported records remains open.
+- Remaining shape-based compatibility fallback still retained:
+  - service-catalog legacy unversioned array acceptance remains as a compatibility bridge.
+  - unique-shape catalog matching fallback in domain validation remains active for legacy records.
+  - non-hardened import/export and repository seams still retain structural fallback pending targeted decoders.
+- Remaining repository/infra runtime decode hardening still needed:
+  - auth/external adapter ingress paths still need explicit runtime decode/adaptation seams.
+- `src/App.tsx` composition density reduction remains open and should remain a dedicated follow-up after persistence/import boundary hardening stabilizes.
+- Migration/backfill strategy still needed for legacy persisted payloads:
+  - define staged rewrite/backfill policy for legacy unversioned service-catalog entries once read and decoded safely.
+  - define sunset criteria for legacy shape-based fallback acceptance after migration coverage is validated.
