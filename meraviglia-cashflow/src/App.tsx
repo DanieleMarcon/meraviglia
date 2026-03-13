@@ -48,6 +48,7 @@ function CashflowApp() {
     propostaB,
     setPropostaB,
     addCatalogServiceToPropostaA,
+    updatePropostaAServicePaymentStrategy,
     sectionToggles,
     setSectionEnabled,
   } = useAppState()
@@ -130,7 +131,7 @@ function CashflowApp() {
         proposta={propostaA}
         piano={piano}
         catalog={catalog}
-        onUpdate={setPropostaA}
+        onUpdatePaymentStrategy={updatePropostaAServicePaymentStrategy}
       />
 
       <IntakeView />

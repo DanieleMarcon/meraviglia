@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import type { Proposta } from "../../application/dto/StrategicPlanDTO"
 import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
-import type { TipoPagamento } from "../../application/dto/StrategicPlanDTO"
 import type { PianoStrategico } from "../../application/dto/StrategicPlanDTO"
+import type { TipoPagamento } from "../../application/dto/StrategicPlanDTO"
 
 import { resolvePaymentConstraints } from "../../application/strategicPlanningService"
 
@@ -11,28 +11,14 @@ interface Props {
   proposta: Proposta
   piano: PianoStrategico
   catalog: ServiceDefinition[]
-  onUpdate: (proposta: Proposta) => void
+  onUpdatePaymentStrategy: (intent: { serviceId: string; tipo?: TipoPagamento; numeroRate?: number }) => void
 }
 
-export default function PaymentEditor({ proposta, piano, catalog, onUpdate }: Props) {
+export default function PaymentEditor({ proposta, piano, catalog, onUpdatePaymentStrategy }: Props) {
   const [warningsByServiceId, setWarningsByServiceId] = useState<Record<string, string>>({})
 
   const updateTipo = (serviceId: string, tipo: TipoPagamento) => {
-    const nuova = {
-      ...proposta,
-      servizi: proposta.servizi.map((s) =>
-        s.service.id === serviceId
-          ? {
-              ...s,
-              strategiaPagamento: {
-                ...s.strategiaPagamento,
-                tipo,
-              },
-            }
-          : s
-      ),
-    }
-    onUpdate(nuova)
+    onUpdatePaymentStrategy({ serviceId, tipo })
   }
 
   const updateRate = (serviceId: string, rate: number, maxRateConsentite: number) => {
@@ -50,22 +36,9 @@ export default function PaymentEditor({ proposta, piano, catalog, onUpdate }: Pr
       return next
     })
 
-    const nuova = {
-      ...proposta,
-      servizi: proposta.servizi.map((s) =>
-        s.service.id === serviceId
-          ? {
-              ...s,
-              strategiaPagamento: {
-                ...s.strategiaPagamento,
-                numeroRate: rate,
-              },
-            }
-          : s
-      ),
-    }
-    onUpdate(nuova)
+    onUpdatePaymentStrategy({ serviceId, numeroRate: rate })
   }
+
 
   return (
     <div style={{ marginBottom: 40 }}>

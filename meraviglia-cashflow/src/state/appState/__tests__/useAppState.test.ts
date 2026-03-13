@@ -394,6 +394,37 @@ describe("useAppState compare/proposal orchestration", () => {
   })
 
 
+
+  it("applies payment-strategy intent through app-state orchestration instead of UI-shaped proposal reconstruction", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.updatePropostaAServicePaymentStrategy({
+      serviceId: "proposal-a-s1",
+      tipo: "accontoRate",
+    })
+    state.updatePropostaAServicePaymentStrategy({
+      serviceId: "proposal-a-s1",
+      numeroRate: 99,
+    })
+
+    const updated = useAppState()
+
+    expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({
+      tipo: "accontoRate",
+      numeroRate: 2,
+      percentualeAcconto: undefined,
+    })
+  })
+
   it("builds proposal service payload in app-state orchestration when adding from catalog selection", async () => {
     const { useAppState } = await loadUseAppState({
       services: baseCatalog,

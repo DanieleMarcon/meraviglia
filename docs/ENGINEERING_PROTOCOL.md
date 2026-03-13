@@ -181,6 +181,7 @@ Ownership boundaries between layers are mandatory.
 - may not modify domain models
 - may not implement business rules
 - may transport user-selected identity references (for example selected catalog service IDs) as DTO fields only
+- should emit narrow edit intents for proposal mutations (for example payment strategy updates by `serviceId` + changed fields) rather than reconstructing nested proposal/service/payment object graphs directly
 - must not originate identity enrichment, identity reconciliation, or business normalization logic
 
 ### Application layer ownership rules

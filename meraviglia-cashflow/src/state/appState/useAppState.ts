@@ -6,6 +6,7 @@ import type {
   ProposalSectionTypeValue as ProposalSectionType,
   Proposta,
   ServiceDefinition,
+  TipoPagamento,
 } from "../../application/dto/StrategicPlanDTO"
 import {
   createDefaultSectionToggleState,
@@ -167,6 +168,34 @@ const buildProposalServiceFromCatalogSelection = (
     },
   }
 }
+
+interface PaymentStrategyIntent {
+  serviceId: string
+  tipo?: TipoPagamento
+  numeroRate?: number
+}
+
+const applyPaymentStrategyIntent = (
+  proposta: Proposta,
+  intent: PaymentStrategyIntent,
+): Proposta => ({
+  ...proposta,
+  servizi: proposta.servizi.map((propostaService) => {
+    if (propostaService.service.id !== intent.serviceId) {
+      return propostaService
+    }
+
+    return {
+      ...propostaService,
+      strategiaPagamento: {
+        ...propostaService.strategiaPagamento,
+        ...(intent.tipo ? { tipo: intent.tipo } : {}),
+        ...(intent.numeroRate !== undefined ? { numeroRate: intent.numeroRate } : {}),
+      },
+    }
+  }),
+})
+
 const createInitialState = (): AppStateStore => {
   const persistedCashflow = loadFromStorage(CASHFLOW_STORAGE_KEY, isPersistedCashflowState)
   const persistedServices = loadFromStorage(SERVICE_CATALOG_STORAGE_KEY, isServiceDefinitionArray) ?? []
@@ -309,6 +338,17 @@ export function useAppState() {
     })
   }
 
+  const updatePropostaAServicePaymentStrategy = (intent: PaymentStrategyIntent) => {
+    setStore({
+      ...store,
+      propostaA: normalizeProposalForWrite(
+        applyPaymentStrategyIntent(store.propostaA, intent),
+        store.piano,
+        store.services,
+      ),
+    })
+  }
+
   const addService = (data: Omit<ServiceDefinition, "id">) => {
     const id = uuidv4()
     const nextServices = [...store.services, { ...data, id, color: data.color ?? generateDeterministicColorFromId(id) }]
@@ -352,6 +392,7 @@ export function useAppState() {
     setPropostaA,
     setPropostaB,
     addCatalogServiceToPropostaA,
+    updatePropostaAServicePaymentStrategy,
     addService,
     removeService,
     setSectionEnabled,
