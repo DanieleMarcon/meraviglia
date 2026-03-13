@@ -361,3 +361,16 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries so canonical identity and mapper adaptation are guaranteed before application/document orchestration.
 - `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition extraction slice after mapper-boundary stabilization.
 - Further identity propagation and boundary tightening remain open for legacy/persisted/imported service payloads and downstream consumers that can still cross boundaries without deterministic `catalogServiceId` continuity.
+
+
+### Post-Domain Aggregate Hardening (Step 31 — Proposal-Document Financial/Comparison Mapper Boundary)
+
+- Proposal-document orchestration now routes `FINANCIAL_PROPOSAL` and `COMPARISON` through explicit application-owned mappers (`proposalDocumentService` + `proposalDocumentMappers`) before engine section emission, reducing coupling-by-shape for one high-value section slice while preserving section payload behavior.
+- Durable clarification captured: proposal-document high-value section payloads are application contract projections first and engine-emission payloads second; the engine may retain local fallback builders only as compatibility bridges when prepared payloads are not supplied.
+- Remaining proposal-document mapper gaps still open after this slice: strategic-plan and remaining placeholder/auxiliary section payloads are still assembled engine-locally without dedicated application-owned projection mappers.
+- Remaining UI deep-shape mutation cleanup still required where UI/state handlers continue authoring nested proposal/service DTO updates directly instead of transporting narrow user intent.
+- Remaining shape-based compatibility fallback still retained: catalog identity fallback (`catalogServiceId := runtimeServiceId`) and unique-shape legacy catalog matching remain as temporary bridges pending full identity propagation/backfill completion.
+- Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries so canonical identity and explicit mapper adaptation are guaranteed before application/document orchestration.
+- `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition extraction slice after current mapper-boundary cleanup stabilizes.
+- Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers that can still cross boundaries without deterministic `catalogServiceId` continuity.
+

@@ -201,3 +201,5 @@ Prepare Meraviglia OS for scalable multi-tenant SaaS operation with governance, 
 - Stable module boundaries and version contracts.
 - Security and governance policy maturity from prior phases.
 - Follow-up update: proposal-document orchestration now includes an explicit application-owned mapper seam for `ACTIVATED_SERVICES` payload preparation (`proposalDocumentService` + `proposalDocumentMappers`), while additional section payload mappers remain open for future slices.
+- Follow-up update: proposal-document orchestration now also prepares `FINANCIAL_PROPOSAL` and `COMPARISON` through application-owned mappers/projections before engine section emission; remaining section payload mapper gaps are still tracked as incremental follow-ups.
+- Follow-up confirmed: remaining UI deep-shape mutation cleanup, retained shape-based compatibility bridges, persistence/import contract hardening, `src/App.tsx` composition density reduction, and broader identity propagation/boundary tightening remain active and explicitly tracked for subsequent cleanup slices.
