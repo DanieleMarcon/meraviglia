@@ -189,6 +189,7 @@ Ownership boundaries between layers are mandatory.
 - must not implement domain invariants
 - owns identity propagation/orchestration across UI, repository, and domain boundaries
 - when boundary payloads need runtime compatibility keys, application mappers should still emit stable business identity explicitly (for example `catalogServiceId`) instead of relying on shape/key inference
+- when application DTO contracts and domain models are shape-compatible, strategic-planning services must still use explicit application-owned mappers for domain ingress/egress to preserve semantic ownership and contract evolution safety
 - import/repository adapters that ingest legacy payloads may accept legacy alias keys only as narrow compatibility bridges (for example `catalog_service_id`) but must normalize them immediately to canonical application fields (`catalogServiceId`) before business orchestration
 
 ### Domain layer ownership rules

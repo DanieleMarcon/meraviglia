@@ -3,6 +3,13 @@ import {
   normalizePropostaForWrite as normalizePropostaForWriteDomain,
   resolvePaymentConstraints as resolvePaymentConstraintsDomain,
 } from "../domain/validation/domainValidation"
+import {
+  mapCatalogDTOToDomain,
+  mapProposalDomainToDTO,
+  mapProposalDTOToDomain,
+  mapServiceDTOToDomain,
+  mapStrategicPlanDTOToDomain,
+} from "./mappers/strategicPlanningDomainMappers"
 import type {
   ProposalDTO,
   ServiceDTO,
@@ -17,7 +24,10 @@ export interface PaymentConstraintsDTO {
 }
 
 export const calculateCashflow = (proposta: ProposalDTO, piano: StrategicPlanDTO) => {
-  return calculateCashflowEngine(proposta, piano)
+  return calculateCashflowEngine(
+    mapProposalDTOToDomain(proposta),
+    mapStrategicPlanDTOToDomain(piano),
+  )
 }
 
 export const calcolaCashflow = calculateCashflow
@@ -28,7 +38,13 @@ export const normalizeProposalForWrite = (
   piano: StrategicPlanDTO,
   catalog: ServiceDefinitionDTO[],
 ): ProposalDTO => {
-  return normalizePropostaForWriteDomain(proposta, piano, catalog)
+  const normalized = normalizePropostaForWriteDomain(
+    mapProposalDTOToDomain(proposta),
+    mapStrategicPlanDTOToDomain(piano),
+    mapCatalogDTOToDomain(catalog),
+  )
+
+  return mapProposalDomainToDTO(normalized)
 }
 
 export const sanitizeProposalAtBoundary = (
@@ -44,5 +60,9 @@ export const resolvePaymentConstraints = (
   pianoDurata: number,
   catalog: ServiceDefinitionDTO[],
 ): PaymentConstraintsDTO => {
-  return resolvePaymentConstraintsDomain(service, pianoDurata, catalog)
+  return resolvePaymentConstraintsDomain(
+    mapServiceDTOToDomain(service),
+    pianoDurata,
+    mapCatalogDTOToDomain(catalog),
+  )
 }
