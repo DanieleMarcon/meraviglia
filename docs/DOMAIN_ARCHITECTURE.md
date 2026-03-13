@@ -161,4 +161,6 @@ These flattened DTOs are deliberate in early architecture stages to reduce migra
 
 Identity ownership clarification (governance rule): UI/state may transport user-selected identity references (for example catalog IDs) in DTO payloads, but identity enrichment/reconciliation/normalization must originate in approved application/domain boundaries, never in UI components.
 
+Persistence ingress clarification (governance rule): local/import/repository payload reads must pass through explicit decode/adaptation seams that isolate parse/shape/compatibility handling before application/domain orchestration consumes the data.
+
 They are migration-only simplifications and are not precedent for long-term architecture direction.
