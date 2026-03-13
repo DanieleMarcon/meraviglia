@@ -393,6 +393,59 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
+
+  it("builds proposal service payload in app-state orchestration when adding from catalog selection", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: { id: "proposal-a-empty", nome: "A", servizi: [] },
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.addCatalogServiceToPropostaA("svc-rate")
+
+    const updated = useAppState()
+    const addedService = updated.propostaA.servizi[0]?.service
+
+    expect(updated.propostaA.servizi).toHaveLength(1)
+    expect(addedService).toMatchObject({
+      catalogServiceId: "svc-rate",
+      nome: "Rate Limited Service",
+      prezzoPieno: 1200,
+      prezzoScontato: 1000,
+      usaPrezzoScontato: true,
+      durataOperativa: 4,
+      meseInizio: 1,
+      consentiRateizzazione: true,
+      consentiAcconto: true,
+      color: expect.stringMatching(/^hsl\(/),
+    })
+    expect(addedService?.id).toBe("generated-id")
+    expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "oneShot" })
+  })
+
+  it("ignores add-from-catalog intent when the selected service id is missing", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: { id: "proposal-a-empty", nome: "A", servizi: [] },
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    state.addCatalogServiceToPropostaA("missing-id")
+
+    const updated = useAppState()
+    expect(updated.propostaA.servizi).toHaveLength(0)
+  })
+
   it("re-normalizes proposals when addService introduces catalog constraints and persists both storage keys", async () => {
     const longPlan: PianoStrategico = {
       durataTotale: 12,

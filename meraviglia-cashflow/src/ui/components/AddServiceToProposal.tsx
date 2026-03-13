@@ -1,50 +1,24 @@
-import { v4 as uuidv4 } from "uuid"
-import type { Proposta } from "../../application/dto/StrategicPlanDTO"
 import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
-import type { TipoPagamento } from "../../application/dto/StrategicPlanDTO"
 
 interface Props {
   catalog: ServiceDefinition[]
-  proposta: Proposta
-  onUpdate: (proposta: Proposta) => void
+  propostaName: string
+  onAddCatalogService: (catalogServiceId: string) => void
 }
 
 export default function AddServiceToProposal({
   catalog,
-  proposta,
-  onUpdate,
+  propostaName,
+  onAddCatalogService,
 }: Props) {
 
   const addServiceToProposal = (serviceDef: ServiceDefinition) => {
-
-    const newService = {
-      service: {
-        id: uuidv4(),
-        catalogServiceId: serviceDef.id,
-        nome: serviceDef.nome,
-        prezzoPieno: serviceDef.prezzoPieno,
-        prezzoScontato: serviceDef.prezzoScontato,
-        usaPrezzoScontato: true,
-        durataOperativa: serviceDef.durataStandard,
-        meseInizio: 1,
-        consentiRateizzazione: serviceDef.consentiRateizzazione,
-        consentiAcconto: serviceDef.consentiAcconto,
-        color: serviceDef.color,
-      },
-      strategiaPagamento: {
-        tipo: "oneShot" as TipoPagamento,
-      },
-    }
-
-    onUpdate({
-      ...proposta,
-      servizi: [...proposta.servizi, newService],
-    })
+    onAddCatalogService(serviceDef.id)
   }
 
   return (
     <div style={{ marginBottom: 30 }}>
-      <h3>Aggiungi servizio a {proposta.nome}</h3>
+      <h3>Aggiungi servizio a {propostaName}</h3>
 
       {catalog.length === 0 && (
         <p>Nessun servizio nel catalogo.</p>
