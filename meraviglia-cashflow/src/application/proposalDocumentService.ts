@@ -14,6 +14,7 @@ import {
   mapFinancialProposalsToComparisonPayload,
   mapFinancialTotalsProjectionToFinancialProposalPayload,
   mapProposalDTOToActivatedServicesPayload,
+  mapStrategicPlanDTOToStrategicPlanPayload,
 } from "./mappers/proposalDocumentMappers"
 import { createDefaultSectionToggleState } from "./proposalDocumentSectionToggles"
 
@@ -75,6 +76,7 @@ export const buildProposalDocument = ({
     meta,
     sectionToggles: resolvedSectionToggles,
     preparedActivatedServicesPayload: mapProposalDTOToActivatedServicesPayload(propostaA),
+    preparedStrategicPlanPayload: mapStrategicPlanDTOToStrategicPlanPayload(piano),
     preparedFinancialProposalPayload: financialProposalPayloadA,
     preparedComparisonPayload:
       financialProposalPayloadB !== undefined

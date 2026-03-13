@@ -10,6 +10,15 @@ export interface ActivatedServicesPayload {
   }>
 }
 
+export interface StrategicPlanPayload {
+  durataTotale: number
+  moduli: Array<{
+    nome: string
+    meseInizio: number
+    durata: number
+  }>
+}
+
 export interface FinancialProposalPayload {
   totaleAnno1: number
   totaleAnno2: number

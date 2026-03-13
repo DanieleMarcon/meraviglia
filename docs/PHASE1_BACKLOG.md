@@ -374,3 +374,14 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition extraction slice after current mapper-boundary cleanup stabilizes.
 - Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers that can still cross boundaries without deterministic `catalogServiceId` continuity.
 
+
+### Post-Domain Aggregate Hardening (Step 32 — Proposal-Document Strategic-Plan Mapper Boundary)
+
+- Proposal-document orchestration now routes `STRATEGIC_PLAN` through an explicit application-owned mapper (`proposalDocumentService` + `proposalDocumentMappers`) before engine section emission, reducing coupling-by-shape for this strategic-planning section while preserving payload semantics.
+- Durable clarification captured: proposal-document strategic-planning data exposed to document/export flows is an application-owned projection contract; engine-local section builders remain compatibility fallbacks only when prepared payloads are not provided.
+- Remaining proposal-document mapper gaps still open after this slice: placeholder/auxiliary sections are still assembled engine-locally without dedicated application-owned projection mappers.
+- Remaining UI deep-shape mutation cleanup still required where UI/state handlers continue authoring nested proposal/service DTO updates directly instead of transporting narrow user intent.
+- Remaining shape-based compatibility fallback still retained: catalog identity fallback (`catalogServiceId := runtimeServiceId`) and unique-shape legacy catalog matching remain as temporary bridges pending full identity propagation/backfill completion.
+- Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries so canonical identity and explicit mapper adaptation are guaranteed before application/document orchestration.
+- `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition extraction slice after current mapper-boundary cleanup stabilizes.
+- Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers that can still cross boundaries without deterministic `catalogServiceId` continuity.

@@ -62,6 +62,28 @@ describe("proposalDocumentService", () => {
   })
 
 
+
+  it("usa il mapper application-owned per il payload STRATEGIC_PLAN", () => {
+    const document = buildProposalDocument({
+      propostaA: proposta,
+      piano,
+      meta: {
+        clientName: "Client",
+        contactPerson: "Owner",
+        version: "v1",
+      },
+    })
+
+    const strategicPlanSection = document.sections.find(
+      (section) => section.type === ProposalSectionType.STRATEGIC_PLAN,
+    )
+
+    expect(strategicPlanSection?.payload).toEqual({
+      durataTotale: 12,
+      moduli: [{ nome: "Core", meseInizio: 1, durata: 12 }],
+    })
+  })
+
   it("usa mappers application-owned per FINANCIAL_PROPOSAL e COMPARISON", () => {
     const proposalB: ProposalDTO = {
       ...proposta,
