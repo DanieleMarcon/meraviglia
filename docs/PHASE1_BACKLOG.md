@@ -498,3 +498,27 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Migration/versioning/backfill follow-up still needed for persisted/imported payloads:
   - define a minimal versioned envelope and decoder dispatch strategy across local persistence, import/export payloads, and repository ingress contracts.
   - define deterministic migration/backfill for legacy compatibility keys and identity continuity fields during ingestion.
+
+### Post-Domain Aggregate Hardening (Step 39 — Cashflow Bootstrap Versioned Envelope / Decoder Dispatch)
+
+- Cashflow local persistence bootstrap ingress now uses an explicit version-aware decode boundary (`cashflowBootstrapDecoder`) with envelope/version detection and dispatch (`version: 1` envelope) before existing compatibility canonicalization and application/state normalization handoff.
+- Runtime behavior remains coherent and incremental: legacy unversioned persisted cashflow payloads continue to load through the legacy decode path, current writes are now persisted in a `version: 1` envelope, and unsupported/unknown versioned envelopes fail closed to safe defaults.
+- Durable clarification: persistence compatibility must be governed at ingress by explicit version-aware decoder dispatch; seam-local shape compatibility fallback is legacy-only and should not be the forward evolution mechanism.
+- Remaining persistence/import contract hardening gaps after this slice:
+  - service-catalog local persistence still lacks a versioned envelope/dispatch contract (it has decode guards but no explicit envelope version strategy).
+  - non-local import/export payload ingress still lacks explicit version-aware decoder dispatch and compatibility adaptation.
+  - auth/external repository ingress still needs runtime decoder hardening where external payloads enter app flow.
+- Remaining identity continuity gaps at persistence/import boundaries:
+  - non-cashflow payload seams still allow records/imports without deterministic identity continuity (`catalogServiceId`) across all boundaries.
+  - deterministic migration/backfill strategy for already persisted/imported legacy identity gaps remains pending.
+- Remaining shape-based compatibility fallback still retained:
+  - cashflow unversioned payload-shape fallback remains intentionally retained as a temporary compatibility bridge for already persisted legacy local data.
+  - unique-shape catalog matching fallback remains active in domain validation as a temporary bridge for legacy records.
+  - non-hardened import/export and repository seams still retain shape-based acceptance fallback pending targeted decoder slices.
+- Remaining repository/infra runtime decode hardening still needed:
+  - auth repository ingress and future external adapters remain pending explicit runtime row decoders.
+- `src/App.tsx` composition density reduction remains open and should stay a dedicated composition extraction step after persistence/import/ingress hardening stabilizes.
+- Migration/versioning/backfill follow-up still needed for persisted/imported payloads:
+  - define rollout strategy for adding versioned envelopes/decoder dispatch to remaining local persisted families (starting with service catalog).
+  - define import/export versioned envelope contracts and migration/backfill policy for legacy payloads.
+  - define deterministic backfill/rewrite policy for legacy persisted cashflow entries currently accepted via unversioned fallback (including any eventual sunset of shape-based fallback).

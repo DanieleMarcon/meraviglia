@@ -239,10 +239,13 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(state.propostaA.servizi[0]?.service.catalogServiceId).toBe("svc-legacy")
     expect(saveToStorage).toHaveBeenCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: state.piano,
       propostaA: state.propostaA,
       propostaB: state.propostaB,
       sectionToggles: state.sectionToggles,
+      },
     })
   })
 
@@ -275,11 +278,34 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(state.propostaA.servizi[0]?.service.id).toBe("runtime-service-id")
     expect(state.propostaA.servizi[0]?.service.catalogServiceId).toBe("svc-rate")
     expect(saveToStorage).toHaveBeenCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: state.piano,
       propostaA: state.propostaA,
       propostaB: state.propostaB,
       sectionToggles: state.sectionToggles,
+      },
     })
+  })
+
+  it("falls back to defaults when persisted cashflow envelope version is unsupported", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: baseCatalog,
+      rawCashflow: {
+        version: 999,
+        payload: {
+          piano: basePlan,
+          propostaA: propostaASeed,
+          propostaB: propostaBSeed,
+        },
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.piano.durataTotale).toBe(12)
+    expect(state.propostaA.servizi).toEqual([])
+    expect(state.propostaB.servizi).toEqual([])
   })
 
   it("falls back to defaults when persisted cashflow payload shape is invalid", async () => {
@@ -404,10 +430,13 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaA.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
 
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -448,10 +477,13 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.sectionToggles[ProposalSectionType.COVER]).toBe(true)
 
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -481,10 +513,13 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 2 })
 
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -593,10 +628,13 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(updated.propostaA.servizi[0]?.service.meseInizio).toBe(2)
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -621,10 +659,13 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(updated.propostaB.servizi[0]?.service.meseInizio).toBe(3)
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -686,10 +727,13 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(saveToStorage).toHaveBeenCalledWith("meraviglia-service-catalog", updated.services)
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 
@@ -713,10 +757,13 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 3 })
 
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
       piano: updated.piano,
       propostaA: updated.propostaA,
       propostaB: updated.propostaB,
       sectionToggles: updated.sectionToggles,
+      },
     })
   })
 })
