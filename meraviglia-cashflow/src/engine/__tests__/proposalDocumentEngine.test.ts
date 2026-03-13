@@ -124,6 +124,28 @@ describe("proposalDocumentEngine", () => {
     })
   })
 
+
+  it("usa payload STRATEGIC_PLAN preparato quando fornito", () => {
+    const doc = buildProposalDocument({
+      propostaA: baseProposal("A", 1000),
+      piano,
+      meta,
+      preparedStrategicPlanPayload: {
+        durataTotale: 24,
+        moduli: [{ nome: "Prepared Strategic Module", meseInizio: 3, durata: 6 }],
+      },
+    })
+
+    const strategicPlan = doc.sections.find(
+      (section) => section.type === ProposalSectionType.STRATEGIC_PLAN
+    )
+
+    expect(strategicPlan?.payload).toEqual({
+      durataTotale: 24,
+      moduli: [{ nome: "Prepared Strategic Module", meseInizio: 3, durata: 6 }],
+    })
+  })
+
   it("include tutte le sezioni attese con comparison disabilitata se assente", () => {
     const doc = buildProposalDocument({
       propostaA: baseProposal("A", 1000),

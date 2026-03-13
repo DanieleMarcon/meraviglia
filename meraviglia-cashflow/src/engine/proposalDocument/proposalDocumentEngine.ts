@@ -12,6 +12,7 @@ import type {
   ActivatedServicesPayload,
   ComparisonPayload,
   FinancialProposalPayload,
+  StrategicPlanPayload,
 } from "./proposalDocumentPayloads"
 import {
   createDefaultSectionToggleState,
@@ -33,6 +34,7 @@ export interface BuildProposalDocumentInput {
   meta: BuildProposalDocumentMeta
   sectionToggles?: SectionToggleState
   preparedActivatedServicesPayload?: ActivatedServicesPayload
+  preparedStrategicPlanPayload?: StrategicPlanPayload
   preparedFinancialProposalPayload?: FinancialProposalPayload
   preparedComparisonPayload?: ComparisonPayload | null
 }
@@ -48,14 +50,6 @@ function isSectionEnabled(
   return sectionToggles[sectionType]
 }
 
-interface StrategicPlanPayload {
-  durataTotale: number
-  moduli: Array<{
-    nome: string
-    meseInizio: number
-    durata: number
-  }>
-}
 
 interface CashflowPayload {
   monthly: number[]
@@ -159,6 +153,7 @@ export function buildProposalDocument({
   meta,
   sectionToggles: sectionTogglesInput,
   preparedActivatedServicesPayload,
+  preparedStrategicPlanPayload,
   preparedFinancialProposalPayload,
   preparedComparisonPayload,
 }: BuildProposalDocumentInput): ProposalDocument {
@@ -169,7 +164,7 @@ export function buildProposalDocument({
 
   const activatedServicesPayload =
     preparedActivatedServicesPayload ?? buildActivatedServicesPayload(propostaA)
-  const strategicPlanPayload = buildStrategicPlanPayload(piano)
+  const strategicPlanPayload = preparedStrategicPlanPayload ?? buildStrategicPlanPayload(piano)
   const cashflowA = calcolaCashflow(propostaA, piano)
   const financialProposalPayload =
     preparedFinancialProposalPayload ??

@@ -1,8 +1,9 @@
-import type { ProposalDTO } from "../dto/StrategicPlanDTO"
+import type { ProposalDTO, StrategicPlanDTO } from "../dto/StrategicPlanDTO"
 import type {
   ActivatedServicesPayload,
   ComparisonPayload,
   FinancialProposalPayload,
+  StrategicPlanPayload,
 } from "../../engine/proposalDocument/proposalDocumentPayloads"
 
 const getEffectiveServicePrice = (proposal: ProposalDTO["servizi"][number]): number => {
@@ -25,6 +26,18 @@ export const mapProposalDTOToActivatedServicesPayload = (
   })),
 })
 
+
+
+export const mapStrategicPlanDTOToStrategicPlanPayload = (
+  piano: StrategicPlanDTO,
+): StrategicPlanPayload => ({
+  durataTotale: piano.durataTotale,
+  moduli: piano.moduli.map((modulo) => ({
+    nome: modulo.nome,
+    meseInizio: modulo.meseInizio,
+    durata: modulo.durata,
+  })),
+})
 
 export interface FinancialTotalsProjectionDTO {
   totaleAnno1: number
