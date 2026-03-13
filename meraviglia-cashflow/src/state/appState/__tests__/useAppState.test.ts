@@ -182,9 +182,12 @@ describe("useAppState compare/proposal orchestration", () => {
 
     expect(saveToStorage).toHaveBeenCalledWith(
       "meraviglia-service-catalog",
-      expect.arrayContaining([
-        expect.objectContaining({ id: "svc-rate", color: expect.stringMatching(/^hsl\(/) }),
-      ])
+      expect.objectContaining({
+        version: 1,
+        payload: expect.arrayContaining([
+          expect.objectContaining({ id: "svc-rate", color: expect.stringMatching(/^hsl\(/) }),
+        ]),
+      }),
     )
   })
 
@@ -373,6 +376,24 @@ describe("useAppState compare/proposal orchestration", () => {
   it("falls back to empty catalog when persisted service-catalog payload is not an array", async () => {
     const { useAppState } = await loadUseAppState({
       services: { not: "an-array" },
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.services).toEqual([])
+  })
+
+  it("falls back to empty catalog when persisted service-catalog envelope version is unsupported", async () => {
+    const { useAppState } = await loadUseAppState({
+      services: {
+        version: 99,
+        payload: baseCatalog,
+      },
       cashflow: {
         piano: basePlan,
         propostaA: propostaASeed,
@@ -725,7 +746,10 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(updated.propostaB.servizi[0]?.strategiaPagamento).toEqual({ tipo: "rate", numeroRate: 6 })
     expect(updated.propostaA.servizi[0]?.service.color).toMatch(/^hsl\(/)
 
-    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-service-catalog", updated.services)
+    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-service-catalog", {
+      version: 1,
+      payload: updated.services,
+    })
     expect(saveToStorage).toHaveBeenLastCalledWith("meraviglia-cashflow", {
       version: 1,
       payload: {

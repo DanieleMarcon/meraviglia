@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest"
 
-import { decodeServiceCatalogBootstrapPayload } from "../serviceCatalogBootstrapDecoder"
+import {
+  createServiceCatalogBootstrapEnvelope,
+  decodeServiceCatalogBootstrapPayload,
+} from "../serviceCatalogBootstrapDecoder"
 
 describe("serviceCatalogBootstrapDecoder", () => {
-  it("accepts valid persisted service catalog payloads", () => {
-    const decoded = decodeServiceCatalogBootstrapPayload([
+  it("accepts current-version envelope payloads", () => {
+    const decoded = decodeServiceCatalogBootstrapPayload(createServiceCatalogBootstrapEnvelope([
       {
         id: "svc-rate",
         nome: "Rate Service",
@@ -16,7 +19,7 @@ describe("serviceCatalogBootstrapDecoder", () => {
         consentiAcconto: false,
         maxRateConsentite: 3,
       },
-    ])
+    ]))
 
     expect(decoded).toEqual([
       {
@@ -31,6 +34,25 @@ describe("serviceCatalogBootstrapDecoder", () => {
         maxRateConsentite: 3,
       },
     ])
+  })
+
+  it("retains compatibility for legacy unversioned payloads", () => {
+    const decoded = decodeServiceCatalogBootstrapPayload([
+      {
+        id: "svc-rate",
+        nome: "Rate Service",
+        categoria: "Ops",
+        prezzoPieno: 1200,
+        prezzoScontato: 1000,
+        durataStandard: 6,
+        consentiRateizzazione: true,
+        consentiAcconto: false,
+        maxRateConsentite: 3,
+      },
+    ])
+
+    expect(decoded).toHaveLength(1)
+    expect(decoded[0]?.id).toBe("svc-rate")
   })
 
   it("applies per-item decode and canonicalization for optional color", () => {
@@ -86,6 +108,27 @@ describe("serviceCatalogBootstrapDecoder", () => {
         color: "#7c3aed",
       },
     ])
+  })
+
+  it("fails closed for unsupported versioned envelopes", () => {
+    const decoded = decodeServiceCatalogBootstrapPayload({
+      version: 999,
+      payload: [
+        {
+          id: "svc-rate",
+          nome: "Rate Service",
+          categoria: "Ops",
+          prezzoPieno: 1200,
+          prezzoScontato: 1000,
+          durataStandard: 6,
+          consentiRateizzazione: true,
+          consentiAcconto: false,
+          maxRateConsentite: 3,
+        },
+      ],
+    })
+
+    expect(decoded).toEqual([])
   })
 
   it("falls back safely for invalid payload shapes and invalid entries", () => {
