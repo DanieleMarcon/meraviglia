@@ -1,42 +1,37 @@
-import type { PianoStrategico, Proposta, PropostaService } from "./dto/StrategicPlanDTO"
+import type {
+  CashflowMonthDataDTO,
+  CompareCashflowDTO,
+  CompareServiceSeriesDTO,
+} from "./dto/ProposteCompareDTO"
+import type { PianoStrategico, Proposta } from "./dto/StrategicPlanDTO"
+import {
+  mapCompareProjectionToServiceSeriesDTO,
+  mapProposalToCompareProjection,
+  type CompareServiceProjection,
+} from "./mappers/proposteCompareMappers"
 
-export interface CashflowMonthData {
-  month: string
-  [serviceKey: string]: number | string
-}
+export type CashflowMonthData = CashflowMonthDataDTO
+export type ServiceSeries = CompareServiceSeriesDTO
 
-export interface ServiceSeries {
-  key: string
-  runtimeServiceId: string
-  catalogServiceId: string
-  name: string
-  color: string
-}
-
-const resolveCatalogServiceId = (propostaService: PropostaService): string => {
-  return propostaService.service.catalogServiceId ?? propostaService.service.id
-}
-
-const getServiceMonthlyContribution = (propostaService: PropostaService, durata: number): number[] => {
+const getServiceMonthlyContribution = (
+  projection: CompareServiceProjection,
+  durata: number,
+): number[] => {
   const contributions = Array<number>(durata).fill(0)
-  const { service, strategiaPagamento } = propostaService
+  const { paymentStrategy, effectivePrice, operationalDuration, startMonth } = projection
 
-  const prezzoEffettivo = service.usaPrezzoScontato
-    ? service.prezzoScontato
-    : service.prezzoPieno
-
-  switch (strategiaPagamento.tipo) {
+  switch (paymentStrategy.tipo) {
     case "oneShot": {
-      if (service.meseInizio <= durata) {
-        contributions[service.meseInizio - 1] += prezzoEffettivo
+      if (startMonth <= durata) {
+        contributions[startMonth - 1] += effectivePrice
       }
       break
     }
     case "rate": {
-      const numeroRate = strategiaPagamento.numeroRate ?? 1
-      const rata = prezzoEffettivo / numeroRate
+      const numeroRate = paymentStrategy.numeroRate ?? 1
+      const rata = effectivePrice / numeroRate
       for (let i = 0; i < numeroRate; i += 1) {
-        const month = service.meseInizio + i
+        const month = startMonth + i
         if (month <= durata) {
           contributions[month - 1] += rata
         }
@@ -44,27 +39,27 @@ const getServiceMonthlyContribution = (propostaService: PropostaService, durata:
       break
     }
     case "abbonamento": {
-      for (let i = 0; i < service.durataOperativa; i += 1) {
-        const month = service.meseInizio + i
+      for (let i = 0; i < operationalDuration; i += 1) {
+        const month = startMonth + i
         if (month <= durata) {
-          contributions[month - 1] += prezzoEffettivo
+          contributions[month - 1] += effectivePrice
         }
       }
       break
     }
     case "accontoRate": {
-      const percentuale = strategiaPagamento.percentualeAcconto ?? 0.3
-      const numeroRateAcconto = strategiaPagamento.numeroRate ?? 1
-      const acconto = prezzoEffettivo * percentuale
-      const resto = prezzoEffettivo - acconto
+      const percentuale = paymentStrategy.percentualeAcconto ?? 0.3
+      const numeroRateAcconto = paymentStrategy.numeroRate ?? 1
+      const acconto = effectivePrice * percentuale
+      const resto = effectivePrice - acconto
       const rataAcconto = resto / numeroRateAcconto
 
-      if (service.meseInizio <= durata) {
-        contributions[service.meseInizio - 1] += acconto
+      if (startMonth <= durata) {
+        contributions[startMonth - 1] += acconto
       }
 
       for (let i = 1; i <= numeroRateAcconto; i += 1) {
-        const month = service.meseInizio + i
+        const month = startMonth + i
         if (month <= durata) {
           contributions[month - 1] += rataAcconto
         }
@@ -79,29 +74,25 @@ const getServiceMonthlyContribution = (propostaService: PropostaService, durata:
 export const buildCashflowData = (
   proposta: Proposta,
   piano: PianoStrategico,
-): { data: CashflowMonthData[]; services: ServiceSeries[] } => {
+): CompareCashflowDTO => {
+  const compareProjection = mapProposalToCompareProjection(proposta)
+
   const data: CashflowMonthData[] = Array.from(
     { length: piano.durataTotale },
     (_, index) => ({ month: `M${index + 1}` }),
   )
 
-  const services = proposta.servizi.map((propostaService) => ({
-    key: propostaService.service.id,
-    runtimeServiceId: propostaService.service.id,
-    catalogServiceId: resolveCatalogServiceId(propostaService),
-    name: propostaService.service.nome,
-    color: propostaService.service.color ?? "#111827",
-  }))
+  const services = compareProjection.map(mapCompareProjectionToServiceSeriesDTO)
 
-  proposta.servizi.forEach((propostaService) => {
-    const monthlyContribution = getServiceMonthlyContribution(propostaService, piano.durataTotale)
+  compareProjection.forEach((projection) => {
+    const monthlyContribution = getServiceMonthlyContribution(projection, piano.durataTotale)
 
     monthlyContribution.forEach((amount, index) => {
       if (amount <= 0) {
         return
       }
 
-      const serviceKey = propostaService.service.id
+      const serviceKey = projection.runtimeServiceId
       const monthData = data[index]
       const previous = typeof monthData[serviceKey] === "number" ? monthData[serviceKey] as number : 0
       monthData[serviceKey] = previous + amount
