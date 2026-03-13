@@ -58,6 +58,30 @@ interface AppStateStore {
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null
 
+const normalizePersistedProposalIdentity = (proposta: Proposta): Proposta => {
+  return {
+    ...proposta,
+    servizi: proposta.servizi.map((propostaService) => {
+      const persistedService = propostaService.service as unknown as Record<string, unknown>
+      const legacyCatalogServiceId = typeof persistedService.catalog_service_id === "string"
+        ? persistedService.catalog_service_id
+        : undefined
+
+      if (!legacyCatalogServiceId || propostaService.service.catalogServiceId) {
+        return propostaService
+      }
+
+      return {
+        ...propostaService,
+        service: {
+          ...propostaService.service,
+          catalogServiceId: legacyCatalogServiceId,
+        },
+      }
+    }),
+  }
+}
+
 const isPersistedCashflowState = (value: unknown): value is PersistedCashflowState => {
   if (!isObject(value)) {
     return false
@@ -123,8 +147,12 @@ const createInitialState = (): AppStateStore => {
   }
 
   const piano = persistedCashflow?.piano ?? DEFAULT_PIANO
-  const propostaA = persistedCashflow?.propostaA ?? createDefaultPropostaA()
-  const propostaB = persistedCashflow?.propostaB ?? createDefaultPropostaB()
+  const propostaA = persistedCashflow?.propostaA
+    ? normalizePersistedProposalIdentity(persistedCashflow.propostaA)
+    : createDefaultPropostaA()
+  const propostaB = persistedCashflow?.propostaB
+    ? normalizePersistedProposalIdentity(persistedCashflow.propostaB)
+    : createDefaultPropostaB()
   const sectionToggles = isSectionToggleState(persistedCashflow?.sectionToggles)
     ? { ...createDefaultSectionToggleState(), ...persistedCashflow.sectionToggles }
     : createDefaultSectionToggleState()

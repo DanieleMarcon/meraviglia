@@ -304,3 +304,15 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - `src/App.tsx` composition density reduction remains open and should be handled in a focused composition-extraction step after mapper/identity slices stabilize.
 - Additional migration/backfill follow-up remains open for legacy imported/persisted payloads and any downstream consumers of compare/export payloads so `catalogServiceId` is eagerly persisted/emitted when deterministic linkage exists.
 - UI-responsibility reduction follow-up remains open (if still relevant): UI should transport user intent/selection and display keys, while application/domain continue owning identity enrichment/reconciliation and normalized identity emission.
+
+### Post-Domain Aggregate Hardening (Step 26 — Persisted Import Adapter Canonical Identity Ingestion)
+
+- The persisted cashflow import adapter boundary in `useAppState` now consumes legacy `catalog_service_id` service payload keys and normalizes them into canonical `catalogServiceId` before application/domain write normalization runs.
+- This hardens one remaining explicit repository/import boundary where stable service identity could still be dropped despite being present under a legacy key, while preserving runtime `service.id` behavior.
+- Governance clarification now captured in protocol docs: legacy alias ingestion is allowed only as a narrow compatibility bridge and must normalize immediately to canonical identity fields at boundary entry.
+- Remaining service-ID propagation gaps after this slice are still open for other explicit import/export contracts and repository/application mapper paths that can still ingest or emit service payloads without explicit `catalogServiceId`.
+- Remaining shape-based compatibility fallback still retained: unique-shape catalog matching remains a temporary legacy bridge and should be removed after full identity propagation/backfill coverage.
+- Remaining coupling-by-shape cleanup still required where UI/state/application exchange DTO-like service shapes directly without explicit mapper boundaries.
+- `src/App.tsx` composition density reduction remains an explicit follow-up and should be handled in a dedicated composition extraction slice.
+- Additional migration/backfill follow-up remains open for legacy imported/persisted paths beyond this adapter key-alias bridge so deterministic `catalogServiceId` recovery can be eagerly persisted where possible.
+- UI-responsibility reduction follow-up remains open (if still relevant): UI should transport intent/selection while application/domain own identity enrichment/reconciliation and canonical identity emission.

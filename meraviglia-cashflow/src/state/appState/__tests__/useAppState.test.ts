@@ -242,6 +242,42 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
+  it("adapts legacy persisted catalog_service_id keys to catalogServiceId before normalization", async () => {
+    const legacyAliasProposta = {
+      ...propostaASeed,
+      servizi: [
+        {
+          ...propostaASeed.servizi[0]!,
+          service: {
+            ...propostaASeed.servizi[0]!.service,
+            id: "runtime-service-id",
+            catalog_service_id: "svc-rate",
+          },
+        },
+      ],
+    } as Proposta
+
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: legacyAliasProposta,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.propostaA.servizi[0]?.service.id).toBe("runtime-service-id")
+    expect(state.propostaA.servizi[0]?.service.catalogServiceId).toBe("svc-rate")
+    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-cashflow", {
+      piano: state.piano,
+      propostaA: state.propostaA,
+      propostaB: state.propostaB,
+      sectionToggles: state.sectionToggles,
+    })
+  })
+
   it("sanitizes proposal A on write and persists the full compare payload", async () => {
     const { useAppState, saveToStorage } = await loadUseAppState({
       services: baseCatalog,

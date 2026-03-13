@@ -103,6 +103,7 @@ Refactor current structural model into a project-centric workspace architecture 
 - Follow-up update: proposal-document export adaptation (`ACTIVATED_SERVICES` payload) now emits `catalogServiceId` explicitly while preserving runtime `service.id` for compatibility, reducing downstream need for shape-based service matching in document/export consumers.
 - Follow-up confirmed: remaining identity propagation gaps are still open for other import/export contracts and repository/application mapping paths that can ingest service payloads without `catalogServiceId`.
 - Follow-up update: compare-chart application mapper now emits both `runtimeServiceId` and `catalogServiceId` per service series (with narrow fallback only when catalog identity is missing), reducing one remaining weak identity boundary while preserving existing chart key behavior.
+- Follow-up update: persisted cashflow import adaptation now consumes legacy `catalog_service_id` and normalizes it to canonical `catalogServiceId` before domain write normalization, reducing one remaining explicit repository/import identity-loss boundary without widening fallback behavior.
 
 ### Objective
 Introduce explicit application/use-case layer to orchestrate workflows and enforce future dependency boundaries.
