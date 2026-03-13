@@ -385,3 +385,17 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries so canonical identity and explicit mapper adaptation are guaranteed before application/document orchestration.
 - `src/App.tsx` composition density reduction remains open and should be addressed in a dedicated composition extraction slice after current mapper-boundary cleanup stabilizes.
 - Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers that can still cross boundaries without deterministic `catalogServiceId` continuity.
+
+### Post-Domain Aggregate Hardening (Step 33 — Payment Strategy Intent Boundary in UI)
+
+- Payment-strategy editing in `PaymentEditor` no longer reconstructs full nested `proposta.servizi[*].strategiaPagamento` graphs in UI; UI now emits narrow payment intents (`serviceId` + changed payment fields), and app-state orchestration applies/normalizes the rich update.
+- Durable clarification: proposal-editing UI surfaces should prefer intent payloads over deep DTO mutation, while state/application boundaries remain responsible for assembling nested proposal/service/payment update shapes before normalization.
+- Remaining UI deep-shape mutation cleanup still required after this slice:
+  - timeline drag/move update path in `src/App.tsx` still reconstructs nested service shape for month changes.
+  - plan/module editing in `PianoEditor` still emits full `PianoStrategico` objects instead of narrower edit intents.
+  - additional proposal/service mutation handlers in UI/state still operate on DTO-like nested structures directly.
+- Remaining proposal-document mapper gaps: placeholder/auxiliary proposal-document sections are still engine-local shape assembly paths without dedicated application-owned projection mappers.
+- Remaining shape-based compatibility fallback retained: catalog identity fallback (`catalogServiceId := runtimeServiceId`) and unique-shape legacy catalog matching are still active compatibility bridges.
+- Persistence/import contract hardening still needed for non-bootstrap import/export/repository boundaries to guarantee canonical identity propagation and mapper adaptation before orchestration.
+- `src/App.tsx` composition density reduction remains open and should be handled in a focused composition-extraction slice after current UI intent-boundary cleanup stabilizes.
+- Further identity propagation and boundary tightening still needed for legacy/persisted/imported service payloads and downstream consumers where deterministic `catalogServiceId` continuity is not yet guaranteed.
