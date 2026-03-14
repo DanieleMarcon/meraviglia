@@ -125,6 +125,38 @@ describe("proposalDocumentEngine", () => {
   })
 
 
+
+  it("falls back to computed ACTIVATED_SERVICES payload when prepared roundtrip payload is malformed", () => {
+    const proposal = baseProposal("A", 1000)
+
+    const doc = buildProposalDocument({
+      propostaA: proposal,
+      piano,
+      meta,
+      preparedActivatedServicesPayload: {
+        services: [{ id: "broken-service" }],
+      } as unknown as { services: [] },
+    })
+
+    const activatedServices = doc.sections.find(
+      (section) => section.type === ProposalSectionType.ACTIVATED_SERVICES
+    )
+
+    expect(activatedServices?.payload).toEqual({
+      services: [
+        {
+          id: "A-s1",
+          catalogServiceId: null,
+          nome: "SEO Pack",
+          modulo: "SEO Pack",
+          prezzo: 1000,
+          durataOperativa: 1,
+          paymentType: "oneShot",
+        },
+      ],
+    })
+  })
+
   it("usa payload STRATEGIC_PLAN preparato quando fornito", () => {
     const doc = buildProposalDocument({
       propostaA: baseProposal("A", 1000),

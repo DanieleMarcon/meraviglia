@@ -673,3 +673,32 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Remaining external payload families still lacking canonical version-aware decode/adaptation:
   - proposal-document payload families.
   - remaining strategic-planning import/export payload families outside the cashflow bootstrap `piano` + proposal seams.
+
+### Post-Domain Aggregate Hardening (Step 46 — Proposal-Document ACTIVATED_SERVICES Roundtrip Decode/Adaptation Seam)
+
+- Proposal-document `ACTIVATED_SERVICES` roundtrip payload family now has an explicit runtime decode/adaptation seam via `proposalDocumentRoundtripPayloadDecoder` before prepared payloads can re-enter proposal-document orchestration.
+- Version-aware behavior is now explicit for this family: `version: 1` envelopes are accepted, legacy unversioned payloads remain compatibility-supported, and unsupported envelope versions fail closed.
+- Canonical boundary output is now explicit for this slice: legacy `catalog_service_id` aliases are adapted to canonical `catalogServiceId` at decode time, improving service identity continuity for document-facing payload re-entry.
+- Structural trust is reduced with low blast radius: malformed prepared roundtrip payloads no longer flow through by shape trust and instead safely fall back to computed `ACTIVATED_SERVICES` payload generation.
+- Durable architectural clarification: proposal-document roundtrip payload families should be hardened section-by-section with narrow decode/adaptation seams, keeping compatibility parsing/version dispatch separate from orchestration and business normalization.
+- Remaining non-local import/export hardening gaps after this slice:
+  - proposal-document roundtrip families beyond `ACTIVATED_SERVICES` (for example `STRATEGIC_PLAN`, `FINANCIAL_PROPOSAL`, and `COMPARISON` payload re-entry) still need explicit decode/adaptation seams.
+  - additional non-local strategic-planning and document-derived import/export families still lacking canonical version-aware decode/adaptation remain pending.
+  - non-local import/export seams outside current bootstrap/repository/document slices still require explicit runtime decoder/adapters.
+- Remaining identity continuity gaps at import/export boundaries:
+  - deterministic `catalogServiceId` continuity is still not guaranteed across all proposal-document section payload families and adjacent import/export contracts.
+  - legacy payload backfill policy for records missing canonical catalog identity remains required.
+- Remaining shape-based compatibility fallback still retained:
+  - legacy unversioned acceptance for multiple bootstrap/import/export payload families remains active as a temporary compatibility bridge.
+  - legacy alias compatibility (including snake_case variants) remains in place pending migration and sunset.
+- Remaining repository/infra runtime decode hardening still needed:
+  - direct external SDK ingress/egress seams outside currently hardened adapters still need explicit decode/adaptation boundaries.
+  - future repository/infra adapters must continue adding fail-closed runtime ingress decoders and explicit write adapters.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this payload-hardening slice.
+- Migration/versioning/backfill/sunset follow-up still needed for legacy payloads:
+  - define versioned envelope + decoder-dispatch strategy for remaining proposal-document and strategic-planning import/export families.
+  - define staged migration/backfill and explicit sunset criteria for unversioned/alias compatibility bridges.
+- Remaining external payload families still lacking canonical version-aware decode/adaptation:
+  - proposal-document section payload families beyond `ACTIVATED_SERVICES`.
+  - document-derived strategic planning re-entry payload families not yet covered by explicit decoders.
+  - remaining non-local strategic-planning import/export families outside current bootstrap and this proposal-document seam.

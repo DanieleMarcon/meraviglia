@@ -19,6 +19,7 @@ import {
   MANDATORY_PROPOSAL_SECTIONS,
   type SectionToggleState,
 } from "../../domain/models/SectionToggleState"
+import { decodeActivatedServicesRoundtripPayload } from "./proposalDocumentRoundtripPayloadDecoder"
 
 export interface BuildProposalDocumentMeta {
   clientName: string
@@ -163,7 +164,8 @@ export function buildProposalDocument({
   }
 
   const activatedServicesPayload =
-    preparedActivatedServicesPayload ?? buildActivatedServicesPayload(propostaA)
+    decodeActivatedServicesRoundtripPayload(preparedActivatedServicesPayload)
+    ?? buildActivatedServicesPayload(propostaA)
   const strategicPlanPayload = preparedStrategicPlanPayload ?? buildStrategicPlanPayload(piano)
   const cashflowA = calcolaCashflow(propostaA, piano)
   const financialProposalPayload =
