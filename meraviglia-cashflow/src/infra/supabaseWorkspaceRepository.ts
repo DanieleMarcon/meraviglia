@@ -1,5 +1,9 @@
 import { supabase } from "../lib/supabaseClient"
 import { decodeWorkspaceRow, decodeWorkspaceRows } from "./workspaceRowDecoder"
+import {
+  adaptCreateWorkspaceWritePayload,
+  adaptUpdateWorkspaceWritePayload,
+} from "./workspaceWritePayloadAdapter"
 import type {
   CreateWorkspaceRecordInput,
   UpdateWorkspaceRecordInput,
@@ -11,12 +15,10 @@ const TABLE_NAME = "workspaces"
 
 export class SupabaseWorkspaceRepository implements WorkspaceRepository {
   async createWorkspace(input: CreateWorkspaceRecordInput): Promise<WorkspaceRecord> {
+    const writePayload = adaptCreateWorkspaceWritePayload(input)
     const { data, error } = await supabase
       .from(TABLE_NAME)
-      .insert({
-        workspace_name: input.workspace_name,
-        workspace_slug: input.workspace_slug,
-      })
+      .insert(writePayload)
       .select("id, workspace_name, workspace_slug, created_at, updated_at")
       .single()
 
@@ -41,11 +43,10 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
   }
 
   async updateWorkspace(id: string, input: UpdateWorkspaceRecordInput): Promise<WorkspaceRecord> {
+    const writePayload = adaptUpdateWorkspaceWritePayload(input)
     const { data, error } = await supabase
       .from(TABLE_NAME)
-      .update({
-        workspace_name: input.workspace_name,
-      })
+      .update(writePayload)
       .eq("id", id)
       .select("id, workspace_name, workspace_slug, created_at, updated_at")
       .single()
