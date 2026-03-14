@@ -111,6 +111,26 @@ If any check fails, feature is not merge-ready.
 
 ---
 
+
+### Documentation Impact Check
+
+Every feature implementation task must explicitly evaluate whether project documentation requires updates.
+
+Feature tasks must include a final step that reviews at least the following documentation surfaces:
+
+- `docs/ROADMAP_PHASES.md`
+- `docs/PROJECT_STRUCTURE.md`
+- `meraviglia-cashflow/README.md`
+- any feature-specific documentation relevant to the change
+
+The task completion summary must explicitly state one of the following:
+
+- Documentation updated (list files modified), or
+- Documentation confirmed unchanged.
+
+Purpose: prevent documentation drift and ensure architecture documentation remains authoritative.
+
+
 ## 3. Layer Ownership Rules
 
 Use these rules as strict placement guidance.
