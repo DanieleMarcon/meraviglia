@@ -1,4 +1,5 @@
 import type { PianoStrategico, Proposta } from "../../application/dto/StrategicPlanDTO"
+import { decodeProposalImportPayload } from "./proposalImportPayloadDecoder"
 import {
   createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
@@ -46,28 +47,8 @@ const isSectionToggleState = (value: unknown): value is SectionToggleState => {
   return Object.values(value).every((toggleValue) => typeof toggleValue === "boolean")
 }
 
-const canonicalizePersistedProposalAliases = (proposta: Proposta): Proposta => {
-  return {
-    ...proposta,
-    servizi: proposta.servizi.map((propostaService) => {
-      const persistedService = propostaService.service as unknown as Record<string, unknown>
-      const legacyCatalogServiceId = typeof persistedService.catalog_service_id === "string"
-        ? persistedService.catalog_service_id
-        : undefined
-
-      if (!legacyCatalogServiceId || propostaService.service.catalogServiceId) {
-        return propostaService
-      }
-
-      return {
-        ...propostaService,
-        service: {
-          ...propostaService.service,
-          catalogServiceId: legacyCatalogServiceId,
-        },
-      }
-    }),
-  }
+const decodePersistedProposal = (raw: unknown): Proposta | null => {
+  return decodeProposalImportPayload(raw)
 }
 
 const normalizePersistedSectionToggles = (
@@ -97,13 +78,23 @@ const decodePersistedCashflowState = (raw: unknown): DecodedCashflowBootstrap =>
     }
   }
 
+  const decodedPropostaA = decodePersistedProposal(raw.propostaA)
+  const decodedPropostaB = decodePersistedProposal(raw.propostaB)
+
+  if (!decodedPropostaA || !decodedPropostaB) {
+    return {
+      payload: null,
+      sectionToggles: createDefaultSectionToggleState(),
+    }
+  }
+
   const normalizedSectionToggles = normalizePersistedSectionToggles(raw.sectionToggles)
 
   return {
     payload: {
       piano: raw.piano,
-      propostaA: canonicalizePersistedProposalAliases(raw.propostaA),
-      propostaB: canonicalizePersistedProposalAliases(raw.propostaB),
+      propostaA: decodedPropostaA,
+      propostaB: decodedPropostaB,
       sectionToggles: normalizedSectionToggles,
     },
     sectionToggles: normalizedSectionToggles,
