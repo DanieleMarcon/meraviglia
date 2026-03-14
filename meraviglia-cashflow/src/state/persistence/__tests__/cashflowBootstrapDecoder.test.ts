@@ -67,6 +67,31 @@ describe("cashflowBootstrapDecoder", () => {
     expect(decoded.sectionToggles[ProposalSectionType.COVER]).toBe(true)
   })
 
+
+  it("rejects payload when imported proposal shape is malformed", () => {
+    const decoded = decodeCashflowBootstrapPayload({
+      version: 1,
+      payload: {
+        piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+        propostaA: {
+          id: "a",
+          nome: "A",
+          servizi: [{
+            service: {
+              id: "runtime-a-1",
+              nome: "Broken",
+              prezzoPieno: "100",
+            },
+            strategiaPagamento: { tipo: "oneShot" },
+          }],
+        },
+        propostaB: { id: "b", nome: "B", servizi: [] },
+      },
+    })
+
+    expect(decoded.payload).toBeNull()
+  })
+
   it("rejects invalid payload shape and returns null payload", () => {
     const decoded = decodeCashflowBootstrapPayload({
       propostaA: { id: "a", nome: "A", servizi: [] },
