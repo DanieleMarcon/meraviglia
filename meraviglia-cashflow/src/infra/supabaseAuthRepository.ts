@@ -1,20 +1,6 @@
-import type { Session } from "@supabase/supabase-js"
-
 import type { AuthRepository, AuthSession } from "../repository/authRepository"
 import { supabase } from "../lib/supabaseClient"
-
-const mapSession = (session: Session | null): AuthSession | null => {
-  if (!session) {
-    return null
-  }
-
-  return {
-    user: {
-      id: session.user.id,
-      email: session.user.email ?? null,
-    },
-  }
-}
+import { decodeExternalAuthSession } from "./authSessionDecoder"
 
 export class SupabaseAuthRepository implements AuthRepository {
   async getSession(): Promise<AuthSession | null> {
@@ -24,14 +10,14 @@ export class SupabaseAuthRepository implements AuthRepository {
       throw new Error(error.message)
     }
 
-    return mapSession(data.session)
+    return decodeExternalAuthSession(data.session, "getSession")
   }
 
   onAuthStateChange(listener: (session: AuthSession | null) => void): () => void {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      listener(mapSession(nextSession))
+      listener(decodeExternalAuthSession(nextSession, "onAuthStateChange"))
     })
 
     return () => {
