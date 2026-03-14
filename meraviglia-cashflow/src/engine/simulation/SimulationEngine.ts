@@ -3,7 +3,10 @@ import type { Scenario } from '../../domain/blueprint/Scenario'
 import { SimulationResult } from '../../domain/blueprint/SimulationResult'
 import { DefaultSimulationModel } from './DefaultSimulationModel'
 import type { SimulationModel } from './SimulationModel'
-import type { SimulationContext } from './SimulationContext'
+import {
+  ensureValidSimulationContext,
+  type SimulationContext,
+} from './SimulationContext'
 
 export class SimulationEngine {
   private readonly simulationModel: SimulationModel
@@ -29,14 +32,8 @@ export class SimulationEngine {
 
     scenario.validateStructure()
 
-    this.ensureValidContext(context)
+    ensureValidSimulationContext(context)
 
     return this.simulationModel.evaluateScenario(blueprint, scenario, context)
-  }
-
-  private ensureValidContext(context: SimulationContext): void {
-    if (!context.timestamp) {
-      throw new Error('SimulationContext timestamp is required')
-    }
   }
 }

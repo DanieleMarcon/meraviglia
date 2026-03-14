@@ -766,3 +766,21 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - migration/backfill writeback path must be in place (or one-time migration completed) for legacy records.
   - at least one release cycle of zero observed legacy-read usage should be confirmed before bridge removal.
   - fail-closed behavior for unsupported versions/invalid shapes must be validated by automated tests before compatibility fallback deletion.
+
+### Post-Domain Aggregate Hardening (Step 49 — Simulation Determinism Runtime Contract Parity)
+
+- Simulation runtime contract parity is now strengthened at engine boundary: `SimulationContext` must include canonical deterministic metadata (`timestampProvenance`, UTC timezone, locale-neutral execution marker, and numeric policy baseline `scale=6` + `half-even`) in addition to canonical UTC ISO-8601 timestamp.
+- Engine validation is now explicit and fail-fast: simulation execution is rejected before model evaluation when deterministic metadata is absent or invalid, preventing silent environment drift relative to documented determinism invariants.
+- Durable architectural clarification: deterministic governance baselines (time provenance, timezone/locale neutrality, numeric normalization policy) must be represented as explicit runtime contract fields validated at orchestration boundary, not left as implicit documentation-only assumptions.
+- Remaining simulation determinism hardening gaps after this slice:
+  - Add shared utility coverage for deterministic collection-order guarantees in future model variants where ordering semantics become non-trivial.
+  - Add explicit deterministic execution-id/run-id schema in `SimulationContext` when multi-run audit logging is introduced.
+- Remaining legacy compatibility bridges still open:
+  - legacy unversioned/alias import-export payload compatibility bridges outside simulation context remain active pending lifecycle sunset criteria.
+- Remaining import/export hardening gaps:
+  - proposal-document payload families and remaining strategic-planning external families still need canonical version-aware decode/adaptation seams.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this determinism contract slice.
+- Remaining domain aggregate hardening follow-ups:
+  - constructor-owned invariants and shape-coupling cleanup remain pending in non-simulation strategic-planning aggregates.
+- Remaining dependency-governance automation follow-up:
+  - add lint/CI guardrails to automatically block non-governed time/random access inside simulation model modules.
