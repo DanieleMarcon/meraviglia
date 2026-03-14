@@ -3,6 +3,10 @@ import { Blueprint } from '../../domain/blueprint/Blueprint'
 import { Constraint } from '../../domain/blueprint/Constraint'
 import { Scenario } from '../../domain/blueprint/Scenario'
 import { SimulationEngine } from '../simulation/SimulationEngine'
+import {
+  DEFAULT_SIMULATION_DETERMINISM_METADATA,
+  type SimulationContext,
+} from '../simulation/SimulationContext'
 
 const buildScenario = (): Scenario =>
   new Scenario({
@@ -64,15 +68,27 @@ const buildBlueprint = (scenario: Scenario): Blueprint =>
     scenarios: [scenario],
   })
 
+const buildContext = (
+  overrides: Partial<SimulationContext> = {}
+): SimulationContext => ({
+  timestamp: '2026-02-03T10:20:30.000Z',
+  determinism: DEFAULT_SIMULATION_DETERMINISM_METADATA,
+  ...overrides,
+})
+
 describe('SimulationEngine', () => {
   it('uses caller-provided context timestamp for result metadata', () => {
     const scenario = buildScenario()
     const blueprint = buildBlueprint(scenario)
     const engine = new SimulationEngine()
 
-    const result = engine.simulateScenario(blueprint, scenario, {
-      timestamp: '2026-02-03T10:20:30.000Z',
-    })
+    const result = engine.simulateScenario(
+      blueprint,
+      scenario,
+      buildContext({
+        timestamp: '2026-02-03T10:20:30.000Z',
+      })
+    )
 
     expect(result.createdAt).toBe('2026-02-03T10:20:30.000Z')
   })
@@ -81,9 +97,7 @@ describe('SimulationEngine', () => {
     const scenario = buildScenario()
     const blueprint = buildBlueprint(scenario)
     const engine = new SimulationEngine()
-    const context = {
-      timestamp: '2026-02-03T10:20:30.000Z',
-    }
+    const context = buildContext()
 
     const first = engine.simulateScenario(blueprint, scenario, context)
     const second = engine.simulateScenario(blueprint, scenario, context)
@@ -97,9 +111,63 @@ describe('SimulationEngine', () => {
     const engine = new SimulationEngine()
 
     expect(() =>
-      engine.simulateScenario(blueprint, scenario, {
-        timestamp: '',
-      })
+      engine.simulateScenario(
+        blueprint,
+        scenario,
+        buildContext({
+          timestamp: '',
+        })
+      )
     ).toThrow(/timestamp is required/)
+  })
+
+  it('throws if context timestamp is not canonical UTC ISO-8601', () => {
+    const scenario = buildScenario()
+    const blueprint = buildBlueprint(scenario)
+    const engine = new SimulationEngine()
+
+    expect(() =>
+      engine.simulateScenario(
+        blueprint,
+        scenario,
+        buildContext({
+          timestamp: '2026-02-03T10:20:30+01:00',
+        })
+      )
+    ).toThrow(/canonical UTC ISO-8601/)
+  })
+
+  it('throws if determinism metadata is missing', () => {
+    const scenario = buildScenario()
+    const blueprint = buildBlueprint(scenario)
+    const engine = new SimulationEngine()
+
+    expect(() =>
+      engine.simulateScenario(blueprint, scenario, {
+        timestamp: '2026-02-03T10:20:30.000Z',
+      } as SimulationContext)
+    ).toThrow(/determinism metadata is required/)
+  })
+
+  it('throws if numeric policy does not match canonical baseline', () => {
+    const scenario = buildScenario()
+    const blueprint = buildBlueprint(scenario)
+    const engine = new SimulationEngine()
+
+    expect(() =>
+      engine.simulateScenario(
+        blueprint,
+        scenario,
+        buildContext({
+          determinism: {
+            ...DEFAULT_SIMULATION_DETERMINISM_METADATA,
+            numericPolicy: {
+              ...DEFAULT_SIMULATION_DETERMINISM_METADATA.numericPolicy,
+              scale: 4,
+            },
+          },
+        })
+      )
+    ).toThrow(/numeric policy scale must be 6/)
   })
 })

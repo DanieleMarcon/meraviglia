@@ -175,14 +175,32 @@ SimulationModel
 SimulationResult
 ```
 
-The context contains deterministic metadata such as UTC timestamps, numeric policy baseline (`scale=6`, `half-even`), and normalized execution parameters.
+The runtime context contract is explicit and mandatory for deterministic governance parity:
+
+```ts
+SimulationContext {
+  timestamp: string // canonical UTC ISO-8601 with millisecond precision
+  determinism: {
+    timestampProvenance: 'context-provided'
+    timezone: 'UTC'
+    locale: 'locale-neutral'
+    numericPolicy: {
+      scale: 6
+      rounding: 'half-even'
+    }
+  }
+}
+```
+
+Engine boundary validation must fail fast before model execution when the context is missing or violates this contract.
 
 This ensures:
 
 * reproducible simulation runs
 * scenario replay
+* explicit runtime contract parity with documented invariants
 * future calibration using real-world execution feedback
-* compatibility with AI-assisted evaluation models.
+* compatibility with AI-assisted evaluation models that preserve deterministic mode.
 
 Simulation models must never directly call system time or external randomness.
 
