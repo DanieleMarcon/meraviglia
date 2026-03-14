@@ -212,7 +212,8 @@ Ownership boundaries between layers are mandatory.
 - may depend on external systems
 - must not contain business rules
 - repository/infra ingress adapters must decode/adapt external persistence rows at runtime before returning repository records to application flow
-- decode adapters at infra ingress may perform structural/compatibility normalization only (shape guards, legacy key aliases, nullability coercion) and must not perform business/domain normalization
+- repository/infra egress adapters that write to external systems must pass repository input payloads through explicit runtime adaptation seams before SDK/database calls (shape guard -> canonical external write payload), instead of forwarding structural-trust objects directly
+- decode/adaptation adapters at infra boundaries may perform structural/compatibility normalization only (shape guards, legacy key aliases, nullability coercion) and must not perform business/domain normalization
 
 ## 6. Naming Conventions
 

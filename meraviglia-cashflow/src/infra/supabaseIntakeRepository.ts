@@ -1,5 +1,9 @@
 import { supabase } from "../lib/supabaseClient"
 import { decodeIntakeRow, decodeIntakeRows } from "./intakeRowDecoder"
+import {
+  adaptCreateIntakeWritePayload,
+  adaptUpdateIntakeWritePayload,
+} from "./intakeWritePayloadAdapter"
 import type {
   CreateIntakeRecordInput,
   IntakeRecord,
@@ -13,7 +17,8 @@ const SELECT_FIELDS =
 
 export class SupabaseIntakeRepository implements IntakeRepository {
   async createIntake(input: CreateIntakeRecordInput): Promise<IntakeRecord> {
-    const { data, error } = await supabase.from(TABLE_NAME).insert(input).select(SELECT_FIELDS).single()
+    const writePayload = adaptCreateIntakeWritePayload(input)
+    const { data, error } = await supabase.from(TABLE_NAME).insert(writePayload).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to create intake")
     return decodeIntakeRow(data, "createIntake")
   }
@@ -34,7 +39,8 @@ export class SupabaseIntakeRepository implements IntakeRepository {
   }
 
   async updateIntake(id: string, input: UpdateIntakeRecordInput): Promise<IntakeRecord> {
-    const { data, error } = await supabase.from(TABLE_NAME).update(input).eq("id", id).select(SELECT_FIELDS).single()
+    const writePayload = adaptUpdateIntakeWritePayload(input)
+    const { data, error } = await supabase.from(TABLE_NAME).update(writePayload).eq("id", id).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to update intake")
     return decodeIntakeRow(data, "updateIntake")
   }
