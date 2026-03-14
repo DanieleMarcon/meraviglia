@@ -10,6 +10,7 @@ import ServiceCatalogManager from "./ui/components/ServiceCatalogManager"
 import AddServiceToProposal from "./ui/components/AddServiceToProposal"
 import PianoEditor from "./ui/components/PianoEditor"
 import IntakeView from "./ui/views/IntakeView"
+import WorkspaceView from "./ui/views/WorkspaceView"
 import UnauthorizedView from "./ui/views/UnauthorizedView"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
@@ -112,6 +113,8 @@ function CashflowApp() {
       />
 
       <IntakeView />
+
+      <WorkspaceView />
 
       <React.Suspense fallback={<div style={{ padding: 16 }}>Loading...</div>}>
         <ProposteCompareView
