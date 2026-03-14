@@ -733,3 +733,36 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - migration/backfill writeback path must be in place (or one-time migration executed) for legacy records.
   - at least one release cycle of zero observed legacy-read usage should be confirmed before bridge removal.
   - fail-closed behavior for unsupported versions must already be validated by tests before compatibility fallback deletion.
+
+
+### Post-Domain Aggregate Hardening (Step 48 — Cashflow Local Persistence Compatibility Lifecycle Governance Parity)
+
+- Cashflow local persistence compatibility lifecycle governance now reaches parity with service-catalog: canonical contract is explicit (`{ version: 1, payload }`), retained legacy form is explicit (unversioned persisted cashflow object), unsupported envelope versions fail closed, and invalid non-object payload shapes now fail closed before legacy adaptation.
+- Decoder lifecycle metadata is now explicit and operational for this family: cashflow bootstrap decode emits `compatibilityState` and `shouldWriteBackCanonicalEnvelope`, allowing orchestration to distinguish canonical vs legacy vs unsupported/invalid reads.
+- Backfill behavior is now explicit and bounded: app-state bootstrap opportunistically writes canonical v1 envelope when a valid legacy-unversioned cashflow payload is decoded, without widening acceptance or moving business normalization into migration code.
+- Sunset strategy is now explicit for this family: remove legacy unversioned cashflow fallback only after observed legacy reads reach zero for a full release cycle, with a non-before target date gate of `2026-06-30`.
+- Durable architectural clarification: compatibility lifecycle metadata belongs at decoder seams, while canonical writeback policy remains orchestration-owned and gated by successful structural decode; this separation keeps migration/backfill mechanics explicit without coupling compatibility parsing to business normalization.
+- Remaining migration/backfill/sunset gaps after this slice:
+  - proposal/piano/proposal-document import families that still accept aliases/unversioned forms still need equivalent explicit migration metadata + sunset gate constants.
+  - compatibility telemetry/observability for legacy-read usage remains missing, so release-gate sunset decisions are still process-driven.
+  - a consolidated compatibility lifecycle checklist/tooling guard for all decoder seams remains pending.
+- Remaining non-local import/export hardening gaps:
+  - proposal-document roundtrip families beyond currently hardened sections still need dedicated decode/adaptation seams.
+  - remaining strategic-planning external import/export families still need canonical version-aware decode/adaptation boundaries.
+  - direct external SDK ingress/egress seams not yet covered by repository adapters still require explicit runtime decode/adaptation enforcement.
+- Remaining identity continuity gaps:
+  - deterministic `catalogServiceId` continuity is still not guaranteed across every external payload family.
+  - explicit migration/backfill for legacy records missing canonical catalog identity remains pending outside local bootstrap slices.
+- Remaining shape-based compatibility fallback still retained:
+  - unique-shape catalog matching fallback in domain validation remains active.
+  - multiple non-local import/export families still retain legacy unversioned/alias compatibility bridges pending lifecycle governance parity.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this persistence compatibility lifecycle slice.
+- Remaining external payload families still lacking canonical version-aware decode/adaptation:
+  - proposal-document section payload families beyond currently hardened scope.
+  - non-local strategic-planning import/export families not yet covered by existing proposal/piano decoders.
+  - additional cross-boundary payload families outside currently hardened repository/bootstrap seams.
+- Removal criteria/preconditions for retiring currently retained legacy bridges:
+  - canonical envelope read/write must be in active use for the targeted family.
+  - migration/backfill writeback path must be in place (or one-time migration completed) for legacy records.
+  - at least one release cycle of zero observed legacy-read usage should be confirmed before bridge removal.
+  - fail-closed behavior for unsupported versions/invalid shapes must be validated by automated tests before compatibility fallback deletion.

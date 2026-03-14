@@ -16,6 +16,17 @@ export interface PersistedCashflowState {
 
 export const CASHFLOW_BOOTSTRAP_VERSION = 1 as const
 
+/**
+ * Compatibility lifecycle policy (Step 48):
+ * - Canonical read/write contract: envelope `{ version: 1, payload }`.
+ * - Legacy compatibility bridge: unversioned persisted cashflow shape is still read.
+ * - Backfill behavior: legacy-unversioned reads emit migration metadata so bootstrap
+ *   orchestration can opportunistically write back the canonical v1 envelope.
+ * - Sunset trigger: once no legacy-unversioned reads are observed for a full
+ *   release cycle (target not before 2026-06-30), remove legacy fallback.
+ */
+export const CASHFLOW_LEGACY_UNVERSIONED_READ_SUNSET_TARGET = "2026-06-30"
+
 interface PersistedCashflowEnvelopeV1 {
   version: typeof CASHFLOW_BOOTSTRAP_VERSION
   payload: PersistedCashflowState
@@ -71,6 +82,17 @@ export interface DecodedCashflowBootstrap {
   sectionToggles: SectionToggleState
 }
 
+export type CashflowBootstrapCompatibilityState =
+  | "canonical_v1"
+  | "legacy_unversioned"
+  | "unsupported_version"
+  | "invalid_shape"
+
+export interface DecodedCashflowBootstrapWithMigration extends DecodedCashflowBootstrap {
+  compatibilityState: CashflowBootstrapCompatibilityState
+  shouldWriteBackCanonicalEnvelope: boolean
+}
+
 const decodePersistedCashflowState = (raw: unknown): DecodedCashflowBootstrap => {
   if (!hasPersistedCashflowShape(raw)) {
     return {
@@ -110,17 +132,41 @@ export const createCashflowBootstrapEnvelope = (
   payload,
 })
 
-export const decodeCashflowBootstrapPayload = (raw: unknown): DecodedCashflowBootstrap => {
+export const decodeCashflowBootstrapPayloadWithMigration = (
+  raw: unknown,
+): DecodedCashflowBootstrapWithMigration => {
   if (hasPersistedCashflowEnvelopeShape(raw)) {
-    return decodePersistedCashflowState(raw.payload)
+    return {
+      ...decodePersistedCashflowState(raw.payload),
+      compatibilityState: "canonical_v1",
+      shouldWriteBackCanonicalEnvelope: false,
+    }
   }
 
   if (isObject(raw) && "version" in raw) {
     return {
       payload: null,
       sectionToggles: createDefaultSectionToggleState(),
+      compatibilityState: "unsupported_version",
+      shouldWriteBackCanonicalEnvelope: false,
     }
   }
 
-  return decodePersistedCashflowState(raw)
+  if (!isObject(raw)) {
+    return {
+      payload: null,
+      sectionToggles: createDefaultSectionToggleState(),
+      compatibilityState: "invalid_shape",
+      shouldWriteBackCanonicalEnvelope: false,
+    }
+  }
+
+  return {
+    ...decodePersistedCashflowState(raw),
+    compatibilityState: "legacy_unversioned",
+    shouldWriteBackCanonicalEnvelope: true,
+  }
 }
+
+export const decodeCashflowBootstrapPayload = (raw: unknown): DecodedCashflowBootstrap =>
+  decodeCashflowBootstrapPayloadWithMigration(raw)
