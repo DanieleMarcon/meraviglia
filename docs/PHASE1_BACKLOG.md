@@ -784,3 +784,27 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - constructor-owned invariants and shape-coupling cleanup remain pending in non-simulation strategic-planning aggregates.
 - Remaining dependency-governance automation follow-up:
   - add lint/CI guardrails to automatically block non-governed time/random access inside simulation model modules.
+
+### Post-Domain Aggregate Hardening (Step 50 — Dependency-Governance Automated Gate)
+
+- A visible automated governance gate now exists as `npm run check:governance` in `meraviglia-cashflow`, backed by `scripts/check-governance.mjs`.
+- Gate coverage in this slice is intentionally high-value and low-noise:
+  - enforce canonical forbidden dependency directions across `src/{ui,application,domain,repository,infra,engine,state,auth,assets}`.
+  - enforce forbidden import surface usage by blocking `src/lib` imports from non-infra layers.
+  - enforce deterministic engine API guardrails by failing on direct `Date.now`, `new Date`, `Math.random`, `performance.now`, and `crypto.randomUUID` in non-test engine source.
+- Durable architectural clarification: dependency governance is an executable boundary contract (scripted pre-merge control), not documentation-only review guidance.
+- Remaining governance automation gaps after this slice:
+  - wire `npm run check:governance` as required CI/merge status in all target pipelines.
+  - expand module-resolution coverage (for example future TS path aliases) when introduced.
+  - consider AST-backed diagnostics if regex-level import parsing becomes noisy at larger scale.
+- Remaining determinism enforcement automation gaps after this slice:
+  - extend forbidden API checks beyond current engine scope if deterministic compute surfaces expand outside `src/engine`.
+  - add optional targeted deterministic-order checks for future simulation models with complex collection traversal.
+- Remaining migration/backfill/sunset strategy gaps:
+  - multiple non-local import/export families still retain legacy unversioned/alias compatibility bridges requiring explicit lifecycle metadata parity and sunset gates.
+  - compatibility telemetry remains needed to operationalize zero-legacy-read sunset criteria.
+- Remaining non-local import/export hardening gaps:
+  - proposal-document roundtrip families and other external payload families still need full canonical version-aware decode/adaptation rollout.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this governance-automation slice.
+- Remaining domain aggregate hardening follow-ups:
+  - strategic-planning aggregates still need wider constructor-owned invariant adoption and retirement of residual shape-coupled compatibility paths.
