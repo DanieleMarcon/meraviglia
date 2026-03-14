@@ -33,7 +33,7 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - Existing Supabase auth bootstrap.
 - Initial multi-user scaffolding.
 - Domain definitions for workspace and intake concepts.
-- Enforced dependency chain `ui → application → domain → repository → infra`.
+- Enforced dependency direction baseline: `ui → application`, `application → domain + repository contracts`, `infra → repository contracts`.
 
 ---
 
@@ -55,7 +55,7 @@ Consolidate strategic architecture decisions into enforceable documentation and 
 
 ### Dependencies
 - Phase 2A foundational persistence and intake baseline.
-- Alignment on target dependency chain `ui → application → domain → repository → infra`.
+- Alignment on target dependency direction baseline: `ui → application`, `application → domain + repository contracts`, `infra → repository contracts`.
 - Governance commitment to documentation-first architecture hardening.
 
 ---

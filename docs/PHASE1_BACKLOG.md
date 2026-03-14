@@ -4,6 +4,17 @@ Roadmap to bring the MVP to **architectural integrity 10/10**, with explicit seq
 
 ---
 
+## Current-State Summary (Open Items Only)
+
+To keep this historical backlog readable during later phases, the current open architectural items are:
+
+- Complete remaining domain aggregate hardening so constructor-owned invariants replace transitional boundary adaptations.
+- Continue mapper-first boundary cleanup where UI/state/application still exchange DTO-shaped payloads directly.
+- Reduce composition density in `src/App.tsx` by extracting composition-oriented UI containers.
+- Finish catalog identity propagation in persistence/import/export flows to fully retire shape-based fallback matching.
+
+---
+
 ## MILESTONE 1 — Structural Integrity
 
 ### Objective
