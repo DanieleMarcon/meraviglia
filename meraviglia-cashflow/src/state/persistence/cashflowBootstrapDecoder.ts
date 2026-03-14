@@ -1,5 +1,6 @@
 import type { PianoStrategico, Proposta } from "../../application/dto/StrategicPlanDTO"
 import { decodeProposalImportPayload } from "./proposalImportPayloadDecoder"
+import { decodePianoImportPayload } from "./pianoImportPayloadDecoder"
 import {
   createDefaultSectionToggleState,
   MANDATORY_PROPOSAL_SECTIONS,
@@ -78,10 +79,11 @@ const decodePersistedCashflowState = (raw: unknown): DecodedCashflowBootstrap =>
     }
   }
 
+  const decodedPiano = decodePianoImportPayload(raw.piano)
   const decodedPropostaA = decodePersistedProposal(raw.propostaA)
   const decodedPropostaB = decodePersistedProposal(raw.propostaB)
 
-  if (!decodedPropostaA || !decodedPropostaB) {
+  if (!decodedPiano || !decodedPropostaA || !decodedPropostaB) {
     return {
       payload: null,
       sectionToggles: createDefaultSectionToggleState(),
@@ -92,7 +94,7 @@ const decodePersistedCashflowState = (raw: unknown): DecodedCashflowBootstrap =>
 
   return {
     payload: {
-      piano: raw.piano,
+      piano: decodedPiano,
       propostaA: decodedPropostaA,
       propostaB: decodedPropostaB,
       sectionToggles: normalizedSectionToggles,

@@ -92,6 +92,33 @@ describe("cashflowBootstrapDecoder", () => {
     expect(decoded.payload).toBeNull()
   })
 
+
+  it("rejects payload when imported piano shape is malformed", () => {
+    const decoded = decodeCashflowBootstrapPayload({
+      version: 1,
+      payload: {
+        piano: { durataTotale: "6", moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+        propostaA: { id: "a", nome: "A", servizi: [] },
+        propostaB: { id: "b", nome: "B", servizi: [] },
+      },
+    })
+
+    expect(decoded.payload).toBeNull()
+  })
+
+  it("adapts legacy piano aliases before orchestration", () => {
+    const decoded = decodeCashflowBootstrapPayload({
+      piano: { durata_totale: 6, moduli: [{ nome: "Launch", mese_inizio: 1, durata: 6 }] },
+      propostaA: { id: "a", nome: "A", servizi: [] },
+      propostaB: { id: "b", nome: "B", servizi: [] },
+    })
+
+    expect(decoded.payload?.piano).toEqual({
+      durataTotale: 6,
+      moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }],
+    })
+  })
+
   it("rejects invalid payload shape and returns null payload", () => {
     const decoded = decodeCashflowBootstrapPayload({
       propostaA: { id: "a", nome: "A", servizi: [] },

@@ -646,3 +646,30 @@ This sequence maximizes architectural coherence: foundation first, domain comple
 - Migration/versioning/backfill/sunset follow-up still needed for legacy payloads:
   - define versioned envelope + dispatch strategy for remaining strategic-planning import/export families.
   - define staged migration/backfill and explicit sunset criteria for legacy alias/unversioned compatibility acceptance.
+
+### Post-Domain Aggregate Hardening (Step 45 — Strategic Plan (`piano`) Import Payload Decode/Adaptation Seam)
+
+- Strategic-plan import payload family is now explicitly runtime-decoded via `pianoImportPayloadDecoder` before cashflow bootstrap orchestration consumes `PianoStrategico`, reducing direct structural trust on `piano` payloads.
+- Cashflow bootstrap ingress now requires both proposal and strategic-plan subtrees to decode successfully before payload acceptance; malformed `piano` payloads fail closed while version-dispatch behavior remains unchanged (`version: 1` envelope accepted, unsupported versions rejected, legacy unversioned fallback retained for compatibility).
+- Canonical output is now explicit at the boundary: strategic-plan compatibility aliases are adapted to canonical DTO fields (`durataTotale`, `moduli[].meseInizio`) in the decoder seam, while business/domain normalization remains downstream.
+- Durable architectural clarification: strategic-planning import payload families should be hardened per-subtree (proposal and piano) with dedicated decode/adaptation modules at ingress boundaries, keeping compatibility parsing separate from orchestration and domain normalization concerns.
+- Remaining non-local import/export hardening gaps after this slice:
+  - proposal-document import roundtrip payload families still need explicit runtime decode/adaptation seams.
+  - additional external strategic-planning import/export payload families still need canonical version-aware decode/adaptation modules.
+  - non-local import/export seams outside current bootstrap/repository hardening slices still require explicit runtime decoder/adapters before orchestration.
+- Remaining identity continuity gaps at import/export boundaries:
+  - deterministic `catalogServiceId` continuity is still not guaranteed across every external strategic-planning import/export family.
+  - migration/backfill policy for legacy payloads missing canonical catalog identity is still required.
+- Remaining shape-based compatibility fallback still retained:
+  - legacy unversioned cashflow/service-catalog bootstrap acceptance remains active as a temporary compatibility bridge.
+  - unique-shape catalog matching fallback in domain validation remains active pending full identity propagation and backfill.
+- Remaining repository/infra runtime decode hardening still needed:
+  - future external repository/import adapters must keep adding explicit runtime ingress decoders and egress adapters.
+  - any direct external SDK ingress/egress that still bypasses decode/adaptation seams remains to be tightened.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this payload-hardening slice.
+- Migration/versioning/backfill/sunset follow-up still needed for legacy payloads:
+  - define explicit versioned envelope and decoder dispatch strategy for remaining strategic-planning import/export payload families.
+  - define staged legacy compatibility migration/backfill plan and explicit sunset criteria for unversioned/alias compatibility bridges.
+- Remaining external payload families still lacking canonical version-aware decode/adaptation:
+  - proposal-document payload families.
+  - remaining strategic-planning import/export payload families outside the cashflow bootstrap `piano` + proposal seams.
