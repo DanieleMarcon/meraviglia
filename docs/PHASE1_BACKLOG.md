@@ -597,3 +597,27 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - define staged migration/backfill and sunset criteria for retained shape-based compatibility bridges.
 - Remaining non-local import/export payload hardening still needed after this slice:
   - add explicit decode/adaptation boundaries for non-local import/export payload ingestion before application orchestration.
+
+### Post-Domain Aggregate Hardening (Step 43 — Non-Local Workspace Write Payload Decode/Adaptation Boundary)
+
+- Non-local workspace persistence write egress (`supabaseWorkspaceRepository` create/update paths) now passes through an explicit runtime decode/adaptation seam (`workspaceWritePayloadAdapter`) before Supabase SDK calls, reducing structural trust of external write payload contracts.
+- Runtime behavior remains coherent and incremental: valid workspace create/update payloads preserve existing canonical field emission (`workspace_name`, `workspace_slug`), while malformed shapes now fail fast at the infra boundary with explicit adapter errors.
+- Durable clarification: the protocol rule for external write boundaries is now concretely applied to both high-traffic repository families (`intake` and `workspace`), reinforcing that repository input contracts must be runtime-adapted before external orchestration/storage.
+- Remaining non-local import/export payload hardening gaps after this slice:
+  - non-local import/export ingress boundaries outside current repository seams still need explicit decode/adaptation before application orchestration.
+  - external payload families beyond intake/workspace/auth remain to be hardened with targeted runtime boundary adapters as they are introduced or discovered.
+- Remaining identity continuity gaps at import/export boundaries:
+  - import/export proposal/service payload seams still lack guaranteed end-to-end `catalogServiceId` continuity.
+  - deterministic backfill policy for legacy payloads lacking explicit catalog identity is still required.
+- Remaining shape-based compatibility fallback still retained:
+  - legacy unversioned local bootstrap fallback remains active for cashflow/service-catalog compatibility.
+  - unique-shape catalog matching fallback remains active in domain validation as a temporary bridge.
+- Remaining repository/infra runtime decode hardening still needed:
+  - direct non-local import/export ingestion paths still require explicit runtime decoders and compatibility narrowing.
+  - any future repository adapter must include ingress decode + egress adaptation seams as baseline contract hardening.
+- `src/App.tsx` composition density reduction remains explicitly open and should remain a separate focused cleanup slice.
+- Migration/versioning/backfill/sunset follow-up still needed for legacy payload compatibility:
+  - define version-aware envelopes and decoder dispatch for remaining non-local import/export families.
+  - define staged migration/backfill and explicit sunset criteria for remaining shape-based compatibility bridges.
+- Remaining external payload families still lacking canonical version-aware decode/adaptation:
+  - proposal/strategic-planning import-export payload families still need explicit canonical runtime boundary modules with version-aware compatibility handling where applicable.
