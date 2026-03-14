@@ -406,6 +406,44 @@ describe("useAppState compare/proposal orchestration", () => {
     expect(state.services).toEqual([])
   })
 
+  it("writes back legacy unversioned persisted service catalog as canonical versioned envelope", async () => {
+    const legacyUnversionedCatalog = [
+      {
+        id: "svc-legacy-catalog",
+        nome: "Legacy Catalog Service",
+        categoria: "Ops",
+        prezzoPieno: 500,
+        prezzoScontato: 450,
+        durataStandard: 3,
+        consentiRateizzazione: true,
+        consentiAcconto: false,
+        maxRateConsentite: 2,
+      },
+    ]
+
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: legacyUnversionedCatalog,
+      cashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.services[0]?.id).toBe("svc-legacy-catalog")
+    expect(saveToStorage).toHaveBeenCalledWith(
+      "meraviglia-service-catalog",
+      expect.objectContaining({
+        version: 1,
+        payload: expect.arrayContaining([
+          expect.objectContaining({ id: "svc-legacy-catalog" }),
+        ]),
+      }),
+    )
+  })
+
   it("falls back to defaults when persisted cashflow JSON decode yields null", async () => {
     const { useAppState } = await loadUseAppState({
       services: baseCatalog,

@@ -2,9 +2,32 @@ import type { ServiceDefinition } from "../../application/dto/StrategicPlanDTO"
 
 export const SERVICE_CATALOG_BOOTSTRAP_VERSION = 1 as const
 
+/**
+ * Compatibility lifecycle policy (Step 47):
+ * - Canonical read/write contract: envelope `{ version: 1, payload }`.
+ * - Legacy compatibility bridge: unversioned array payloads are still read.
+ * - Backfill behavior: legacy-unversioned reads should be opportunistically
+ *   written back as canonical v1 envelope by app-state bootstrap.
+ * - Sunset trigger: once no legacy-unversioned reads are observed for a full
+ *   release cycle (target not before 2026-06-30), remove legacy fallback.
+ */
+export const SERVICE_CATALOG_LEGACY_UNVERSIONED_READ_SUNSET_TARGET = "2026-06-30"
+
 interface PersistedServiceCatalogEnvelopeV1 {
   version: typeof SERVICE_CATALOG_BOOTSTRAP_VERSION
   payload: unknown
+}
+
+export type ServiceCatalogBootstrapCompatibilityState =
+  | "canonical_v1"
+  | "legacy_unversioned"
+  | "unsupported_version"
+  | "invalid_shape"
+
+export interface DecodedServiceCatalogBootstrap {
+  payload: ServiceDefinition[]
+  compatibilityState: ServiceCatalogBootstrapCompatibilityState
+  shouldWriteBackCanonicalEnvelope: boolean
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -91,14 +114,39 @@ export const createServiceCatalogBootstrapEnvelope = (
   payload,
 })
 
-export const decodeServiceCatalogBootstrapPayload = (raw: unknown): ServiceDefinition[] => {
+export const decodeServiceCatalogBootstrapPayloadWithMigration = (
+  raw: unknown,
+): DecodedServiceCatalogBootstrap => {
   if (hasPersistedServiceCatalogEnvelopeShape(raw)) {
-    return decodePersistedServiceCatalogPayload(raw.payload)
+    return {
+      payload: decodePersistedServiceCatalogPayload(raw.payload),
+      compatibilityState: "canonical_v1",
+      shouldWriteBackCanonicalEnvelope: false,
+    }
   }
 
   if (isObject(raw) && "version" in raw) {
-    return []
+    return {
+      payload: [],
+      compatibilityState: "unsupported_version",
+      shouldWriteBackCanonicalEnvelope: false,
+    }
   }
 
-  return decodePersistedServiceCatalogPayload(raw)
+  if (!Array.isArray(raw)) {
+    return {
+      payload: [],
+      compatibilityState: "invalid_shape",
+      shouldWriteBackCanonicalEnvelope: false,
+    }
+  }
+
+  return {
+    payload: decodePersistedServiceCatalogPayload(raw),
+    compatibilityState: "legacy_unversioned",
+    shouldWriteBackCanonicalEnvelope: true,
+  }
 }
+
+export const decodeServiceCatalogBootstrapPayload = (raw: unknown): ServiceDefinition[] =>
+  decodeServiceCatalogBootstrapPayloadWithMigration(raw).payload

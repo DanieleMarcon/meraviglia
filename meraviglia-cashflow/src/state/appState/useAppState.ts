@@ -19,7 +19,7 @@ import {
 } from "../persistence/cashflowBootstrapDecoder"
 import {
   createServiceCatalogBootstrapEnvelope,
-  decodeServiceCatalogBootstrapPayload,
+  decodeServiceCatalogBootstrapPayloadWithMigration,
 } from "../persistence/serviceCatalogBootstrapDecoder"
 import { loadRawFromStorage, saveToStorage } from "../persistence/storage"
 
@@ -181,10 +181,11 @@ const createInitialState = (): AppStateStore => {
   const decodedBootstrap = decodeCashflowBootstrapPayload(rawPersistedCashflow)
   const persistedCashflow = decodedBootstrap.payload
   const rawPersistedServiceCatalog = loadRawFromStorage(SERVICE_CATALOG_STORAGE_KEY)
-  const persistedServices = decodeServiceCatalogBootstrapPayload(rawPersistedServiceCatalog)
+  const decodedServiceCatalog = decodeServiceCatalogBootstrapPayloadWithMigration(rawPersistedServiceCatalog)
+  const persistedServices = decodedServiceCatalog.payload
   const { services, changed } = ensureServiceColors(persistedServices)
 
-  if (changed) {
+  if (changed || decodedServiceCatalog.shouldWriteBackCanonicalEnvelope) {
     saveToStorage(SERVICE_CATALOG_STORAGE_KEY, createServiceCatalogBootstrapEnvelope(services))
   }
 

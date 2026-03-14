@@ -197,6 +197,8 @@ Ownership boundaries between layers are mandatory.
 - import/repository adapters that ingest legacy payloads may accept legacy alias keys only as narrow compatibility bridges (for example `catalog_service_id`) but must normalize them immediately to canonical application fields (`catalogServiceId`) before business orchestration
 - local persistence bootstrap ingress must pass through an explicit decode/compatibility adapter boundary (parse → shape guard → legacy alias canonicalization) before application orchestration; bootstrap adapters may not rely on broad cast-based acceptance
 - versioned local persistence families must decode through an explicit envelope/version-dispatch ingress seam (raw parse → envelope/version detection → version-specific decoder/adaptation → handoff to existing application/domain normalization), and unknown envelope versions must fail closed to a safe fallback instead of shape-based acceptance
+- retained compatibility bridges (for example legacy unversioned payload acceptance or legacy alias keys) must declare explicit lifecycle governance in-code at the boundary: canonical contract/version, accepted legacy forms, read-time backfill/migration behavior, and sunset/removal criteria (including a target gate such as release window/date or observed-usage condition)
+- when a compatibility bridge is retained at read ingress and canonical output is known, adapters should expose explicit migration metadata so bootstrap/orchestration can opportunistically write back canonical persisted envelopes without changing business normalization ownership
 
 ### Domain layer ownership rules
 

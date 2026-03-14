@@ -702,3 +702,34 @@ This sequence maximizes architectural coherence: foundation first, domain comple
   - proposal-document section payload families beyond `ACTIVATED_SERVICES`.
   - document-derived strategic planning re-entry payload families not yet covered by explicit decoders.
   - remaining non-local strategic-planning import/export families outside current bootstrap and this proposal-document seam.
+
+### Post-Domain Aggregate Hardening (Step 47 — Service-Catalog Local Persistence Compatibility Lifecycle Governance)
+
+- Service-catalog local persistence now has explicit compatibility lifecycle governance encoded at the decoder seam: canonical contract remains `{ version: 1, payload }`, retained legacy form is unversioned array payload, unsupported envelope versions fail closed, and legacy reads now emit migration metadata (`shouldWriteBackCanonicalEnvelope`) for opportunistic canonical writeback at bootstrap.
+- Runtime behavior remains coherent and low-risk: legacy unversioned catalogs are still accepted, decoded with existing per-item guards, and now canonicalized on the next bootstrap write so compatibility debt becomes time-bounded instead of open-ended.
+- Durable architectural clarification: retained compatibility bridges are governed boundary artifacts, not indefinite behavior—decode/adaptation seams must declare canonical version, accepted legacy forms, migration/backfill behavior, and explicit sunset gate criteria in code and governance docs.
+- Sunset strategy is now explicit for this family: remove legacy unversioned acceptance only after observed legacy reads reach zero for a full release cycle, with a non-before target date gate of `2026-06-30` to avoid abrupt compatibility breakage.
+- Remaining migration/backfill/sunset gaps after this slice:
+  - cashflow bootstrap legacy unversioned acceptance still lacks equivalent explicit migration metadata + sunset gate constants.
+  - proposal/piano/proposal-document import families that still accept aliases/unversioned forms need the same explicit lifecycle metadata and staged sunset criteria.
+  - compatibility telemetry/observability for legacy-read usage is still missing, so release-gate validation is currently process-driven rather than instrumented.
+- Remaining non-local import/export hardening gaps:
+  - proposal-document roundtrip families beyond `ACTIVATED_SERVICES` still need dedicated decode/adaptation seams.
+  - remaining strategic-planning external import/export families still need canonical version-aware decode/adaptation boundaries.
+  - direct external SDK ingress/egress seams not yet covered by repository adapters still require explicit runtime decode/adaptation enforcement.
+- Remaining identity continuity gaps:
+  - deterministic `catalogServiceId` continuity is still not guaranteed across every external payload family.
+  - explicit migration/backfill for legacy records missing canonical catalog identity remains pending outside this local service-catalog bootstrap slice.
+- Remaining shape-based compatibility fallback still retained:
+  - unique-shape catalog matching fallback in domain validation remains active.
+  - cashflow bootstrap and several non-local import/export families still retain legacy unversioned/alias compatibility bridges.
+- `src/App.tsx` composition density reduction remains open and intentionally out of scope for this persistence compatibility lifecycle slice.
+- Remaining external payload families still lacking canonical version-aware decode/adaptation:
+  - proposal-document section payload families beyond `ACTIVATED_SERVICES`.
+  - non-local strategic-planning import/export families not yet covered by existing proposal/piano decoders.
+  - additional cross-boundary payload families outside currently hardened repository/bootstrap seams.
+- Removal criteria/preconditions for retiring currently retained legacy bridges:
+  - compatibility family must have canonical envelope read/write in active use.
+  - migration/backfill writeback path must be in place (or one-time migration executed) for legacy records.
+  - at least one release cycle of zero observed legacy-read usage should be confirmed before bridge removal.
+  - fail-closed behavior for unsupported versions must already be validated by tests before compatibility fallback deletion.
