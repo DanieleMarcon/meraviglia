@@ -15,7 +15,7 @@ import {
 import { normalizeProposalForWrite } from "../../application/strategicPlanningService"
 import {
   createCashflowBootstrapEnvelope,
-  decodeCashflowBootstrapPayload,
+  decodeCashflowBootstrapPayloadWithMigration,
 } from "../persistence/cashflowBootstrapDecoder"
 import {
   createServiceCatalogBootstrapEnvelope,
@@ -178,7 +178,7 @@ const applyServiceStartMonthIntent = (
 
 const createInitialState = (): AppStateStore => {
   const rawPersistedCashflow = loadRawFromStorage(CASHFLOW_STORAGE_KEY)
-  const decodedBootstrap = decodeCashflowBootstrapPayload(rawPersistedCashflow)
+  const decodedBootstrap = decodeCashflowBootstrapPayloadWithMigration(rawPersistedCashflow)
   const persistedCashflow = decodedBootstrap.payload
   const rawPersistedServiceCatalog = loadRawFromStorage(SERVICE_CATALOG_STORAGE_KEY)
   const decodedServiceCatalog = decodeServiceCatalogBootstrapPayloadWithMigration(rawPersistedServiceCatalog)
@@ -207,7 +207,10 @@ const createInitialState = (): AppStateStore => {
       || !areValuesEqual(persistedCashflow.propostaB, normalizedPropostaB)
       || !areValuesEqual(persistedCashflow.sectionToggles, sectionToggles)
 
-    if (shouldPersistNormalizedCashflow) {
+    if (
+      shouldPersistNormalizedCashflow
+      || decodedBootstrap.shouldWriteBackCanonicalEnvelope
+    ) {
       saveToStorage(
         CASHFLOW_STORAGE_KEY,
         createCashflowBootstrapEnvelope({

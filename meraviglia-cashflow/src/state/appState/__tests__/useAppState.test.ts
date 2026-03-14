@@ -291,6 +291,31 @@ describe("useAppState compare/proposal orchestration", () => {
     })
   })
 
+
+  it("writes back legacy unversioned persisted cashflow as canonical versioned envelope", async () => {
+    const { useAppState, saveToStorage } = await loadUseAppState({
+      services: baseCatalog,
+      rawCashflow: {
+        piano: basePlan,
+        propostaA: propostaASeed,
+        propostaB: propostaBSeed,
+      },
+    })
+
+    const state = useAppState()
+
+    expect(state.piano.durataTotale).toBe(6)
+    expect(saveToStorage).toHaveBeenCalledWith("meraviglia-cashflow", {
+      version: 1,
+      payload: {
+      piano: state.piano,
+      propostaA: state.propostaA,
+      propostaB: state.propostaB,
+      sectionToggles: state.sectionToggles,
+      },
+    })
+  })
+
   it("falls back to defaults when persisted cashflow envelope version is unsupported", async () => {
     const { useAppState } = await loadUseAppState({
       services: baseCatalog,

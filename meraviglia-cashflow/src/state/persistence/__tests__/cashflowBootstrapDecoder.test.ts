@@ -4,6 +4,7 @@ import { ProposalSectionType } from "../../../application/dto/StrategicPlanDTO"
 import {
   createCashflowBootstrapEnvelope,
   decodeCashflowBootstrapPayload,
+  decodeCashflowBootstrapPayloadWithMigration,
 } from "../cashflowBootstrapDecoder"
 
 describe("cashflowBootstrapDecoder", () => {
@@ -16,6 +17,30 @@ describe("cashflowBootstrapDecoder", () => {
     }))
 
     expect(decoded.payload?.piano.durataTotale).toBe(6)
+  })
+
+
+  it("marks legacy unversioned payloads for canonical writeback", () => {
+    const decoded = decodeCashflowBootstrapPayloadWithMigration({
+      piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+      propostaA: { id: "a", nome: "A", servizi: [] },
+      propostaB: { id: "b", nome: "B", servizi: [] },
+    })
+
+    expect(decoded.compatibilityState).toBe("legacy_unversioned")
+    expect(decoded.shouldWriteBackCanonicalEnvelope).toBe(true)
+    expect(decoded.payload?.piano.durataTotale).toBe(6)
+  })
+
+  it("does not mark canonical versioned payload for writeback", () => {
+    const decoded = decodeCashflowBootstrapPayloadWithMigration(createCashflowBootstrapEnvelope({
+      piano: { durataTotale: 6, moduli: [{ nome: "Launch", meseInizio: 1, durata: 6 }] },
+      propostaA: { id: "a", nome: "A", servizi: [] },
+      propostaB: { id: "b", nome: "B", servizi: [] },
+    }))
+
+    expect(decoded.compatibilityState).toBe("canonical_v1")
+    expect(decoded.shouldWriteBackCanonicalEnvelope).toBe(false)
   })
 
   it("rejects unsupported versioned envelope payload", () => {
@@ -126,5 +151,16 @@ describe("cashflowBootstrapDecoder", () => {
     })
 
     expect(decoded.payload).toBeNull()
+  })
+
+  it("fails closed for unsupported versions and invalid non-object shapes", () => {
+    const unsupported = decodeCashflowBootstrapPayloadWithMigration({ version: 999, payload: {} })
+    expect(unsupported.compatibilityState).toBe("unsupported_version")
+    expect(unsupported.shouldWriteBackCanonicalEnvelope).toBe(false)
+
+    const invalid = decodeCashflowBootstrapPayloadWithMigration(null)
+    expect(invalid.compatibilityState).toBe("invalid_shape")
+    expect(invalid.payload).toBeNull()
+    expect(invalid.shouldWriteBackCanonicalEnvelope).toBe(false)
   })
 })
