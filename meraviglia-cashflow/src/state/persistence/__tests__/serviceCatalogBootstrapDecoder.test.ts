@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   createServiceCatalogBootstrapEnvelope,
   decodeServiceCatalogBootstrapPayload,
+  decodeServiceCatalogBootstrapPayloadWithMigration,
 } from "../serviceCatalogBootstrapDecoder"
 
 describe("serviceCatalogBootstrapDecoder", () => {
@@ -53,6 +54,26 @@ describe("serviceCatalogBootstrapDecoder", () => {
 
     expect(decoded).toHaveLength(1)
     expect(decoded[0]?.id).toBe("svc-rate")
+  })
+
+  it("marks legacy unversioned payloads for canonical writeback", () => {
+    const decoded = decodeServiceCatalogBootstrapPayloadWithMigration([
+      {
+        id: "svc-rate",
+        nome: "Rate Service",
+        categoria: "Ops",
+        prezzoPieno: 1200,
+        prezzoScontato: 1000,
+        durataStandard: 6,
+        consentiRateizzazione: true,
+        consentiAcconto: false,
+        maxRateConsentite: 3,
+      },
+    ])
+
+    expect(decoded.compatibilityState).toBe("legacy_unversioned")
+    expect(decoded.shouldWriteBackCanonicalEnvelope).toBe(true)
+    expect(decoded.payload).toHaveLength(1)
   })
 
   it("applies per-item decode and canonicalization for optional color", () => {
@@ -111,7 +132,7 @@ describe("serviceCatalogBootstrapDecoder", () => {
   })
 
   it("fails closed for unsupported versioned envelopes", () => {
-    const decoded = decodeServiceCatalogBootstrapPayload({
+    const decoded = decodeServiceCatalogBootstrapPayloadWithMigration({
       version: 999,
       payload: [
         {
@@ -128,11 +149,16 @@ describe("serviceCatalogBootstrapDecoder", () => {
       ],
     })
 
-    expect(decoded).toEqual([])
+    expect(decoded.payload).toEqual([])
+    expect(decoded.compatibilityState).toBe("unsupported_version")
+    expect(decoded.shouldWriteBackCanonicalEnvelope).toBe(false)
   })
 
   it("falls back safely for invalid payload shapes and invalid entries", () => {
-    expect(decodeServiceCatalogBootstrapPayload({ foo: "bar" })).toEqual([])
+    const invalidShape = decodeServiceCatalogBootstrapPayloadWithMigration({ foo: "bar" })
+    expect(invalidShape.payload).toEqual([])
+    expect(invalidShape.compatibilityState).toBe("invalid_shape")
+    expect(invalidShape.shouldWriteBackCanonicalEnvelope).toBe(false)
 
     const decoded = decodeServiceCatalogBootstrapPayload([
       {
