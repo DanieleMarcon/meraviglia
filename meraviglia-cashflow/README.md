@@ -40,8 +40,9 @@ Current status of the codebase in relation to the target architecture:
 - ✅ Supabase authentication introduced
 - ✅ Multi-user foundation established
 - ✅ Governance baseline for multi-tenant RBAC and isolation formalized
-- ⏳ Workspace refactor implementation in progress
-- ⏳ Intake module implementation pending
+- ✅ Intake baseline implemented
+- ✅ Operational UI baseline available for Intake and Workspace workflows
+- 🔜 Further refinement planned in upcoming roadmap phases
 - ⏳ Application-layer-first architecture transition in progress
 
 This means the repository is in a transition stage between MVP cashflow tooling and full Meraviglia OS modular architecture.
