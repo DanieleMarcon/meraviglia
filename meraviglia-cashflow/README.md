@@ -61,7 +61,6 @@ Current capabilities include:
 ## Tech Stack
 - React + Vite
 - TypeScript (strict mode)
-- dnd-kit
 - Recharts
 - html-to-image
 - UUID
@@ -73,11 +72,14 @@ meraviglia-cashflow/
 ├── docs/
 ├── public/
 ├── src/
+│   ├── application/
 │   ├── assets/
 │   ├── auth/
 │   ├── domain/
 │   ├── engine/
+│   ├── infra/
 │   ├── lib/
+│   ├── repository/
 │   ├── state/
 │   └── ui/
 ├── CODEX_SYSTEM_PROMPT.md
