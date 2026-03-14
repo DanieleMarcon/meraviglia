@@ -72,9 +72,12 @@ const decodeProposalService = (raw: unknown): Proposta["servizi"][number] | null
     return null
   }
 
+  // Compatibility bridge: accept legacy snake_case alias during import only.
+  // Canonical field ownership remains catalogServiceId; writeback/migration policy is handled by persistence bootstrap orchestration.
   const legacyCatalogServiceId = isString(service.catalog_service_id)
     ? service.catalog_service_id
     : undefined
+  // Canonical key takes precedence when both forms are present; alias support is transitional and should be removed once sunset criteria are met.
   const catalogServiceId = isString(service.catalogServiceId)
     ? service.catalogServiceId
     : legacyCatalogServiceId

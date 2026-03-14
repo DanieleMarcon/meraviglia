@@ -9,6 +9,9 @@ import {
 import { normalizeService, type Service } from "../models/Service"
 import type { ServiceDefinition } from "../models/ServiceDefinition"
 
+// Compatibility fallback for legacy or partially-identified services that do not
+// resolve a catalog-backed rate cap yet. Keeps boundary validation safe by default
+// while identity migration/reconciliation remains in progress.
 const FALLBACK_MAX_RATE = 12
 
 const isSameServiceShape = (service: Service, definition: ServiceDefinition): boolean => {
@@ -19,6 +22,9 @@ const isSameServiceShape = (service: Service, definition: ServiceDefinition): bo
   )
 }
 
+// Reconciliation order is identity-first (catalogServiceId, then service.id) and only
+// then shape-based fallback. This minimizes accidental cross-service matches while
+// still supporting transitional payloads that predate stable IDs.
 const resolveCatalogDefinition = (service: Service, catalog: ServiceDefinition[]): ServiceDefinition | undefined => {
   const byCatalogServiceId = service.catalogServiceId
     ? catalog.find((definition) => definition.id === service.catalogServiceId)
@@ -34,6 +40,8 @@ const resolveCatalogDefinition = (service: Service, catalog: ServiceDefinition[]
     return byId
   }
 
+  // Shape matching is retained as a compatibility bridge for legacy records.
+  // It is intentionally narrow (single unambiguous match) and not a target steady-state identity strategy.
   const shapeMatches = catalog.filter((definition) => isSameServiceShape(service, definition))
 
   if (shapeMatches.length === 1) {
