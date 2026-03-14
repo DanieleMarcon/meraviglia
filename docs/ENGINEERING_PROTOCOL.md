@@ -58,6 +58,13 @@ Minimum required enforcement classes:
 
 Review-only acceptance is prohibited for architecture governance.
 
+
+Operational governance gate (mandatory local + CI surface):
+
+- Run `npm run check:governance` from `meraviglia-cashflow/` to execute the automated architecture gate.
+- The gate must fail on forbidden dependency directions against the canonical matrix, forbidden import surfaces (`src/lib` usage outside infra adapters), and forbidden non-deterministic runtime APIs (`Date.now`, `new Date`, `Math.random`, `performance.now`, `crypto.randomUUID`) inside non-test engine source.
+- This command is merge-blocking and is required in addition to lint/test/build.
+
 Temporary patterns or exceptions require explicit justification, must preserve all invariants, are migration-only, and must not be treated as precedent for future architecture decisions.
 
 ## 3. Project Structure Rules
@@ -106,6 +113,7 @@ Notes:
 - `repository` is a contract module (ports), not an implementation module.
 - Infra may depend on repository contracts to implement adapters.
 - Composition root wiring stays in application composition, outside domain logic.
+- Operational exception (explicit and narrow): files under `src/application/composition` may import infra adapters strictly for runtime wiring; this is composition-only and must not leak into application service logic.
 
 ## 4. Layer Responsibilities
 

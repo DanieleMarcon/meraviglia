@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:governance": "node scripts/check-governance.mjs",
+    "check": "npm run check:governance && npm run lint && npm run test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",

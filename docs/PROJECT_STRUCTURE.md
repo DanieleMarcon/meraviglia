@@ -243,6 +243,12 @@ Forbidden dependencies:
 
 These dependency rules are defined by the Architecture Freeze and must always be respected.
 
+Operational enforcement rule:
+
+* `meraviglia-cashflow/scripts/check-governance.mjs` is the explicit runnable dependency-governance gate.
+* Run it via `npm run check:governance` from `meraviglia-cashflow/` before merge (local and CI).
+* The gate is expected to fail on forbidden dependency directions and protected forbidden import surfaces.
+
 ---
 
 ## 5. DTO Structure
