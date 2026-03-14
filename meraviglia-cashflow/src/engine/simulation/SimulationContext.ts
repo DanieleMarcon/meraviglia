@@ -19,6 +19,9 @@ export interface SimulationDeterminismMetadata {
   numericPolicy: SimulationNumericPolicy
 }
 
+// SimulationContext is the canonical execution envelope for simulation metadata.
+// Models must read deterministic settings from this object only, so provenance stays
+// explicit and auditable at the boundary.
 export interface SimulationContext {
   timestamp: string
   determinism: SimulationDeterminismMetadata
@@ -35,6 +38,8 @@ export const DEFAULT_SIMULATION_DETERMINISM_METADATA: SimulationDeterminismMetad
     },
   }
 
+// Deterministic metadata validation is centralized here so every engine entry point
+// enforces one contract and fails closed on drift before computation begins.
 export function ensureValidSimulationContext(context: SimulationContext): void {
   if (!context.timestamp) {
     throw new Error('SimulationContext timestamp is required')

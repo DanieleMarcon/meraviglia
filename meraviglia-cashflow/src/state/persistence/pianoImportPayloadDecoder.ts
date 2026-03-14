@@ -11,6 +11,8 @@ const decodeModulo = (raw: unknown): PianoStrategico["moduli"][number] | null =>
     return null
   }
 
+  // Compatibility bridge for legacy snake_case payloads at read ingress only.
+  // Canonical naming remains camelCase and is what downstream flows should persist.
   const meseInizio = isNumber(raw.meseInizio)
     ? raw.meseInizio
     : isNumber(raw.mese_inizio)
@@ -33,6 +35,8 @@ export const decodePianoImportPayload = (raw: unknown): PianoStrategico | null =
     return null
   }
 
+  // Transitional alias acceptance mirrors old exports; decoder keeps this narrow and
+  // structural so business normalization continues in domain/application layers.
   const durataTotale = isNumber(raw.durataTotale)
     ? raw.durataTotale
     : isNumber(raw.durata_totale)

@@ -32,6 +32,8 @@ export class SimulationEngine {
 
     scenario.validateStructure()
 
+    // The engine is the fail-fast boundary between orchestration and deterministic execution:
+    // invalid execution metadata must be rejected before any model logic runs.
     ensureValidSimulationContext(context)
 
     return this.simulationModel.evaluateScenario(blueprint, scenario, context)

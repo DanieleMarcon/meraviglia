@@ -22,6 +22,8 @@ export class DefaultSimulationModel implements SimulationModel {
       projectedIndicators,
       riskLevel: 'medium',
       notes: 'Simulation Engine skeleton result',
+      // Result timestamps stay context-owned to preserve deterministic provenance.
+      // Models must not generate runtime time values on their own.
       createdAt: context.timestamp,
     })
   }

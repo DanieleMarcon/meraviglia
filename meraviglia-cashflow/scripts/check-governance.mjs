@@ -18,6 +18,8 @@ const governedLayers = new Set([
   "assets"
 ])
 
+// Frozen dependency matrix from Architecture Freeze v1.
+// Keep this map strict and explicit so governance drift is visible in code review.
 const allowedDependencies = {
   ui: new Set(["application"]),
   application: new Set(["domain", "repository", "engine"]),
@@ -35,6 +37,8 @@ const surfaceAccessPolicy = {
   lib: new Set(["infra"])
 }
 
+// Narrowly-governed exception: composition root is the only application seam
+// allowed to wire runtime infra adapters. This must not expand to service logic.
 const dependencyExceptions = [
   {
     from: "application",
@@ -46,6 +50,8 @@ const dependencyExceptions = [
 
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"])
 const deterministicFolder = path.join(srcRoot, "engine")
+// Engine determinism guardrails ban known nondeterministic runtime APIs.
+// These patterns are intentionally frozen to catch regressions early.
 const deterministicForbiddenPatterns = [
   /\bDate\.now\s*\(/,
   /\bnew\s+Date\s*\(/,
@@ -106,6 +112,8 @@ function resolveImport(filePath, specifier) {
   return null
 }
 
+// Regex import parsing is a fast governance heuristic, not a full parser.
+// It is intentionally conservative and backed by review when syntax evolves.
 function parseImports(sourceText) {
   const imports = []
   const importRegex = /(?:^|\n)\s*import\s+(?:type\s+)?(?:[^"'\n]+?\s+from\s+)?["']([^"']+)["']/g
@@ -180,6 +188,8 @@ function main() {
       }
     }
 
+    // Deterministic API bans apply to engine production source only; tests remain
+    // free to use runtime clocks/randomness for harness behavior when needed.
     if (filePath.startsWith(deterministicFolder) && !isTestFile(filePath)) {
       for (const pattern of deterministicForbiddenPatterns) {
         if (pattern.test(sourceText)) {
