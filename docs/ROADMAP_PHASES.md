@@ -255,3 +255,26 @@ Prepare Meraviglia OS for scalable multi-tenant SaaS operation with governance, 
 - Follow-up confirmed: remaining non-local import/export hardening gaps remain active for external payload families still missing canonical version-aware decode/adaptation seams.
 - Follow-up confirmed: `src/App.tsx` composition density reduction remains open and intentionally sequenced after current governance/contract hardening slices.
 - Follow-up confirmed: remaining domain aggregate hardening remains open for strategic-planning aggregates where constructor-owned invariants are not yet end-to-end enforced.
+
+
+## Phase 2D.5 — Memory Foundation Definition
+### Status Update
+- Canonical Memory Layer definition documented as workspace-scoped strategic memory.
+- Memory Foundation framed as first narrow slice (manual artifact creation with optional contact/interaction linkage).
+
+### Objective
+Formally define the Memory Layer before runtime implementation to preserve architecture/governance continuity and prevent generic storage drift.
+
+### Completion Criteria
+- Canonical Memory Layer model documented (artifact type, provenance, linkage semantics).
+- Memory Foundation scope and out-of-scope boundaries documented.
+- Prompt/governance documentation aligned for future implementation prompts.
+
+### Architectural Risk
+- Memory interpreted as generic storage instead of governed strategic continuity layer.
+- Premature expansion into document management, search, or AI automation without baseline governance.
+
+### Dependencies
+- Workspace as Strategic Context Kernel.
+- Interaction and Relationship layer definitions in place.
+- Prompt and feature delivery governance active.

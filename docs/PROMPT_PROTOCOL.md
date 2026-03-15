@@ -66,6 +66,51 @@ State quality expectations (clarity, determinism, architectural compliance, comp
 
 ---
 
+## 2.1 Prompt Modes
+
+Meraviglia Prompt Protocol supports two compliant prompt modes:
+
+- **FULL PROMPT**
+- **COMPACT PROMPT**
+
+Both modes are governance-compliant. The difference is verbosity and reuse strategy, not rigor.
+
+### FULL PROMPT
+
+Use FULL prompts when:
+
+- introducing a new canonical layer,
+- architecture is changing or being clarified,
+- task complexity is high,
+- onboarding a new contributor or tool,
+- ambiguity risk is high.
+
+FULL prompts should include the complete canonical protocol structure and explicit restatement of critical constraints.
+
+### COMPACT PROMPT
+
+Use COMPACT prompts when:
+
+- the task is narrow and well-bounded,
+- authoritative documentation is already mature for the area,
+- the AI/tool is already operating within established governance,
+- constraints can be safely referenced from docs instead of fully restated.
+
+COMPACT prompts should still be explicit and testable, but can use a shorter canonical structure:
+
+1. **TASK**
+2. **CONTEXT**
+3. **CONSTRAINTS**
+4. **SCOPE**
+5. **OUT OF SCOPE**
+6. **REQUIRED OUTPUT**
+7. **VALIDATION**
+8. **DELIVERABLE FORMAT**
+
+COMPACT prompts must still reference authoritative documents and must never bypass frozen architecture or engineering protocol constraints.
+
+---
+
 ## 3. Authoritative Documentation References
 
 Prompts must reference the canonical documentation set below rather than duplicating governance rules.
