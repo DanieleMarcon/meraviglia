@@ -105,6 +105,16 @@ This workflow formalizes the minimum executable strategic path and preserves tra
 Governance constraint:
 - UI interaction remains bound to application services, preserving architectural boundaries and keeping infra details outside presentation modules.
 
+## Contacts Foundation v1
+The first workspace-scoped relationship slice is now active as a strategic continuity layer:
+
+`Workspace view → list contacts by workspace → manual contact creation`
+
+Governance constraints for this slice:
+- Contacts remain workspace-scoped and tenant-safe.
+- Provenance is explicit (`manual`, `from_intake`, `from_ai_review`) even when only manual creation is active.
+- The feature is not a CRM pipeline and does not introduce deals/activities abstractions.
+
 ## Long-Term SaaS Evolution Vision
 Meraviglia OS evolves in staged maturity:
 1. **Foundation**: multi-user architecture, shared governance standards, modular domain boundaries.

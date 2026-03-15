@@ -22,21 +22,26 @@ Note: the bounded-context term in this document is a domain-modeling concept and
    - Operational strategic container bound to one organization.
    - Coordinates lifecycle state and ownership of strategic artifacts.
 
-4. **Blueprint Context**
+4. **Relationship Context**
+   - Workspace-scoped strategic relationship layer for key contacts.
+   - Tracks contact provenance to preserve modeling traceability across manual and future ingestion paths.
+
+5. **Blueprint Context**
    - Core strategic modeling aggregate.
    - Encodes objectives, hypotheses, actions, indicators, constraints, and scenarios.
 
-5. **Knowledge Context**
+6. **Knowledge Context**
    - Strategy templates, modeling heuristics, and reusable advisory patterns.
    - Supplies structured guidance for blueprint composition.
 
-6. **Strategic Simulation Domain**
+7. **Strategic Simulation Domain**
    - Defines simulation concepts and their relationship to strategic domain entities.
    - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md` and is not redefined in this domain document.
 
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.
 - **Workspace** belongs to exactly one organization and is created from intake conversion.
+- **Contact** belongs to exactly one workspace and one organization-scoped boundary.
 - **Intake** is the required starting artifact for each strategic lifecycle.
 - **Blueprint** is versioned and linked to a workspace for full traceability.
 - **Scenario** belongs to exactly one blueprint and defines active action IDs plus assumption variables.
@@ -47,6 +52,7 @@ Key invariants:
 - No cross-tenant access to strategic entities.
 - No blueprint without workspace context.
 - No workspace lifecycle without intake lineage.
+- No contact without workspace ownership and explicit provenance.
 - No simulation output without declared scenario assumptions.
 
 ## Composition Root and Application Wiring
@@ -63,7 +69,7 @@ Composition responsibilities:
 
 Current transitional implementation:
 - service registration currently follows a temporary service locator pattern,
-- active examples include `setWorkspaceService` and `setIntakeService`.
+- active examples include `setWorkspaceService`, `setIntakeService`, and `setContactService`.
 
 Transitional architecture rule:
 - transitional patterns are allowed only as temporary refactor bridges,

@@ -21,6 +21,7 @@ public.organizations
   1 ─── * public.roles
   1 ─── * public.workspaces
   1 ─── * public.intakes
+  1 ─── * public.contacts
 
 public.permissions (global catalog)
   1 ─── * public.role_permissions
@@ -35,6 +36,9 @@ public.users
 
 public.intakes
   * ─── 0..1 public.workspaces (workspace_id set on conversion)
+
+public.workspaces
+  1 ─── * public.contacts
 ```
 
 ## Table Responsibilities
@@ -63,6 +67,9 @@ Organization-scoped strategic containers for planning/orchestration initiatives.
 ### `public.intakes`
 Organization-scoped strategic entry records. Stores initial strategic inputs (`draft`/`validated`) and links to workspace once converted (`converted`).
 
+### `public.contacts`
+Organization-scoped, workspace-linked strategic relationship records. Contacts carry explicit provenance metadata (`manual`, `from_intake`, `from_ai_review`) to support lifecycle traceability.
+
 ## RBAC Flow
 1. Platform defines global permissions in `public.permissions`.
 2. Each organization defines custom roles in `public.roles`.
@@ -75,7 +82,7 @@ This keeps permission semantics globally consistent while allowing per-tenant ro
 ## Tenant Isolation Model
 Isolation boundary is `organization_id`.
 
-- `public.users`, `public.roles`, `public.workspaces`, and `public.intakes` include explicit `organization_id`.
+- `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, and `public.contacts` include explicit `organization_id`.
 - `public.user_roles` is constrained transitively by requiring both linked user and role to be in current user organization.
 - Foreign keys + RLS prevent cross-tenant traversal.
 
@@ -86,6 +93,7 @@ RLS is enabled and forced on:
 - `public.user_roles`
 - `public.workspaces`
 - `public.intakes`
+- `public.contacts`
 
 A helper function `public.current_user_organization_id()` resolves tenant context from `auth.uid()` via `public.users`.
 
