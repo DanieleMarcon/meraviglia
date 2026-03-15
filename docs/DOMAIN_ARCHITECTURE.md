@@ -38,6 +38,21 @@ Note: the bounded-context term in this document is a domain-modeling concept and
    - Defines simulation concepts and their relationship to strategic domain entities.
    - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md` and is not redefined in this domain document.
 
+## Strategic Context Kernel Model
+Meraviglia OS is organized around a **Strategic Context Kernel**.
+
+Kernel definition:
+- **Workspace = Strategic Context Kernel**.
+- Workspace is the canonical container of strategic context and the anchor for lifecycle continuity, ownership, and governance.
+
+Layers around the workspace kernel:
+- **Relationship layer**: Contacts.
+- **Interaction layer**: Scheduling, meetings, calls.
+- **Memory layer**: Notes, documents, artifacts.
+- **Decision layer**: Blueprint and simulation engines.
+- **Augmentation layer**: AI ingestion and AI operator assistance.
+- **Integration layer**: Google ecosystem and external systems.
+
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.
 - **Workspace** belongs to exactly one organization and is created from intake conversion.

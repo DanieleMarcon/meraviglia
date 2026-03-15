@@ -15,6 +15,25 @@ All new code must follow this structure.
 
 ---
 
+## 1.1 Architectural Center
+Meraviglia OS project structure follows a workspace-centered system model:
+
+- **Workspace = Strategic Context Kernel**
+- Workspace is the canonical container for strategic context and governs how surrounding modules are placed and evolved.
+
+Layer interpretation around the workspace kernel:
+
+- **Relationship layer**: contacts
+- **Interaction layer**: scheduling / meetings / calls
+- **Memory layer**: notes / documents / artifacts
+- **Decision layer**: blueprint + simulation engines
+- **Augmentation layer**: AI ingestion + AI operator assistance
+- **Integration layer**: Google ecosystem + external systems
+
+Folder/module proposals must preserve this kernel-centered architecture and must not redefine ownership through convenience structure changes.
+
+---
+
 ## 2. Root Repository Structure
 
 Expected repository layout:

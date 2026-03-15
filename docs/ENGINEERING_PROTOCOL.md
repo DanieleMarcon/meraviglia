@@ -273,6 +273,30 @@ Example of a good comment:
 
 > This validation is enforced in the domain layer to preserve the aggregate invariant and prevent UI-specific assumptions from leaking into core business behavior.
 
+## 8.1 Comment Impact Check
+
+Every feature must explicitly evaluate whether code comments need to be added or updated.
+
+A comment impact check is required when a change modifies or introduces:
+
+- architectural seams
+- adapters / decoders / mappers
+- domain invariants that are not obvious
+- composition root wiring
+- migration or compatibility bridges
+- deterministic engine constraints
+- intentional limitations or tradeoffs
+
+Comment rule:
+
+- comments must explain reasoning and constraints
+- comments must not restate implementation syntax
+
+Feature completion report requirement:
+
+- include either `Code comments updated`
+- or `Code comments confirmed sufficient`
+
 ## 9. Domain Modeling Rules
 
 Domain modeling must prioritize correctness and explicit business intent.
@@ -353,6 +377,7 @@ Every pull request must verify that:
 - DTO boundaries are respected
 - deterministic simulation rules are respected
 - dependencies introduced are justified
+- comment impact check outcome is explicitly recorded in the feature completion report
 
 Large architectural changes must reference architecture documentation updates.
 

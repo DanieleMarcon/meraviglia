@@ -55,6 +55,21 @@ Meraviglia OS is the coordination engine that:
 
 It is intentionally modular, enabling future intelligence components (e.g., ROI engine, recommendation layers, adaptive planning automation) without collapsing architecture boundaries.
 
+
+## Strategic Context Kernel
+Meraviglia OS is organized around a **Strategic Context Kernel** where:
+
+- **Workspace = Strategic Context Kernel**
+- Workspace is the canonical container of strategic context across planning, relationship continuity, interaction history, memory, and strategic decisions.
+
+System layers around the workspace kernel:
+- **Relationship layer**: Contacts
+- **Interaction layer**: Scheduling / meetings / calls
+- **Memory layer**: Notes / documents / artifacts
+- **Decision layer**: Blueprint + simulation engines
+- **Augmentation layer**: AI ingestion + AI operator assistance
+- **Integration layer**: Google ecosystem + external systems
+
 ## Strategic Modeling Positioning
 Blueprint is the core strategic modeling aggregate of Meraviglia OS. The platform treats Blueprint modeling as the center of design-to-execution continuity, with objectives, hypotheses, actions, indicators, and simulations maintained as governed strategic components.
 
