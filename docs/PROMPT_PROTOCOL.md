@@ -1,0 +1,141 @@
+# Meraviglia OS Prompt Protocol
+
+## 1. Purpose
+
+Meraviglia OS is built with AI-assisted development workflows, so prompts must follow a standardized structure to keep delivery consistent, auditable, and repeatable.
+
+This protocol defines how implementation prompts are written and consumed. Prompts must reference authoritative project documentation instead of embedding all rules inline.
+
+The protocol is tool-independent and must be usable with:
+
+- Codex
+- ChatGPT
+- Claude
+- Emergent
+- future AI tooling
+
+---
+
+## 2. Prompt Architecture
+
+Every implementation prompt must follow this canonical structure.
+
+### Context
+
+Provide the current product and engineering context relevant to the task.
+
+### Authoritative Constraints
+
+List the governing documentation and non-negotiable constraints that apply.
+
+### Task Description
+
+Describe the exact change requested and expected outcome.
+
+### Architectural Constraints
+
+State architecture-layer and boundary constraints that must be preserved.
+
+### Scope
+
+Define what is included in this implementation slice.
+
+### Out of Scope
+
+Define what must not be implemented in this slice.
+
+### Implementation Guidance
+
+Provide practical guidance (sequence, priorities, conventions) without redefining authoritative rules.
+
+### Documentation Requirements
+
+Specify documentation checks/updates required for this change.
+
+### Validation Requirements
+
+List mandatory checks and tests to run before completion.
+
+### Deliverables Expected
+
+Define the exact response artifacts expected from the AI implementation output.
+
+### Quality Bar
+
+State quality expectations (clarity, determinism, architectural compliance, completeness).
+
+---
+
+## 3. Authoritative Documentation References
+
+Prompts must reference the canonical documentation set below rather than duplicating governance rules.
+
+- `docs/ARCHITECTURE_FREEZE_v1.md`
+- `docs/ENGINEERING_PROTOCOL.md`
+- `docs/FEATURE_DELIVERY_PROTOCOL.md`
+- `docs/PROJECT_STRUCTURE.md`
+- `docs/DOMAIN_ARCHITECTURE.md`
+- `docs/MERAVIGLIA_OS_MASTER_PLAN.md`
+- `docs/MERAVIGLIA_POSITIONING.md`
+- `docs/AI_STRATEGY.md`
+- `docs/AI_TOOLING_ADOPTION_PLAN.md`
+
+This creates a documentation-driven prompt model: prompts compose and reference authoritative sources, similar to how web pages reference CSS instead of repeating style definitions inline.
+
+---
+
+## 4. Prompt Writing Rules
+
+All prompts must follow these writing rules:
+
+- constraints must be explicit and testable
+- scope and out-of-scope items must be clearly separated
+- prompts must not introduce architectural ambiguity
+- frozen architecture must not be modified unless explicitly authorized
+- prompts should minimize speculative future implementation and focus on the requested slice
+
+---
+
+## 5. Prompt Output Contract
+
+Every feature implementation response must include:
+
+- **Implementation Summary**
+- **Files Modified**
+- **Architectural Notes**
+- **Documentation Impact Check result**
+- **Comment Impact Check result**
+- **Validation Results**
+- **Known Limitations / Out of Scope**
+
+This output contract guarantees traceability, governance visibility, and consistent review quality across implementations.
+
+---
+
+## 6. Chat Continuity Protocol
+
+To continue delivery across conversations and tools, each new conversation should include:
+
+- project context
+- current architecture state
+- last executed task
+- next objective
+- reference to authoritative documentation
+
+This continuity packet prevents context loss when switching chats, contributors, or AI tools.
+
+---
+
+## 7. Tool Independence
+
+This Prompt Protocol is intentionally tool-agnostic.
+
+It governs prompt structure and output expectations, not a specific AI implementation.
+
+The same protocol must remain valid for:
+
+- Codex
+- ChatGPT
+- Claude
+- Emergent
+- future AI tools

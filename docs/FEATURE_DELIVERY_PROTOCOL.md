@@ -15,6 +15,12 @@ This document is operational (how to ship work), while architecture and layer co
 - `docs/SIMULATION_ENGINE.md`
 - `docs/AI_STRATEGY.md`
 
+### Prompt Protocol Alignment
+
+All feature implementation prompts must follow `docs/PROMPT_PROTOCOL.md`.
+
+This keeps AI-assisted development workflows consistent across tools without duplicating prompt governance in this document.
+
 ---
 
 ## 2. Feature Lifecycle
