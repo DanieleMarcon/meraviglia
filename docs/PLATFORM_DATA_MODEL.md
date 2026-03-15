@@ -23,6 +23,7 @@ public.organizations
   1 ─── * public.intakes
   1 ─── * public.contacts
   1 ─── * public.interactions
+  1 ─── * public.memory_artifacts
 
 public.permissions (global catalog)
   1 ─── * public.role_permissions
@@ -41,9 +42,11 @@ public.intakes
 public.workspaces
   1 ─── * public.contacts
   1 ─── * public.interactions
+  1 ─── * public.memory_artifacts
 
 public.contacts
   * ─── * public.interactions (through participant linkage table in future implementation slices)
+  * ─── * public.memory_artifacts (optional linkage; join table or controlled reference model in future slices)
 ```
 
 ## Table Responsibilities
@@ -91,6 +94,24 @@ Interaction participant linkage remains explicit and workspace-compatible (likel
 
 Scheduling Foundation will implement the first narrow subset of this model and must not be interpreted as the full Interaction Layer scope.
 
+
+### `public.memory_artifacts` (canonical model target)
+Workspace-scoped strategic memory records preserving continuity across notes, documents, and strategic observations.
+
+Conceptual fields (v1 target):
+- `id`
+- `workspace_id`
+- `type`
+- `provenance`
+- `created_at`
+- optional linked contacts (`linked_contact_ids` or join table approach)
+- optional `linked_interaction_id`
+- optional content fields (`content`, `summary`, `reference`)
+- optional `review_state` for future AI-assisted governance compatibility
+
+Memory Foundation will implement only the first narrow subset (manual workspace-linked artifacts with optional contact/interaction linkage).
+
+
 ## RBAC Flow
 1. Platform defines global permissions in `public.permissions`.
 2. Each organization defines custom roles in `public.roles`.
@@ -103,7 +124,7 @@ This keeps permission semantics globally consistent while allowing per-tenant ro
 ## Tenant Isolation Model
 Isolation boundary is `organization_id`.
 
-- `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, `public.contacts`, and future `public.interactions` include explicit `organization_id`.
+- `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, `public.contacts`, and future `public.interactions`/`public.memory_artifacts` include explicit `organization_id`.
 - `public.user_roles` is constrained transitively by requiring both linked user and role to be in current user organization.
 - Foreign keys + RLS prevent cross-tenant traversal.
 
@@ -116,6 +137,7 @@ RLS is enabled and forced on:
 - `public.intakes`
 - `public.contacts`
 - future `public.interactions`
+- future `public.memory_artifacts`
 
 A helper function `public.current_user_organization_id()` resolves tenant context from `auth.uid()` via `public.users`.
 

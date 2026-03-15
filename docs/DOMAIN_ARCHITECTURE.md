@@ -48,7 +48,7 @@ Kernel definition:
 Layers around the workspace kernel:
 - **Relationship layer**: Contacts.
 - **Interaction layer**: Workspace-scoped interactions that connect participants, operational timing, and decision-relevant continuity (Scheduling Foundation is the first slice).
-- **Memory layer**: Notes, documents, artifacts.
+- **Memory layer**: Workspace-scoped strategic memory artifacts (notes, documents, summaries, observations) governed by context and provenance; see `docs/MEMORY_LAYER.md`.
 - **Decision layer**: Blueprint and simulation engines.
 - **Augmentation layer**: AI ingestion and AI operator assistance.
 - **Integration layer**: Google ecosystem and external systems.

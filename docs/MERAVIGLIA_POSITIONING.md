@@ -18,7 +18,7 @@ Layers around the workspace kernel:
    - Workspace-scoped operational interaction artifacts linking participants, timing, provenance, and strategic continuity; not CRM activity logs nor generic calendar events.
 
 3. **Memory layer**
-   - Notes, documents, and artifacts preserving strategic memory.
+   - Workspace-scoped strategic memory artifacts preserving continuity through governed notes, documents, summaries, and observations (not generic storage).
 
 4. **Decision layer**
    - Blueprint modeling and simulation engines used for decision design and validation.

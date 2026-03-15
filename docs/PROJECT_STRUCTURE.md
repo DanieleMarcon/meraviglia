@@ -25,7 +25,7 @@ Layer interpretation around the workspace kernel:
 
 - **Relationship layer**: contacts
 - **Interaction layer**: workspace-scoped interactions (type/status/provenance/participants) with Scheduling Foundation as first slice
-- **Memory layer**: notes / documents / artifacts
+- **Memory layer**: workspace-scoped strategic memory artifacts (notes / documents / summaries / observations)
 - **Decision layer**: blueprint + simulation engines
 - **Augmentation layer**: AI ingestion + AI operator assistance
 - **Integration layer**: Google ecosystem + external systems

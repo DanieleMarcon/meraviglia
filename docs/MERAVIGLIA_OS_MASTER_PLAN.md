@@ -65,7 +65,7 @@ Meraviglia OS is organized around a **Strategic Context Kernel** where:
 System layers around the workspace kernel:
 - **Relationship layer**: Contacts
 - **Interaction layer**: Workspace-scoped operational interactions linking participants, timing, provenance, and strategic continuity (Scheduling Foundation is the first slice)
-- **Memory layer**: Notes / documents / artifacts
+- **Memory layer**: Workspace-scoped strategic memory artifacts preserving continuity (notes / documents / summaries / observations), governed by context and provenance
 - **Decision layer**: Blueprint + simulation engines
 - **Augmentation layer**: AI ingestion + AI operator assistance
 - **Integration layer**: Google ecosystem + external systems
@@ -143,6 +143,10 @@ Supporting controlled vocabularies are established for:
 - interaction provenance (e.g., `manual`, `from_calendar_sync`, `from_ai_review`).
 
 See `docs/INTERACTION_LAYER.md` for the authoritative layer definition and implementation-slice framing.
+
+Memory Layer continuity constraint: interaction workflows should support later memory creation/linkage (for example interaction summaries or strategic observations) while keeping automation out of scope for early slices.
+
+See `docs/MEMORY_LAYER.md` for canonical Memory Layer definition and Memory Foundation scope.
 
 ## Scheduling Foundation (Interaction Layer — First Slice)
 Scheduling Foundation is framed as the first narrow product slice of the Interaction Layer.

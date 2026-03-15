@@ -19,6 +19,8 @@ This document is operational (how to ship work), while architecture and layer co
 
 All feature implementation prompts must follow `docs/PROMPT_PROTOCOL.md`.
 
+Both prompt modes defined there (**FULL** and **COMPACT**) are compliant when they preserve the same governance rigor, constraints, and validation obligations.
+
 This keeps AI-assisted development workflows consistent across tools without duplicating prompt governance in this document.
 
 ---
