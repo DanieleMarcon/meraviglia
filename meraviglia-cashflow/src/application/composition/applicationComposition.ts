@@ -5,7 +5,9 @@ import { SupabaseIntakeRepository } from "../../infra/supabaseIntakeRepository"
 import { SupabaseWorkspaceRepository } from "../../infra/supabaseWorkspaceRepository"
 import { SupabaseContactRepository } from "../../infra/supabaseContactRepository"
 import { SupabaseAuthRepository } from "../../infra/supabaseAuthRepository"
+import { SupabaseInteractionRepository } from "../../infra/supabaseInteractionRepository"
 import { setAuthRepository } from "../authService"
+import { InteractionService, setInteractionService } from "../interactionService"
 
 // Composition root: architecture-approved runtime wiring seam where application
 // can bind infra implementations. This is a narrow freeze-governed exception and
@@ -20,10 +22,14 @@ export const configureApplication = (): void => {
   const contactRepository = new SupabaseContactRepository()
   const contactService = new ContactService(contactRepository)
 
+  const interactionRepository = new SupabaseInteractionRepository()
+  const interactionService = new InteractionService(interactionRepository)
+
   const authRepository = new SupabaseAuthRepository()
 
   setWorkspaceService(workspaceService)
   setIntakeService(intakeService)
   setContactService(contactService)
+  setInteractionService(interactionService)
   setAuthRepository(authRepository)
 }
