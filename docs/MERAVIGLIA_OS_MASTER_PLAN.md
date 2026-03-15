@@ -3,6 +3,12 @@
 ## Executive Vision
 Meraviglia OS is the strategic operating system for growth design, orchestration, and governance. It exists to transform fragmented strategic decisions into a continuous, auditable, and adaptive operating cycle across planning, execution, and performance learning.
 
+Authoritative product framing:
+- **Strategic Modeling and Decision Orchestration Platform**
+- **Strategic Context Operating System**
+
+These labels are intentionally complementary: the platform models and orchestrates strategic decisions while governing the context continuity those decisions depend on.
+
 Meraviglia OS is designed to become the decision and orchestration brain that sits above operational systems, ensuring that every commercial initiative is:
 - Intentionally designed
 - Explicitly modeled
@@ -21,6 +27,15 @@ Final architecture hardening decision:
 
 This establishes a SaaS-ready platform core without introducing a network/super-admin layer in this milestone.
 
+## Category Guardrails
+Meraviglia OS is not positioned as:
+- a CRM,
+- a calendar-first product,
+- a generic notes/document application,
+- an AI wrapper.
+
+Meraviglia OS is positioned as a strategic context and decision-governance infrastructure layer operating above systems of record.
+
 ## Positioning vs Relatia
 Meraviglia OS and Relatia CRM are complementary but distinct products:
 
@@ -28,6 +43,13 @@ Meraviglia OS and Relatia CRM are complementary but distinct products:
 - **Meraviglia OS**: strategic and orchestration layer that governs *what should be done, why, when, and with which expected impact*.
 
 Meraviglia OS must never be positioned as a CRM replacement. Instead, it defines and governs strategic intent while interoperating with systems like Relatia that execute and record transactional interactions.
+
+## Architecture Ecosystem Relationship
+Architecture Ecosystem and Meraviglia OS are related but non-identical:
+- **Architecture Ecosystem** defines methodology, consulting patterns, and strategic intervention frameworks.
+- **Meraviglia OS** provides operating infrastructure that supports, codifies, and scales that methodology through governed strategic context and orchestration workflows.
+
+Methodology does not collapse into software, and software does not redefine methodology; Meraviglia OS operationalizes Architecture Ecosystem continuity.
 
 ## System of Design vs System of Record
 ### System of Design (Meraviglia OS)
@@ -69,6 +91,11 @@ System layers around the workspace kernel:
 - **Decision layer**: Blueprint + simulation engines
 - **Augmentation layer**: AI ingestion + AI operator assistance
 - **Integration layer**: Google ecosystem + external systems
+
+Layered continuity model:
+`context → relationship → interaction → memory → decision → augmentation → integration`
+
+Modularity rule: future modules are valid when they deepen one governed layer (or explicit inter-layer contracts) around the workspace kernel; they are not arbitrary plugin surfaces detached from context lineage.
 
 ## Strategic Modeling Positioning
 Blueprint is the core strategic modeling aggregate of Meraviglia OS. The platform treats Blueprint modeling as the center of design-to-execution continuity, with objectives, hypotheses, actions, indicators, and simulations maintained as governed strategic components.

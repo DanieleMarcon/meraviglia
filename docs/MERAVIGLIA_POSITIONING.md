@@ -3,6 +3,12 @@
 ## Purpose
 Define Meraviglia OS positioning as a strategic operating system for consultants and advisory teams that need structured, repeatable decision orchestration across multiple client organizations.
 
+Authoritative framing to preserve across product, engineering, and pitch materials:
+- **Strategic Modeling and Decision Orchestration Platform**
+- **Strategic Context Operating System**
+
+These two formulations are complementary and must be used together: Meraviglia OS models strategic decisions and governs the continuity of strategic context that makes those decisions auditable and reusable.
+
 ## Conceptual Architecture
 Meraviglia OS is organized around a **Strategic Context Kernel**:
 
@@ -31,10 +37,23 @@ Layers around the workspace kernel:
 
 Intake remains the formal entry boundary that feeds the workspace kernel, preserving lifecycle continuity from assumptions to governed execution.
 
+## Layered Growth Logic (Context Continuity)
+Meraviglia OS does not grow by accumulating disconnected features. It grows by layering governed context capabilities around the workspace kernel:
+
+`context → relationship → interaction → memory → decision → augmentation → integration`
+
+Implication for roadmap and module design:
+- New modules are valid only when they reinforce kernel continuity and layer contracts.
+- Arbitrary plugin-style additions that bypass context lineage are out of category and out of architecture scope.
+
 ## Category Definition
 Meraviglia OS is **not a CRM**.
+Meraviglia OS is **not a calendar-first product**.
+Meraviglia OS is **not a notes app**.
+Meraviglia OS is **not an AI wrapper**.
 
 Meraviglia OS is a **Strategic Modeling and Decision Orchestration Platform**.
+Meraviglia OS is a **Strategic Context Operating System**.
 
 CRM systems primarily record operational interactions. Meraviglia OS designs and governs strategic decisions.
 
@@ -47,6 +66,18 @@ CRM systems primarily record operational interactions. Meraviglia OS designs and
 | — | simulations |
 
 Meraviglia operates as a **System of Strategic Design** above Systems of Record.
+
+### System Role Distinction
+- **Meraviglia OS**: system of strategic design, orchestration, and context governance.
+- **Relatia (and similar products)**: systems of record for operational execution and transactional history.
+- **Architecture Ecosystem**: strategic methodology and consulting architecture that Meraviglia OS can support, codify, and scale without becoming the methodology itself.
+
+This distinction preserves product clarity: Meraviglia OS is infrastructure for strategic continuity, while execution systems record operations and consulting frameworks define intervention methods.
+
+## Pitch-Ready Formulation (Architecture-Safe)
+Reusable wording for presentation and onboarding contexts:
+
+> Meraviglia OS is a Strategic Context Operating System and Strategic Modeling and Decision Orchestration Platform. It governs strategic context through layered continuity—from workspace context to relationship, interaction, memory, decision, augmentation, and integration—operating above systems of record.
 
 ## Core Principles
 - **Consultant-first interaction model**: workflows are designed for consultants guiding multiple client contexts, not for self-serve end users.

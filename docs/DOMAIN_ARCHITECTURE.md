@@ -39,7 +39,17 @@ Note: the bounded-context term in this document is a domain-modeling concept and
    - Operational simulation execution governance is defined in `docs/SIMULATION_ENGINE.md` and is not redefined in this domain document.
 
 ## Strategic Context Kernel Model
-Meraviglia OS is organized around a **Strategic Context Kernel**.
+Meraviglia OS is organized around a **Strategic Context Kernel** and category framing that must remain explicit in domain decisions.
+
+Authoritative category framing:
+- Meraviglia OS is a **Strategic Modeling and Decision Orchestration Platform**.
+- Meraviglia OS is a **Strategic Context Operating System**.
+
+Negative-category guardrails:
+- not a CRM domain model,
+- not a calendar-first scheduling product model,
+- not a generic notes/storage model,
+- not an AI-wrapper interaction model.
 
 Kernel definition:
 - **Workspace = Strategic Context Kernel**.
@@ -52,6 +62,11 @@ Layers around the workspace kernel:
 - **Decision layer**: Blueprint and simulation engines.
 - **Augmentation layer**: AI ingestion and AI operator assistance.
 - **Integration layer**: Google ecosystem and external systems.
+
+Layered continuity logic:
+`context → relationship → interaction → memory → decision → augmentation → integration`
+
+Domain expansion rule: new bounded capabilities must strengthen this continuity chain around workspace ownership, not introduce disconnected feature islands.
 
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.

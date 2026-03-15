@@ -32,6 +32,19 @@ Layer interpretation around the workspace kernel:
 
 Folder/module proposals must preserve this kernel-centered architecture and must not redefine ownership through convenience structure changes.
 
+
+### 1.2 Category and Modularity Guardrails
+To prevent product drift, structure proposals must preserve these positioning constraints:
+
+- Meraviglia OS is not a CRM codebase shape.
+- Meraviglia OS is not a calendar-first module hierarchy.
+- Meraviglia OS is not a generic notes repository model.
+- Meraviglia OS is not an AI-wrapper surface over existing tools.
+
+Repository-level modularity rule:
+- New modules must map to governed workspace-kernel layers (relationship, interaction, memory, decision, augmentation, integration) or explicit contracts between them.
+- Arbitrary plugin folders/features that bypass context lineage are architecture-invalid.
+
 ### Interaction Layer implementation note
 Interaction ownership is workspace-first. New scheduling-related modules must treat interaction artifacts as workspace-scoped operational records (participants + timing + provenance + status), not as calendar-first entities or CRM activity streams.
 

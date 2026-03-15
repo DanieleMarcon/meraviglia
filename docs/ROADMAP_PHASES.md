@@ -15,6 +15,13 @@ Codebase Cleanup Phase is now completed.
 - Documentation alignment completed.
 - Feature delivery protocol defined.
 
+### Positioning Continuity Baseline (Active)
+Roadmap prioritization must preserve category and architecture framing:
+- Meraviglia OS remains a Strategic Modeling and Decision Orchestration Platform and Strategic Context Operating System.
+- Delivery slices must reinforce layered continuity: `context → relationship → interaction → memory → decision → augmentation → integration`.
+- Future modules are layer-governed capabilities around workspace kernel ownership, not disconnected feature plugins.
+- Category drift to CRM/calendar/notes/AI-wrapper semantics is explicitly out of scope for roadmap planning.
+
 ### Objective
 Establish production-oriented identity and persistence baseline, and introduce the strategic Intake module as the formal entry point for workspace-level planning.
 
@@ -195,6 +202,9 @@ Add deterministic ROI and strategic impact engine to quantify blueprint viabilit
 ## Phase 3 — Relatia Integration
 ### Objective
 Integrate Meraviglia OS with Relatia CRM through contract-based adapters while preserving strategic/operational separation.
+
+Architecture Ecosystem alignment note:
+- Meraviglia OS operationalizes strategic methodology continuity in software, while Architecture Ecosystem remains the methodology/consulting framework itself.
 
 ### Completion Criteria
 - CRMAdapter contract finalized and versioned.
