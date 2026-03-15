@@ -24,13 +24,16 @@ Meraviglia OS project structure follows a workspace-centered system model:
 Layer interpretation around the workspace kernel:
 
 - **Relationship layer**: contacts
-- **Interaction layer**: scheduling / meetings / calls
+- **Interaction layer**: workspace-scoped interactions (type/status/provenance/participants) with Scheduling Foundation as first slice
 - **Memory layer**: notes / documents / artifacts
 - **Decision layer**: blueprint + simulation engines
 - **Augmentation layer**: AI ingestion + AI operator assistance
 - **Integration layer**: Google ecosystem + external systems
 
 Folder/module proposals must preserve this kernel-centered architecture and must not redefine ownership through convenience structure changes.
+
+### Interaction Layer implementation note
+Interaction ownership is workspace-first. New scheduling-related modules must treat interaction artifacts as workspace-scoped operational records (participants + timing + provenance + status), not as calendar-first entities or CRM activity streams.
 
 ---
 

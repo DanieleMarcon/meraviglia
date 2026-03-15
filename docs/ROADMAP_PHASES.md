@@ -148,6 +148,28 @@ Introduce explicit application/use-case layer to orchestrate workflows and enfor
 
 ---
 
+## Phase 2C.5 — Interaction Layer Definition + Scheduling Foundation (Planned)
+### Objective
+Define the canonical Interaction Layer architecture after Contacts Foundation and implement Scheduling Foundation as its first narrow product slice.
+
+### Completion Criteria
+- Interaction Layer definition codified across architecture/master-plan/positioning/project-structure/data-model docs.
+- Canonical interaction model established (`id`, `workspaceId`, `type`, `scheduledAt`, `status`, `provenance`, participant linkage, optional notes/outcome linkage).
+- Scheduling Foundation framed explicitly as first slice of Interaction Layer (not full layer scope).
+- Out-of-scope boundaries documented (no external sync, no AI generation, no analytics/recurrence/automation/CRM semantics).
+
+### Architectural Risk
+- Calendar-first implementation drift.
+- CRM activity-feed semantics leaking into workspace strategic model.
+- Premature commitments to integrations/AI artifacts before baseline interaction ownership is stable.
+
+### Dependencies
+- Contacts Foundation v1 active.
+- Workspace kernel and relationship layer boundaries preserved.
+- Documentation-first architecture alignment completed before runtime implementation.
+
+---
+
 ## Phase 2D — ROI Engine
 ### Objective
 Add deterministic ROI and strategic impact engine to quantify blueprint viability and improve decision quality.
