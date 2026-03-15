@@ -64,7 +64,7 @@ Meraviglia OS is organized around a **Strategic Context Kernel** where:
 
 System layers around the workspace kernel:
 - **Relationship layer**: Contacts
-- **Interaction layer**: Scheduling / meetings / calls
+- **Interaction layer**: Workspace-scoped operational interactions linking participants, timing, provenance, and strategic continuity (Scheduling Foundation is the first slice)
 - **Memory layer**: Notes / documents / artifacts
 - **Decision layer**: Blueprint + simulation engines
 - **Augmentation layer**: AI ingestion + AI operator assistance
@@ -119,6 +119,47 @@ This workflow formalizes the minimum executable strategic path and preserves tra
 
 Governance constraint:
 - UI interaction remains bound to application services, preserving architectural boundaries and keeping infra details outside presentation modules.
+
+## Interaction Layer (Canonical Definition)
+The Interaction Layer is now formally defined as the canonical layer that follows Contacts Foundation.
+
+Interaction is modeled as a **workspace-scoped operational contact artifact** that links:
+- strategic context (workspace),
+- participants (contacts),
+- operational timing,
+- and potential decision consequences.
+
+It is explicitly:
+- not a CRM activity feed,
+- not equivalent to a generic calendar event,
+- not an unconstrained AI artifact model.
+
+Canonical model baseline:
+- `id`, `workspaceId`, `type`, `scheduledAt`, `status`, `provenance`, participant/contact linkage, optional notes/outcome linkage.
+
+Supporting controlled vocabularies are established for:
+- interaction type (e.g., `meeting`, `call`, `follow_up`),
+- interaction status (e.g., `planned`, `completed`, `cancelled`),
+- interaction provenance (e.g., `manual`, `from_calendar_sync`, `from_ai_review`).
+
+See `docs/INTERACTION_LAYER.md` for the authoritative layer definition and implementation-slice framing.
+
+## Scheduling Foundation (Interaction Layer — First Slice)
+Scheduling Foundation is framed as the first narrow product slice of the Interaction Layer.
+
+Expected minimal scope:
+- create workspace-linked interactions,
+- associate one or more contacts,
+- present planned interactions in workspace context,
+- support a basic status lifecycle.
+
+Explicitly out of scope in this slice:
+- external calendar sync,
+- AI-generated interactions,
+- interaction analytics,
+- advanced recurrence,
+- task automation,
+- CRM pipeline semantics.
 
 ## Contacts Foundation v1
 The first workspace-scoped relationship slice is now active as a strategic continuity layer:

@@ -22,6 +22,7 @@ public.organizations
   1 ─── * public.workspaces
   1 ─── * public.intakes
   1 ─── * public.contacts
+  1 ─── * public.interactions
 
 public.permissions (global catalog)
   1 ─── * public.role_permissions
@@ -39,6 +40,10 @@ public.intakes
 
 public.workspaces
   1 ─── * public.contacts
+  1 ─── * public.interactions
+
+public.contacts
+  * ─── * public.interactions (through participant linkage table in future implementation slices)
 ```
 
 ## Table Responsibilities
@@ -70,6 +75,22 @@ Organization-scoped strategic entry records. Stores initial strategic inputs (`d
 ### `public.contacts`
 Organization-scoped, workspace-linked strategic relationship records. Contacts carry explicit provenance metadata (`manual`, `from_intake`, `from_ai_review`) to support lifecycle traceability.
 
+### `public.interactions` (canonical model target)
+Workspace-scoped operational interaction records linking participants and timing to strategic continuity.
+
+Conceptual fields (v1 target):
+- `id`
+- `workspace_id`
+- `type`
+- `scheduled_at`
+- `status`
+- `provenance`
+- optional notes/outcome linkage metadata
+
+Interaction participant linkage remains explicit and workspace-compatible (likely via join table in implementation).
+
+Scheduling Foundation will implement the first narrow subset of this model and must not be interpreted as the full Interaction Layer scope.
+
 ## RBAC Flow
 1. Platform defines global permissions in `public.permissions`.
 2. Each organization defines custom roles in `public.roles`.
@@ -82,7 +103,7 @@ This keeps permission semantics globally consistent while allowing per-tenant ro
 ## Tenant Isolation Model
 Isolation boundary is `organization_id`.
 
-- `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, and `public.contacts` include explicit `organization_id`.
+- `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, `public.contacts`, and future `public.interactions` include explicit `organization_id`.
 - `public.user_roles` is constrained transitively by requiring both linked user and role to be in current user organization.
 - Foreign keys + RLS prevent cross-tenant traversal.
 
@@ -94,6 +115,7 @@ RLS is enabled and forced on:
 - `public.workspaces`
 - `public.intakes`
 - `public.contacts`
+- future `public.interactions`
 
 A helper function `public.current_user_organization_id()` resolves tenant context from `auth.uid()` via `public.users`.
 

@@ -47,7 +47,7 @@ Kernel definition:
 
 Layers around the workspace kernel:
 - **Relationship layer**: Contacts.
-- **Interaction layer**: Scheduling, meetings, calls.
+- **Interaction layer**: Workspace-scoped interactions that connect participants, operational timing, and decision-relevant continuity (Scheduling Foundation is the first slice).
 - **Memory layer**: Notes, documents, artifacts.
 - **Decision layer**: Blueprint and simulation engines.
 - **Augmentation layer**: AI ingestion and AI operator assistance.
@@ -68,6 +68,7 @@ Key invariants:
 - No blueprint without workspace context.
 - No workspace lifecycle without intake lineage.
 - No contact without workspace ownership and explicit provenance.
+- No interaction without workspace ownership, explicit type/status/provenance semantics, and participant linkage scoped to workspace context.
 - No simulation output without declared scenario assumptions.
 
 ## Composition Root and Application Wiring

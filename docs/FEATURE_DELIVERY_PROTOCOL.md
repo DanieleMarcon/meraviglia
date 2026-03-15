@@ -108,6 +108,7 @@ If any check fails, feature is not merge-ready.
 ### Phase 6 — Documentation Update
 
 - Update docs affected by new behavior, boundaries, or contracts.
+- When introducing a new canonical layer, architecture-definition documentation must be completed and aligned before runtime feature implementation for that layer.
 - Add migration notes when compatibility bridges or aliases are introduced.
 - Ensure implementation language and docs use the same terms.
 

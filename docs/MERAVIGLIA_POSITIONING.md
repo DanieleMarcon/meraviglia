@@ -15,7 +15,7 @@ Layers around the workspace kernel:
    - Contacts and stakeholder continuity within workspace scope.
 
 2. **Interaction layer**
-   - Scheduling, meetings, calls, and interaction events that drive operating cadence.
+   - Workspace-scoped operational interaction artifacts linking participants, timing, provenance, and strategic continuity; not CRM activity logs nor generic calendar events.
 
 3. **Memory layer**
    - Notes, documents, and artifacts preserving strategic memory.
@@ -52,6 +52,7 @@ Meraviglia operates as a **System of Strategic Design** above Systems of Record.
 - **Consultant-first interaction model**: workflows are designed for consultants guiding multiple client contexts, not for self-serve end users.
 - **Multi-tenant isolation**: each organization is an isolated strategic environment with strict data and permission boundaries.
 - **Lifecycle continuity**: all decisions must remain traceable through intake → workspace → blueprint evolution.
+- **Interaction as strategic-operational artifact**: interactions are governed workspace artifacts that connect contacts, timing, and possible decision consequences; scheduling is only the first implementation slice.
 - **Model-driven strategy**: strategic intent is expressed through explicit entities and decision rules, not ad hoc notes.
 - **Execution governance**: the platform prioritizes decision quality, consistency, and explainability before automation scale.
 
