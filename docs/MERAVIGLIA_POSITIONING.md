@@ -4,23 +4,32 @@
 Define Meraviglia OS positioning as a strategic operating system for consultants and advisory teams that need structured, repeatable decision orchestration across multiple client organizations.
 
 ## Conceptual Architecture
-Meraviglia OS is positioned as a strategic platform composed of four coordinated layers:
+Meraviglia OS is organized around a **Strategic Context Kernel**:
 
-1. **Strategic Intake Layer**
-   - Captures initial context, constraints, goals, and assumptions.
-   - Normalizes ambiguous client input into structured decision-ready artifacts.
+- **Workspace = Strategic Context Kernel**
+- Workspace is the canonical container where strategic context is accumulated, governed, and transformed into decisions.
 
-2. **Workspace Layer**
-   - Provides the tenant-scoped operational context where planning, design, and governance occur.
-   - Maintains continuity from intake assumptions to execution decisions.
+Layers around the workspace kernel:
 
-3. **Blueprint Modeling Layer**
-   - Formalizes objectives, hypotheses, actions, indicators, constraints, and scenarios as strategic models.
-   - Enables versioning, comparison, and traceability of alternative strategic designs.
+1. **Relationship layer**
+   - Contacts and stakeholder continuity within workspace scope.
 
-4. **Simulation and Knowledge Layer**
-   - Uses deterministic simulation logic and reusable strategy templates to evaluate options before execution.
-   - Supports consultant decisions with structured precedent and domain-specific pattern reuse.
+2. **Interaction layer**
+   - Scheduling, meetings, calls, and interaction events that drive operating cadence.
+
+3. **Memory layer**
+   - Notes, documents, and artifacts preserving strategic memory.
+
+4. **Decision layer**
+   - Blueprint modeling and simulation engines used for decision design and validation.
+
+5. **Augmentation layer**
+   - AI ingestion and AI operator assistance under governance.
+
+6. **Integration layer**
+   - Google ecosystem and external systems connected via explicit contracts.
+
+Intake remains the formal entry boundary that feeds the workspace kernel, preserving lifecycle continuity from assumptions to governed execution.
 
 ## Category Definition
 Meraviglia OS is **not a CRM**.
