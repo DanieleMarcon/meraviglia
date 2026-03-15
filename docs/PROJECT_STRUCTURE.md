@@ -90,6 +90,7 @@ Contains:
 * services
 * DTOs
 * composition root
+* repository port ownership for features such as intake, workspace, and contacts
 
 Responsibilities:
 
@@ -138,6 +139,8 @@ Persistence contracts.
 
 Contains repository interfaces used by the application layer.
 
+Current interfaces include workspace, intake, and contact persistence ports.
+
 ---
 
 ### infra/
@@ -149,6 +152,8 @@ Examples:
 * database adapters
 * API clients
 * Supabase implementations
+
+Current adapters include Supabase repositories and decoder/write-payload seams for workspace, intake, and contact persistence.
 
 ---
 

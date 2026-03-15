@@ -1,4 +1,5 @@
 import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
+import WorkspaceContactsPanel from "./WorkspaceContactsPanel"
 
 type WorkspaceListProps = {
   workspaces: WorkspaceDTO[]
@@ -15,6 +16,7 @@ function WorkspaceList({ workspaces }: WorkspaceListProps) {
           <p><strong>Name:</strong> {workspace.workspace_name}</p>
           <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
           <p><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
+          <WorkspaceContactsPanel workspaceId={workspace.id} />
         </li>
       ))}
     </ul>
