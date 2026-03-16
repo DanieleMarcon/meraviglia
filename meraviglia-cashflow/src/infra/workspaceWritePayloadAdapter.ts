@@ -4,6 +4,7 @@ import type {
 } from "../repository/workspaceRepository"
 
 interface WorkspaceExternalWritePayload {
+  organization_id?: string
   workspace_name?: string
   workspace_slug?: string
 }
@@ -31,14 +32,19 @@ const readOptionalString = (
 }
 
 export const adaptCreateWorkspaceWritePayload = (
-  input: CreateWorkspaceRecordInput,
+  input: CreateWorkspaceRecordInput & { organization_id: string },
 ): WorkspaceExternalWritePayload => {
   if (!isObject(input)) {
     throw new Error("[workspace-write-adapter:create] expected create workspace input object")
   }
 
+  const organization_id = readOptionalString(input, "organization_id", "create")
   const workspace_name = readOptionalString(input, "workspace_name", "create")
   const workspace_slug = readOptionalString(input, "workspace_slug", "create")
+
+  if (organization_id === undefined) {
+    throw new Error("[workspace-write-adapter:create] missing required `organization_id`")
+  }
 
   if (workspace_name === undefined) {
     throw new Error("[workspace-write-adapter:create] missing required `workspace_name`")
@@ -49,6 +55,7 @@ export const adaptCreateWorkspaceWritePayload = (
   }
 
   return {
+    organization_id,
     workspace_name,
     workspace_slug,
   }
