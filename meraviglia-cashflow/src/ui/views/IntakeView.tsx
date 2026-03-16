@@ -5,6 +5,8 @@ import type { IntakeDTO } from "../../application/dto/IntakeDTO"
 import IntakeForm from "../components/IntakeForm"
 import IntakeList from "../components/IntakeList"
 
+const WORKSPACE_CONVERTED_EVENT = "workspace:converted"
+
 function IntakeView() {
   const [intakes, setIntakes] = useState<IntakeDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -28,11 +30,16 @@ function IntakeView() {
     void loadIntakes()
   }, [loadIntakes])
 
+  const handleConverted = useCallback(async () => {
+    await loadIntakes()
+    window.dispatchEvent(new Event(WORKSPACE_CONVERTED_EVENT))
+  }, [loadIntakes])
+
   return (
     <section style={{ marginTop: 32 }}>
       <h1>Intake Operations</h1>
       <IntakeForm onCreated={loadIntakes} />
-      {isLoading ? <p>Loading intakes...</p> : <IntakeList intakes={intakes} onConverted={loadIntakes} />}
+      {isLoading ? <p>Loading intakes...</p> : <IntakeList intakes={intakes} onConverted={handleConverted} />}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )

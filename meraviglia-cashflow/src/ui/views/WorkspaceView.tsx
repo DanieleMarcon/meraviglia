@@ -4,6 +4,8 @@ import { listWorkspaces } from "../../application/workspaceService"
 import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
 import WorkspaceList from "../components/WorkspaceList"
 
+const WORKSPACE_CONVERTED_EVENT = "workspace:converted"
+
 function WorkspaceView() {
   const [workspaces, setWorkspaces] = useState<WorkspaceDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -25,6 +27,16 @@ function WorkspaceView() {
 
   useEffect(() => {
     void loadWorkspaces()
+
+    const handleWorkspaceConverted = () => {
+      void loadWorkspaces()
+    }
+
+    window.addEventListener(WORKSPACE_CONVERTED_EVENT, handleWorkspaceConverted)
+
+    return () => {
+      window.removeEventListener(WORKSPACE_CONVERTED_EVENT, handleWorkspaceConverted)
+    }
   }, [loadWorkspaces])
 
   return (
