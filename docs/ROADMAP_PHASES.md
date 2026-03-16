@@ -40,6 +40,24 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - RLS policies defined for strict organization isolation.
 - Explicitly out of scope in this step: self-signup organization creation, cross-organization super-admin/network layer.
 
+### Multi-Organization Maturity Note (Current)
+- Current state is backend-ready / product-incomplete.
+- Implemented now: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, basic role assignment, authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
+- Not yet implemented: invite-based onboarding, approval/activation workflow, organization management UI, organization switching, parent/child org visibility, and "mother organization sees all children" behavior.
+
+### Forward Slice — Organization & Access Management Foundation (Planned)
+Objective for a future roadmap slice:
+- Introduce product-complete organization and access management workflows on top of existing tenant/security foundations.
+
+Expected scope:
+- Invite-based user onboarding and membership lifecycle,
+- approval/activation flow,
+- organization management UI baseline,
+- organization switcher UX/application flow.
+
+Explicitly out of scope for this forward slice unless separately approved:
+- parent/child network governance and cross-org global visibility models.
+
 ### Architectural Risk
 - Early coupling of intake logic to UI forms.
 - Leakage of Supabase-specific assumptions into domain/application layers.

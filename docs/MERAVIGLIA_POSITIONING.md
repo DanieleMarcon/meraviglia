@@ -82,6 +82,7 @@ Reusable wording for presentation and onboarding contexts:
 ## Core Principles
 - **Consultant-first interaction model**: workflows are designed for consultants guiding multiple client contexts, not for self-serve end users.
 - **Multi-tenant isolation**: each organization is an isolated strategic environment with strict data and permission boundaries.
+- **Current maturity transparency**: multi-organization infrastructure/security foundations are implemented, but organization/access product workflows (invite onboarding, activation, org management, org switching) are not yet product-complete.
 - **Lifecycle continuity**: all decisions must remain traceable through intake → workspace → blueprint evolution.
 - **Interaction as strategic-operational artifact**: interactions are governed workspace artifacts that connect contacts, timing, and possible decision consequences; scheduling is only the first implementation slice.
 - **Model-driven strategy**: strategic intent is expressed through explicit entities and decision rules, not ad hoc notes.
