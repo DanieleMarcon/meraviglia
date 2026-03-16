@@ -1,6 +1,7 @@
 import type { CreateInteractionRecordInput, UpdateInteractionStatusRecordInput } from "../repository/interactionRepository"
 
 type CreateInteractionWritePayload = {
+  organization_id: string
   workspace_id: string
   type: CreateInteractionRecordInput["type"]
   scheduled_at: string
@@ -22,9 +23,10 @@ const assertString = (value: unknown, fieldName: string, context: string): strin
 }
 
 export const adaptCreateInteractionWritePayload = (
-  input: CreateInteractionRecordInput,
+  input: CreateInteractionRecordInput & { organization_id: string },
 ): CreateInteractionWritePayload => {
   return {
+    organization_id: assertString(input.organization_id, "organization_id", "createInteraction"),
     workspace_id: assertString(input.workspace_id, "workspace_id", "createInteraction"),
     type: input.type,
     scheduled_at: assertString(input.scheduled_at, "scheduled_at", "createInteraction"),
