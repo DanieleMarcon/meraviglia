@@ -20,6 +20,7 @@ function IntakeList({ intakes, onConverted }: IntakeListProps) {
             <p><strong>Name:</strong> {intake.first_name} {intake.last_name}</p>
             <p><strong>Email:</strong> {intake.email}</p>
             <p><strong>Status:</strong> {intake.status}</p>
+            {intake.notes ? <p><strong>Notes:</strong> {intake.notes}</p> : null}
             <p><strong>Created:</strong> {new Date(intake.created_at).toLocaleString()}</p>
 
             {intake.status !== "converted" ? (
