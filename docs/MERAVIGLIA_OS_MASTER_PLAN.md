@@ -27,6 +27,25 @@ Final architecture hardening decision:
 
 This establishes a SaaS-ready platform core without introducing a network/super-admin layer in this milestone.
 
+### Multi-Organization Maturity (Current Status)
+Current multi-organization status is **infrastructure-ready and product-incomplete**.
+
+Implemented foundation:
+- `organizations` and `users` tenant model with user ↔ organization linkage.
+- organization-scoped RBAC baseline (`roles`, `user_roles`, permission catalog).
+- organization-scoped RLS tenant isolation.
+- authenticated runtime with logout and an operational strategic loop (`intake → workspace → contacts → interactions`).
+
+Not yet implemented as product workflow:
+- invite-based user onboarding,
+- approval/activation flow,
+- organization management UI,
+- organization switching,
+- parent/child multi-organization visibility,
+- "mother organization sees all children" behavior.
+
+Planning implication: current platform security/data boundaries are ready for multi-org operations, while organization and access management workflows remain a dedicated future delivery slice.
+
 ## Category Guardrails
 Meraviglia OS is not positioned as:
 - a CRM,

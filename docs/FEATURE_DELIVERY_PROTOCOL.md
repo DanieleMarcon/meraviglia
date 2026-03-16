@@ -112,6 +112,7 @@ If any check fails, feature is not merge-ready.
 - Update docs affected by new behavior, boundaries, or contracts.
 - When introducing a new canonical layer, architecture-definition documentation must be completed and aligned before runtime feature implementation for that layer.
 - Add migration notes when compatibility bridges or aliases are introduced.
+- For tenant/access changes, explicitly state maturity status (infrastructure-ready vs product-complete) to avoid overstating multi-organization capabilities.
 - Ensure implementation language and docs use the same terms.
 
 **Exit criteria**
