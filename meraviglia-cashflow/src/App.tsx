@@ -14,6 +14,7 @@ import WorkspaceView from "./ui/views/WorkspaceView"
 import UnauthorizedView from "./ui/views/UnauthorizedView"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
+import { useAuth } from "./auth/useAuth"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
@@ -34,6 +35,7 @@ const SECTION_TOGGLE_LABELS = [
 ] as const
 
 function CashflowApp() {
+  const { signOut } = useAuth()
   const {
     services: catalog,
     addService,
@@ -61,6 +63,12 @@ function CashflowApp() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Meraviglia Cashflow Engine</h1>
+
+      <div style={{ marginBottom: 20 }}>
+        <button type="button" onClick={() => void signOut()}>
+          Logout
+        </button>
+      </div>
 
       <PianoEditor
         piano={piano}
