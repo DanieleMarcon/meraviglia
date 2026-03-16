@@ -24,7 +24,8 @@ const SELECT_PARTICIPANT_FIELDS = "interaction_id, contact_id"
 
 export class SupabaseInteractionRepository implements InteractionRepository {
   async createInteraction(input: CreateInteractionRecordInput): Promise<InteractionRecord> {
-    const writePayload = adaptCreateInteractionWritePayload(input)
+    const organizationId = await this.resolveCurrentOrganizationId()
+    const writePayload = adaptCreateInteractionWritePayload({ ...input, organization_id: organizationId })
 
     const { data, error } = await supabase
       .from(INTERACTIONS_TABLE)
@@ -40,6 +41,19 @@ export class SupabaseInteractionRepository implements InteractionRepository {
     await this.replaceParticipants(interaction.id, input.participant_contact_ids)
 
     return interaction
+  }
+
+  private async resolveCurrentOrganizationId(): Promise<string> {
+    const { data, error } = await supabase.rpc("current_user_organization_id")
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (typeof data !== "string" || !data) {
+      throw new Error("Authenticated user organization context is unavailable")
+    }
+
+    return data
   }
 
   async listInteractionsByWorkspace(workspaceId: string): Promise<InteractionRecord[]> {
