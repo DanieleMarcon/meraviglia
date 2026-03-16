@@ -5,6 +5,7 @@ import type {
 } from "../repository/intakeRepository"
 
 type CreateIntakeWritePayload = {
+  organization_id: string
   first_name: string
   last_name: string
   email: string
@@ -65,13 +66,14 @@ const assertIntakeStatus = (value: unknown, fieldName: string, context: string):
 }
 
 export const adaptCreateIntakeWritePayload = (
-  input: CreateIntakeRecordInput,
+  input: CreateIntakeRecordInput & { organization_id: string },
 ): CreateIntakeWritePayload => {
   if (!isObject(input)) {
     throw new Error("Invalid createIntake payload: input must be an object")
   }
 
   const payload: CreateIntakeWritePayload = {
+    organization_id: assertString(input.organization_id, "organization_id", "createIntake"),
     first_name: assertString(input.first_name, "first_name", "createIntake"),
     last_name: assertString(input.last_name, "last_name", "createIntake"),
     email: assertString(input.email, "email", "createIntake"),

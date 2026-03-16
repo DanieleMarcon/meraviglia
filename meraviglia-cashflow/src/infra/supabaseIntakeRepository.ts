@@ -17,10 +17,22 @@ const SELECT_FIELDS =
 
 export class SupabaseIntakeRepository implements IntakeRepository {
   async createIntake(input: CreateIntakeRecordInput): Promise<IntakeRecord> {
-    const writePayload = adaptCreateIntakeWritePayload(input)
+    const organizationId = await this.resolveCurrentOrganizationId()
+    const writePayload = adaptCreateIntakeWritePayload({ ...input, organization_id: organizationId })
     const { data, error } = await supabase.from(TABLE_NAME).insert(writePayload).select(SELECT_FIELDS).single()
     if (error || !data) throw new Error(error?.message ?? "Failed to create intake")
     return decodeIntakeRow(data, "createIntake")
+  }
+
+
+  private async resolveCurrentOrganizationId(): Promise<string> {
+    const { data, error } = await supabase.rpc("current_user_organization_id")
+    if (error) throw new Error(error.message)
+    if (typeof data !== "string" || !data) {
+      throw new Error("Authenticated user organization context is unavailable")
+    }
+
+    return data
   }
 
   async listIntakes(): Promise<IntakeRecord[]> {

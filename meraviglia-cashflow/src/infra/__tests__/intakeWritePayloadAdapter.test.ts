@@ -8,6 +8,7 @@ import {
 describe("intakeWritePayloadAdapter", () => {
   it("accepts valid create payloads and emits canonical write contract", () => {
     const decoded = adaptCreateIntakeWritePayload({
+      organization_id: "org-1",
       first_name: "Ada",
       last_name: "Lovelace",
       email: "ada@example.com",
@@ -18,6 +19,7 @@ describe("intakeWritePayloadAdapter", () => {
     })
 
     expect(decoded).toEqual({
+      organization_id: "org-1",
       first_name: "Ada",
       last_name: "Lovelace",
       email: "ada@example.com",
@@ -31,6 +33,7 @@ describe("intakeWritePayloadAdapter", () => {
   it("rejects malformed create payloads", () => {
     expect(() =>
       adaptCreateIntakeWritePayload({
+        organization_id: "org-1",
         first_name: "Ada",
         last_name: "Lovelace",
         email: "ada@example.com",
