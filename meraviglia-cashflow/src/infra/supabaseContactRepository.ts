@@ -9,7 +9,8 @@ const SELECT_FIELDS =
 
 export class SupabaseContactRepository implements ContactRepository {
   async createContact(input: CreateContactRecordInput): Promise<ContactRecord> {
-    const writePayload = adaptCreateContactWritePayload(input)
+    const organizationId = await this.resolveCurrentOrganizationId()
+    const writePayload = adaptCreateContactWritePayload({ ...input, organization_id: organizationId })
     const { data, error } = await supabase.from(TABLE_NAME).insert(writePayload).select(SELECT_FIELDS).single()
 
     if (error || !data) {
@@ -17,6 +18,19 @@ export class SupabaseContactRepository implements ContactRepository {
     }
 
     return decodeContactRow(data, "createContact")
+  }
+
+  private async resolveCurrentOrganizationId(): Promise<string> {
+    const { data, error } = await supabase.rpc("current_user_organization_id")
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (typeof data !== "string" || !data) {
+      throw new Error("Authenticated user organization context is unavailable")
+    }
+
+    return data
   }
 
   async listContactsByWorkspace(workspaceId: string): Promise<ContactRecord[]> {
