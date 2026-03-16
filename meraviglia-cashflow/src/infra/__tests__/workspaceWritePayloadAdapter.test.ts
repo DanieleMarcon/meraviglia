@@ -8,11 +8,13 @@ import {
 describe("workspaceWritePayloadAdapter", () => {
   it("adapts valid create payload to canonical external shape", () => {
     const payload = adaptCreateWorkspaceWritePayload({
+      organization_id: "org-1",
       workspace_name: "Meraviglia HQ",
       workspace_slug: "meraviglia-hq",
     })
 
     expect(payload).toEqual({
+      organization_id: "org-1",
       workspace_name: "Meraviglia HQ",
       workspace_slug: "meraviglia-hq",
     })
@@ -20,9 +22,18 @@ describe("workspaceWritePayloadAdapter", () => {
 
   it("throws on malformed create payload", () => {
     expect(() => adaptCreateWorkspaceWritePayload({
+      organization_id: "org-1",
       workspace_name: 42,
       workspace_slug: "meraviglia-hq",
     } as never)).toThrow("expected `workspace_name` string")
+  })
+
+
+  it("throws when organization_id is missing for create payload", () => {
+    expect(() => adaptCreateWorkspaceWritePayload({
+      workspace_name: "Meraviglia HQ",
+      workspace_slug: "meraviglia-hq",
+    } as never)).toThrow("missing required `organization_id`")
   })
 
   it("adapts valid update payload", () => {
