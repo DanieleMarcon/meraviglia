@@ -1,6 +1,7 @@
 import type { CreateContactRecordInput } from "../repository/contactRepository"
 
 type CreateContactWritePayload = {
+  organization_id: string
   workspace_id: string
   first_name: string
   last_name: string
@@ -47,13 +48,14 @@ const assertProvenance = (
 }
 
 export const adaptCreateContactWritePayload = (
-  input: CreateContactRecordInput,
+  input: CreateContactRecordInput & { organization_id: string },
 ): CreateContactWritePayload => {
   if (!isObject(input)) {
     throw new Error("Invalid createContact payload: input must be an object")
   }
 
   const payload: CreateContactWritePayload = {
+    organization_id: assertString(input.organization_id, "organization_id", "createContact"),
     workspace_id: assertString(input.workspace_id, "workspace_id", "createContact"),
     first_name: assertString(input.first_name, "first_name", "createContact"),
     last_name: assertString(input.last_name, "last_name", "createContact"),
