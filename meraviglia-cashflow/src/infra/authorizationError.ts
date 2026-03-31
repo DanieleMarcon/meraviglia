@@ -4,8 +4,10 @@ type ErrorLike = {
 }
 
 export const ADMIN_REQUIRED_ERROR_MESSAGE = "Admin privileges required for this action."
+export const AUTHENTICATION_REQUIRED_ERROR_MESSAGE = "Authentication required. Please log in again."
 
-const AUTHORIZATION_ERROR_CODES = new Set(["42501", "PGRST301"])
+const AUTHENTICATION_ERROR_CODES = new Set(["PGRST301"])
+const AUTHORIZATION_ERROR_CODES = new Set(["42501"])
 const AUTHORIZATION_ERROR_PATTERNS = [
   "permission denied",
   "row-level security",
@@ -28,6 +30,10 @@ const isAuthorizationDenied = (error: ErrorLike | null | undefined): boolean => 
 }
 
 export const toRepositoryError = (error: ErrorLike | null | undefined, fallbackMessage: string): Error => {
+  if (error?.code && AUTHENTICATION_ERROR_CODES.has(error.code)) {
+    return new Error(AUTHENTICATION_REQUIRED_ERROR_MESSAGE)
+  }
+
   if (isAuthorizationDenied(error)) {
     return new Error(ADMIN_REQUIRED_ERROR_MESSAGE)
   }

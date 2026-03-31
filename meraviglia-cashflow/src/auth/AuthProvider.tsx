@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 
 import { getRbacState, getSession, onAuthStateChange, signIn, signOut } from "../application/authService"
 import type { AuthRbacState, AuthSession, AuthUser } from "../repository/authRepository"
@@ -9,6 +9,7 @@ type AuthProviderProps = {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const rbacRequestIdRef = useRef(0)
   const [rbac, setRbac] = useState<AuthRbacState>({ isAdmin: false, canManageRbac: false })
   const [rbacLoading, setRbacLoading] = useState(true)
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -19,6 +20,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     let isMounted = true
 
     const refreshRbac = async (nextSession: AuthSession | null): Promise<void> => {
+      const requestId = rbacRequestIdRef.current + 1
+      rbacRequestIdRef.current = requestId
+
       if (!isMounted) {
         return
       }
@@ -32,17 +36,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setRbacLoading(true)
       try {
         const nextRbac = await getRbacState()
-        if (!isMounted) {
+        if (!isMounted || rbacRequestIdRef.current !== requestId) {
           return
         }
         setRbac(nextRbac)
       } catch {
-        if (!isMounted) {
+        if (!isMounted || rbacRequestIdRef.current !== requestId) {
           return
         }
         setRbac({ isAdmin: false, canManageRbac: false })
       } finally {
-        if (isMounted) {
+        if (isMounted && rbacRequestIdRef.current === requestId) {
           setRbacLoading(false)
         }
       }
