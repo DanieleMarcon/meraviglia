@@ -66,7 +66,7 @@ Before implementation:
 
 ### Active priority
 
-👉 PRODUCT-stream milestone coordination for M2-B Organization Access Foundation (with DB/APP execution queued from this contract)
+👉 PRODUCT-stream M2-B product contract ratified; execute DB/APP invite + activation + membership baseline within fixed scope
 
 ---
 
@@ -178,3 +178,20 @@ The system is working when:
 APP-side RBAC alignment is now baseline-complete; the next gateway is collaboration workflow completion on top of active RBAC
 
 ---
+
+
+## 11. M2-B Contract Guardrails (Active)
+
+Execution for M2-B must remain inside:
+
+- invite flow
+- invite activation flow
+- membership baseline management (list/remove + role assignment within `admin`/`member`)
+- collaboration entry with existing org-scoped app shell
+
+Explicitly forbidden in this milestone:
+
+- RBAC redesign
+- org switching
+- multi-org membership productization
+- enterprise IAM scope (SSO/SCIM)
