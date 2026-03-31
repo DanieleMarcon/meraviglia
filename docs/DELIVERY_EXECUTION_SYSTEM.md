@@ -66,7 +66,7 @@ Before implementation:
 
 ### Active priority
 
-👉 APP-side RBAC alignment on top of completed DB-side activation
+👉 PRODUCT-stream milestone coordination for M2-B Organization Access Foundation (with DB/APP execution queued from this contract)
 
 ---
 
@@ -173,8 +173,8 @@ The system is working when:
 
 ## 10. Next Step
 
-👉 Complete APP-side RBAC alignment (DB-side RBAC already active)
+👉 Execute M2-B Organization Access Foundation using coordinated stream priorities (PRODUCT contract → DB support → APP workflows)
 
-This remains the gateway from M1 → M2 completion
+APP-side RBAC alignment is now baseline-complete; the next gateway is collaboration workflow completion on top of active RBAC
 
 ---
