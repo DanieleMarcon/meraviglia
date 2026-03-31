@@ -47,7 +47,7 @@ The missing layer is now mostly product workflow, not low-level security.
 - Membership acceptance/activation flow.
 - Organization/member administration UI baseline.
 - Deterministic role assignment UX for admins.
-- Basic org access lifecycle states (pending, active, removed) at product level.
+- Basic org access lifecycle states (`invited`, `active`, `removed`) at product level.
 
 ### Collaboration usability gaps
 
@@ -210,13 +210,15 @@ Deliver the smallest collaboration-ready access workflow on top of the active RB
 ### 11.3 Role Responsibilities (M2-B)
 - `admin`
   - invite users
-  - activate/remove membership via membership management baseline
+  - remove membership via membership management baseline
   - assign role only between existing roles (`admin`/`member`)
   - manage access governance surfaces protected by `rbac.manage`
 - `member`
   - use organization operational surfaces permitted by canonical permissions
   - cannot invite/remove users or modify roles
   - cannot access admin-only governance controls
+
+Activation ownership note: membership activation is collaborator-driven through invite acceptance after authentication; admin does not directly activate collaborators in the standard M2-B contract.
 
 ### 11.4 Minimal Membership Lifecycle (M2-B)
 Canonical product states:
