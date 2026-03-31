@@ -1,5 +1,6 @@
-import type { AuthRepository, AuthSession } from "../repository/authRepository"
+import type { AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
 import { supabase } from "../lib/supabaseClient"
+import { toRepositoryError } from "./authorizationError"
 import { decodeExternalAuthSession } from "./authSessionDecoder"
 
 export class SupabaseAuthRepository implements AuthRepository {
@@ -7,10 +8,30 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { data, error } = await supabase.auth.getSession()
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Unable to load authentication session")
     }
 
     return decodeExternalAuthSession(data.session, "getSession")
+  }
+
+  async getRbacState(): Promise<AuthRbacState> {
+    const [isAdminResult, canManageRbacResult] = await Promise.all([
+      supabase.rpc("has_role", { role_name: "admin" }),
+      supabase.rpc("has_permission", { permission_key: "rbac.manage" }),
+    ])
+
+    if (isAdminResult.error) {
+      throw toRepositoryError(isAdminResult.error, "Unable to resolve admin role")
+    }
+
+    if (canManageRbacResult.error) {
+      throw toRepositoryError(canManageRbacResult.error, "Unable to resolve RBAC capability")
+    }
+
+    return {
+      isAdmin: isAdminResult.data === true,
+      canManageRbac: canManageRbacResult.data === true,
+    }
   }
 
   onAuthStateChange(listener: (session: AuthSession | null) => void): () => void {
@@ -29,7 +50,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Unable to sign in")
     }
   }
 
@@ -37,7 +58,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { error } = await supabase.auth.signOut()
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Unable to sign out")
     }
   }
 }

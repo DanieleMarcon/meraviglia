@@ -129,6 +129,11 @@ Required documentation alignment after this activation:
 - `docs/ROADMAP_PHASES.md` should mark DB-side RBAC activation as completed transition work.
 - `docs/PLATFORM_DATA_MODEL.md` should reflect active helper-function/policy model (`has_role`, `has_permission`).
 
+APP alignment status (M2 minimal slice):
+
+- `meraviglia-cashflow` auth context now resolves and exposes RBAC read flags (`isAdmin`, `canManageRbac`, `rbacLoading`) through existing Supabase RPC helpers.
+- A minimal UI gating primitive and authorization-denied message normalization have been introduced without adding a frontend permission engine.
+
 ## 10. Known Risks / Tradeoffs
 
 - `member` is intentionally broad on operational data (`*.manage`) to keep milestone small; this is a conscious tradeoff.

@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { toRepositoryError } from "./authorizationError"
 import type {
   CreateInteractionRecordInput,
   InteractionParticipantRecord,
@@ -34,7 +35,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .single()
 
     if (error || !data) {
-      throw new Error(error?.message ?? "Failed to create interaction")
+      throw toRepositoryError(error, "Failed to create interaction")
     }
 
     const interaction = decodeInteractionRow(data, "createInteraction")
@@ -46,7 +47,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
   private async resolveCurrentOrganizationId(): Promise<string> {
     const { data, error } = await supabase.rpc("current_user_organization_id")
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to resolve current organization")
     }
 
     if (typeof data !== "string" || !data) {
@@ -64,7 +65,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .order("scheduled_at", { ascending: true })
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to list interactions")
     }
 
     return decodeInteractionRows(data ?? [], "listInteractionsByWorkspace")
@@ -78,7 +79,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .maybeSingle()
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to load interaction")
     }
 
     if (!data) {
@@ -99,7 +100,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .single()
 
     if (error || !data) {
-      throw new Error(error?.message ?? "Failed to update interaction status")
+      throw toRepositoryError(error, "Failed to update interaction status")
     }
 
     return decodeInteractionRow(data, "updateInteractionStatus")
@@ -112,7 +113,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .eq("interaction_id", interactionId)
 
     if (deleteError) {
-      throw new Error(deleteError.message)
+      throw toRepositoryError(deleteError, "Failed to replace participants")
     }
 
     const payloads = adaptInteractionParticipantWritePayloads(interactionId, contactIds)
@@ -123,7 +124,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .select(SELECT_PARTICIPANT_FIELDS)
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to replace participants")
     }
 
     return decodeInteractionParticipantRows(data ?? [], "replaceParticipants")
@@ -136,7 +137,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .eq("interactions.workspace_id", workspaceId)
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to list interaction participants")
     }
 
     return decodeInteractionParticipantRows(data ?? [], "listParticipantsByWorkspace")
