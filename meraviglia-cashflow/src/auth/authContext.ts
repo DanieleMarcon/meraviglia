@@ -5,9 +5,11 @@ import type { AuthRbacState, AuthSession, AuthUser } from "../repository/authRep
 export type AuthContextValue = {
   user: AuthUser | null
   session: AuthSession | null
+  organizationId: string | null
   loading: boolean
   rbac: AuthRbacState
   rbacLoading: boolean
+  organizationLoading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }

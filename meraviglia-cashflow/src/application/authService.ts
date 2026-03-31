@@ -1,4 +1,4 @@
-import type { AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
+import type { AuthOrganizationContext, AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
 
 let authRepository: AuthRepository | null = null
 
@@ -24,6 +24,10 @@ export const onAuthStateChange = (listener: (session: AuthSession | null) => voi
 
 export const getRbacState = async (): Promise<AuthRbacState> => {
   return getAuthRepository().getRbacState()
+}
+
+export const getOrganizationContext = async (): Promise<AuthOrganizationContext> => {
+  return getAuthRepository().getOrganizationContext()
 }
 
 export const signIn = async (email: string, password: string): Promise<void> => {

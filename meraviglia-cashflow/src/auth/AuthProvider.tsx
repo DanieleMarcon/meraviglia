@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 
-import { getRbacState, getSession, onAuthStateChange, signIn, signOut } from "../application/authService"
+import { getOrganizationContext, getRbacState, getSession, onAuthStateChange, signIn, signOut } from "../application/authService"
 import type { AuthRbacState, AuthSession, AuthUser } from "../repository/authRepository"
 import { AuthContext, type AuthContextValue } from "./authContext"
 
@@ -10,8 +10,11 @@ type AuthProviderProps = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const rbacRequestIdRef = useRef(0)
+  const organizationRequestIdRef = useRef(0)
   const [rbac, setRbac] = useState<AuthRbacState>({ isAdmin: false, canManageRbac: false })
   const [rbacLoading, setRbacLoading] = useState(true)
+  const [organizationId, setOrganizationId] = useState<string | null>(null)
+  const [organizationLoading, setOrganizationLoading] = useState(true)
   const [user, setUser] = useState<AuthUser | null>(null)
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
@@ -52,6 +55,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
 
+    const refreshOrganization = async (nextSession: AuthSession | null): Promise<void> => {
+      const requestId = organizationRequestIdRef.current + 1
+      organizationRequestIdRef.current = requestId
+
+      if (!isMounted) {
+        return
+      }
+
+      if (!nextSession) {
+        setOrganizationId(null)
+        setOrganizationLoading(false)
+        return
+      }
+
+      setOrganizationLoading(true)
+      try {
+        const nextOrganization = await getOrganizationContext()
+        if (!isMounted || organizationRequestIdRef.current !== requestId) {
+          return
+        }
+        setOrganizationId(nextOrganization.organizationId)
+      } catch {
+        if (!isMounted || organizationRequestIdRef.current !== requestId) {
+          return
+        }
+        setOrganizationId(null)
+      } finally {
+        if (isMounted && organizationRequestIdRef.current === requestId) {
+          setOrganizationLoading(false)
+        }
+      }
+    }
+
     const loadSession = async () => {
       try {
         const currentSession = await getSession()
@@ -62,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         setSession(currentSession)
         setUser(currentSession?.user ?? null)
-        await refreshRbac(currentSession)
+        await Promise.all([refreshRbac(currentSession), refreshOrganization(currentSession)])
       } catch {
         if (!isMounted) {
           return
@@ -72,6 +108,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(null)
         setRbac({ isAdmin: false, canManageRbac: false })
         setRbacLoading(false)
+        setOrganizationId(null)
+        setOrganizationLoading(false)
       } finally {
         if (isMounted) {
           setLoading(false)
@@ -86,6 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(nextSession?.user ?? null)
       setLoading(false)
       void refreshRbac(nextSession)
+      void refreshOrganization(nextSession)
     })
 
     return () => {
@@ -98,13 +137,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       user,
       session,
+      organizationId,
       loading,
       rbac,
       rbacLoading,
+      organizationLoading,
       signIn,
       signOut,
     }),
-    [user, session, loading, rbac, rbacLoading],
+    [user, session, organizationId, loading, rbac, rbacLoading, organizationLoading],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
