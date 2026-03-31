@@ -118,6 +118,7 @@ Memory Foundation will implement only the first narrow subset (manual workspace-
 3. Roles receive capabilities through `public.role_permissions`.
 4. Users receive one or more roles through `public.user_roles`.
 5. Application authorization checks resolve: user → roles → permissions.
+6. DB policies now enforce role-sensitive mutations on administrative/access-control surfaces via helper checks (`has_role`, `has_permission`).
 
 This keeps permission semantics globally consistent while allowing per-tenant role modeling.
 
@@ -156,7 +157,7 @@ Policies ensure:
 ## Future Extensibility Notes
 - Add audit tables (`audit_log`) for privileged mutations.
 - Add `network_id` and network-level governance later without breaking org boundaries.
-- Add policy-helper functions for permission checks (`has_permission(permission_key)`).
+- Extend existing policy-helper usage (`has_role`, `has_permission`) to finer-grained product surfaces only when corresponding product workflows are implemented.
 - Add soft-delete/versioning patterns for strategic artifacts.
 - Add optional custom role templates per tenant onboarding workflow.
 

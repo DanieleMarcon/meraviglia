@@ -38,11 +38,14 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - Supabase identity split confirmed: `auth.users` + `public.users`.
 - Organization-scoped RBAC model defined and seeded with global permissions.
 - RLS policies defined for strict organization isolation.
+- DB hardening follow-up completed: `organizations` / `permissions` / `role_permissions` / `intake_leads` secured, `set_updated_at` hardened, and auto-enable-RLS trigger enabled.
+- RBAC activation follow-up completed at DB level: minimal deterministic enforcement now active on administrative surfaces with active `admin`/`member` role model.
+- Supabase key posture aligned: publishable key migration completed, legacy JWT-based key usage disabled in current app path.
 - Explicitly out of scope in this step: self-signup organization creation, cross-organization super-admin/network layer.
 
 ### Multi-Organization Maturity Note (Current)
 - Current state is backend-ready / product-incomplete.
-- Implemented now: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, basic role assignment, authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
+- Implemented now: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, DB-enforced RBAC baseline (`admin`/`member` with minimal canonical permissions), authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
 - Not yet implemented: invite-based onboarding, approval/activation workflow, organization management UI, organization switching, parent/child org visibility, and "mother organization sees all children" behavior.
 
 ### Forward Slice — Organization & Access Management Foundation (Planned)

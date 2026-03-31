@@ -139,10 +139,10 @@ Deliverable to external users/clients.
 
 ## DB Status
 
-* RLS mostly complete
+* RLS hardening complete on current relevant public tables
 * Auto-RLS trigger enabled
-* Security hardened
-* RBAC schema present but not enforced
+* Security hardening slice complete (including key posture alignment)
+* DB-side RBAC activation complete and enforced on administrative surfaces
 
 ---
 
@@ -167,8 +167,8 @@ Deliverable to external users/clients.
 
 Current priority:
 
-* Activate RBAC (DB + APP)
-* Introduce multi-user logic
+* APP-side RBAC alignment (UI/workflow permission behavior)
+* Introduce organization/access workflows (invite, switching, management) in future approved slices
 
 ---
 
@@ -218,6 +218,6 @@ When moving between chats:
 
 # 8. Next Step
 
-👉 Activate RBAC system (DB + APP)
+👉 Complete APP-side RBAC alignment on top of DB-enforced baseline
 
-This is the key transition from M1 → M2
+DB-side transition work is complete; application/product alignment is the active transition step from M1 → M2

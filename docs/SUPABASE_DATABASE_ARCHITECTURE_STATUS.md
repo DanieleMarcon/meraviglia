@@ -51,15 +51,15 @@ public.current_user_organization_id()
 
 # 4. Security Model
 
-## 4.1 RLS Status
+## 4.1 RLS Status (Current)
 
 | Table         | RLS | Forced |
 | ------------- | --- | ------ |
 | contacts      | ✅   | ✅      |
-| intake_leads  | ✅   | ❌      |
+| intake_leads  | ✅   | ✅      |
 | intakes       | ✅   | ✅      |
 | interactions  | ✅   | ✅      |
-| organizations | ❌   | ❌      |
+| organizations | ✅   | ✅      |
 | roles         | ✅   | ✅      |
 | user_roles    | ✅   | ✅      |
 | users         | ✅   | ✅      |
@@ -67,12 +67,22 @@ public.current_user_organization_id()
 
 ---
 
-## 4.2 Helper Functions
+## 4.2 Helper Functions (Active)
 
 ### current_user_organization_id()
 
 * SECURITY DEFINER
 * Resolves org context from `auth.uid()`
+
+### has_role(role_name)
+
+* SECURITY DEFINER
+* Resolves role assignment through `user_roles` in caller organization context
+
+### has_permission(permission_key)
+
+* SECURITY DEFINER
+* Resolves effective permission through `roles` + `role_permissions`
 
 ---
 
@@ -86,7 +96,7 @@ public.current_user_organization_id()
 
 ---
 
-## 4.4 Auto RLS Enforcement (NEW)
+## 4.4 Auto RLS Enforcement
 
 ### ensure_rls_trigger
 
@@ -111,7 +121,42 @@ Policies must still be explicitly defined.
 
 ---
 
-## 4.5 Password & Auth Security Configuration
+## 4.5 RBAC Enforcement State
+
+RBAC is now **actively enforced at DB level** with minimal deterministic scope.
+
+Active role model:
+
+* `admin`
+* `member`
+
+Canonical permission set currently enforced:
+
+* `organization.read`
+* `workspace.manage`
+* `intake.manage`
+* `contact.manage`
+* `interaction.manage`
+* `rbac.manage`
+
+DB-level role-aware enforcement is active on administrative surfaces:
+
+* `roles` writes
+* `role_permissions` writes
+* `user_roles` writes
+* `permissions` writes
+* `users` cross-user mutation
+* `organizations` update
+
+Operational entities remain organization-scoped in this milestone:
+
+* `workspaces`
+* `intakes`
+* `contacts`
+* `interactions`
+* `intake_leads`
+
+## 4.6 Password & Auth Security Configuration
 
 ### Current Settings
 
@@ -216,7 +261,7 @@ Do not use service_role or backend access (for now)
 ## 7.2 Publishable Key Migration
 
 **Decision:**
-Migrate from anon key → publishable key
+Migration from anon key → publishable key is completed
 
 **Why:**
 
@@ -285,31 +330,23 @@ Disabled
 
 # 9. Known Risks & Gaps
 
-* organizations table without RLS
-* intake_leads RLS not forced
-* RBAC not enforced yet
-* single-user system
-* no backend layer
+* APP-side RBAC alignment is still pending (UI and workflow-level permission UX).
+* Organization/access product workflows are still incomplete (invite flow, org switching, org management UI).
+* No audit log yet for privileged mutations.
+* No backend layer (intentional in current client-only path).
 
 ---
 
 # 10. Recommended Improvements
 
-## Priority 1 — Security Hardening
+## Priority 1 — APP-Side RBAC Alignment
 
-* Enable RLS on organizations
-* Force RLS on intake_leads
-
----
-
-## Priority 2 — RBAC Activation
-
-* Enforce permissions via policies
-* Integrate roles into queries
+* Align application checks and UI affordances with DB-enforced role/permission model
+* Prevent stale UI assumptions that predate RBAC activation
 
 ---
 
-## Priority 3 — Multi-User System
+## Priority 2 — Multi-User System
 
 * Invitations
 * Role assignment
@@ -317,14 +354,14 @@ Disabled
 
 ---
 
-## Priority 4 — Backend Layer
+## Priority 3 — Backend Layer
 
 * Introduce controlled service_role usage
 * Move sensitive logic server-side
 
 ---
 
-## Priority 5 — Observability
+## Priority 4 — Observability
 
 * Audit logs
 * Monitoring
@@ -337,6 +374,10 @@ The current database setup is:
 
 👉 **secure, intentional, and well-structured for early-stage production**
 
-However, the next evolution step is not infrastructure but:
+Current milestone state is:
 
-👉 **access control, collaboration, and RBAC enforcement**
+👉 **M1 completed at DB/security baseline, transitioning to M2**
+
+Immediate next evolution step is:
+
+👉 **APP-side RBAC alignment plus organization/access product workflows**

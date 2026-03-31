@@ -66,7 +66,7 @@ Before implementation:
 
 ### Active priority
 
-👉 RBAC activation
+👉 APP-side RBAC alignment on top of completed DB-side activation
 
 ---
 
@@ -144,7 +144,7 @@ RBAC implementation follows:
 ### Meaning
 
 * use existing schema
-* enforce via RLS + application checks
+* enforce via RLS + helper-function checks at DB level, then align application checks
 * no abstraction layer
 * no dynamic permission engine
 
@@ -173,8 +173,8 @@ The system is working when:
 
 ## 10. Next Step
 
-👉 Activate RBAC (DB + APP)
+👉 Complete APP-side RBAC alignment (DB-side RBAC already active)
 
-This is the gateway from M1 → M2
+This remains the gateway from M1 → M2 completion
 
 ---
