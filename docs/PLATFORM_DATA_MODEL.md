@@ -18,6 +18,7 @@ auth.users (Supabase Auth)
 
 public.organizations
   1 ─── * public.users
+  1 ─── * public.invites
   1 ─── * public.roles
   1 ─── * public.workspaces
   1 ─── * public.intakes
@@ -55,7 +56,10 @@ public.contacts
 Tenant root entity. Stores organization identity and lifecycle metadata.
 
 ### `public.users`
-Application identity linked 1:1 to `auth.users`. Stores tenant membership (`organization_id`) and app profile metadata.
+Application identity linked 1:1 to `auth.users`. Stores tenant membership (`organization_id`), lifecycle status (`membership_status`: `invited` | `active` | `removed`), and app profile metadata.
+
+### `public.invites`
+Organization-scoped invite records, email-bound and limited to `admin` / `member` role assignment for activation.
 
 ### `public.permissions`
 Global catalog of permission keys (platform-wide vocabulary).
@@ -126,6 +130,7 @@ This keeps permission semantics globally consistent while allowing per-tenant ro
 Isolation boundary is `organization_id`.
 
 - `public.users`, `public.roles`, `public.workspaces`, `public.intakes`, `public.contacts`, and future `public.interactions`/`public.memory_artifacts` include explicit `organization_id`.
+- `public.invites` is organization-scoped and activation is additionally constrained by matching authenticated email.
 - `public.user_roles` is constrained transitively by requiring both linked user and role to be in current user organization.
 - Foreign keys + RLS prevent cross-tenant traversal.
 
@@ -137,6 +142,7 @@ RLS is enabled and forced on:
 - `public.workspaces`
 - `public.intakes`
 - `public.contacts`
+- `public.invites`
 - future `public.interactions`
 - future `public.memory_artifacts`
 
@@ -150,9 +156,9 @@ Policies ensure:
 ## Identity Bootstrap Trigger
 `public.handle_auth_user_created()` runs after `auth.users` insert and auto-creates `public.users`.
 
-- Reads `organization_id` from `auth.users.raw_user_meta_data`.
-- Rejects inserts without organization context.
-- Preserves controlled onboarding path (manual organization provisioning).
+- Reads optional `organization_id` from `auth.users.raw_user_meta_data`.
+- If organization is absent, user is created in `membership_status = invited` and can later activate via invite.
+- If organization is present, user is created in `membership_status = active`.
 
 ## Future Extensibility Notes
 - Add audit tables (`audit_log`) for privileged mutations.
