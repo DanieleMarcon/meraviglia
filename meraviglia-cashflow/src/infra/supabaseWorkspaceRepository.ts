@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { toRepositoryError } from "./authorizationError"
 import { decodeWorkspaceRow, decodeWorkspaceRows } from "./workspaceRowDecoder"
 import {
   adaptCreateWorkspaceWritePayload,
@@ -24,7 +25,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       .single()
 
     if (error || !data) {
-      throw new Error(error?.message ?? "Failed to create workspace")
+      throw toRepositoryError(error, "Failed to create workspace")
     }
 
     return decodeWorkspaceRow(data, "createWorkspace")
@@ -33,7 +34,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
   private async resolveCurrentOrganizationId(): Promise<string> {
     const { data, error } = await supabase.rpc("current_user_organization_id")
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to resolve current organization")
     }
 
     if (typeof data !== "string" || !data) {
@@ -50,7 +51,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       .order("created_at", { ascending: false })
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to list workspaces")
     }
 
     return decodeWorkspaceRows(data ?? [], "listWorkspaces")
@@ -66,7 +67,7 @@ export class SupabaseWorkspaceRepository implements WorkspaceRepository {
       .single()
 
     if (error || !data) {
-      throw new Error(error?.message ?? "Failed to update workspace")
+      throw toRepositoryError(error, "Failed to update workspace")
     }
 
     return decodeWorkspaceRow(data, "updateWorkspace")

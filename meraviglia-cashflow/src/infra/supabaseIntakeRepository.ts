@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { toRepositoryError } from "./authorizationError"
 import { decodeIntakeRow, decodeIntakeRows } from "./intakeRowDecoder"
 import {
   adaptCreateIntakeWritePayload,
@@ -20,14 +21,14 @@ export class SupabaseIntakeRepository implements IntakeRepository {
     const organizationId = await this.resolveCurrentOrganizationId()
     const writePayload = adaptCreateIntakeWritePayload({ ...input, organization_id: organizationId })
     const { data, error } = await supabase.from(TABLE_NAME).insert(writePayload).select(SELECT_FIELDS).single()
-    if (error || !data) throw new Error(error?.message ?? "Failed to create intake")
+    if (error || !data) throw toRepositoryError(error, "Failed to create intake")
     return decodeIntakeRow(data, "createIntake")
   }
 
 
   private async resolveCurrentOrganizationId(): Promise<string> {
     const { data, error } = await supabase.rpc("current_user_organization_id")
-    if (error) throw new Error(error.message)
+    if (error) throw toRepositoryError(error, "Failed to resolve current organization")
     if (typeof data !== "string" || !data) {
       throw new Error("Authenticated user organization context is unavailable")
     }
@@ -37,7 +38,7 @@ export class SupabaseIntakeRepository implements IntakeRepository {
 
   async listIntakes(): Promise<IntakeRecord[]> {
     const { data, error } = await supabase.from(TABLE_NAME).select(SELECT_FIELDS).order("created_at", { ascending: false })
-    if (error) throw new Error(error.message)
+    if (error) throw toRepositoryError(error, "Failed to list intakes")
     return decodeIntakeRows(data ?? [], "listIntakes")
   }
 
@@ -45,7 +46,7 @@ export class SupabaseIntakeRepository implements IntakeRepository {
     const { data, error } = await supabase.from(TABLE_NAME).select(SELECT_FIELDS).eq("id", id).single()
     if (error) {
       if (error.code === "PGRST116") return null
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to load intake")
     }
     return data ? decodeIntakeRow(data, "getIntakeById") : null
   }
@@ -53,7 +54,7 @@ export class SupabaseIntakeRepository implements IntakeRepository {
   async updateIntake(id: string, input: UpdateIntakeRecordInput): Promise<IntakeRecord> {
     const writePayload = adaptUpdateIntakeWritePayload(input)
     const { data, error } = await supabase.from(TABLE_NAME).update(writePayload).eq("id", id).select(SELECT_FIELDS).single()
-    if (error || !data) throw new Error(error?.message ?? "Failed to update intake")
+    if (error || !data) throw toRepositoryError(error, "Failed to update intake")
     return decodeIntakeRow(data, "updateIntake")
   }
 

@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient"
+import { toRepositoryError } from "./authorizationError"
 import { decodeContactRow, decodeContactRows } from "./contactRowDecoder"
 import { adaptCreateContactWritePayload } from "./contactWritePayloadAdapter"
 import type { ContactRepository, ContactRecord, CreateContactRecordInput } from "../repository/contactRepository"
@@ -14,7 +15,7 @@ export class SupabaseContactRepository implements ContactRepository {
     const { data, error } = await supabase.from(TABLE_NAME).insert(writePayload).select(SELECT_FIELDS).single()
 
     if (error || !data) {
-      throw new Error(error?.message ?? "Failed to create contact")
+      throw toRepositoryError(error, "Failed to create contact")
     }
 
     return decodeContactRow(data, "createContact")
@@ -23,7 +24,7 @@ export class SupabaseContactRepository implements ContactRepository {
   private async resolveCurrentOrganizationId(): Promise<string> {
     const { data, error } = await supabase.rpc("current_user_organization_id")
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to resolve current organization")
     }
 
     if (typeof data !== "string" || !data) {
@@ -41,7 +42,7 @@ export class SupabaseContactRepository implements ContactRepository {
       .order("created_at", { ascending: false })
 
     if (error) {
-      throw new Error(error.message)
+      throw toRepositoryError(error, "Failed to list contacts")
     }
 
     return decodeContactRows(data ?? [], "listContactsByWorkspace")

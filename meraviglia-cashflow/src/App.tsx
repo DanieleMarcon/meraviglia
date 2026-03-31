@@ -15,6 +15,7 @@ import UnauthorizedView from "./ui/views/UnauthorizedView"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
 import { useAuth } from "./auth/useAuth"
+import { useRbacGate } from "./auth/useRbacGate"
 
 import { useServiceCatalog } from "./state/appState/useServiceCatalog"
 import { useAppState } from "./state/appState/useAppState"
@@ -36,6 +37,7 @@ const SECTION_TOGGLE_LABELS = [
 
 function CashflowApp() {
   const { signOut } = useAuth()
+  const { canAccessAdminUi, rbacLoading } = useRbacGate()
   const {
     services: catalog,
     addService,
@@ -75,11 +77,13 @@ function CashflowApp() {
         onUpdate={setPiano}
       />
 
-      <ServiceCatalogManager
-        services={catalog}
-        addService={addService}
-        removeService={removeService}
-      />
+      {rbacLoading ? null : canAccessAdminUi ? (
+        <ServiceCatalogManager
+          services={catalog}
+          addService={addService}
+          removeService={removeService}
+        />
+      ) : null}
 
       <AddServiceToProposal
         catalog={catalog}
