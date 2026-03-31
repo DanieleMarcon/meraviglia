@@ -184,3 +184,87 @@ The same protocol must remain valid for:
 - Claude
 - Emergent
 - future AI tools
+
+## 🔁 Cross-Chat Continuity Protocol (NEW)
+
+### Purpose
+
+Ensure continuity, alignment, and controlled progress across multiple parallel development streams (DB, App, Product).
+
+---
+
+## 1. Mandatory Context Header
+
+Every new chat MUST start with:
+
+```
+Current milestone: [M1 / M2 / M3]
+Current stream: [DB / APP / PRODUCT]
+Current focus: [specific task]
+Last completed step: [short summary]
+Blocked by: [if any]
+```
+
+---
+
+## 2. Chat Transition Rule
+
+When switching to a new chat:
+
+The assistant MUST generate a **Transition Prompt** containing:
+
+* Current milestone
+* Current system state
+* Completed work
+* Next step
+* Constraints / decisions already taken
+
+---
+
+## 3. No Context Assumption Rule
+
+Each chat must be:
+
+* Self-contained
+* Explicit about assumptions
+* Based ONLY on provided context
+
+---
+
+## 4. Decision Persistence Rule
+
+Every architectural or security decision MUST be:
+
+* Explicitly stated
+* Stored in documentation
+* Referenced in future steps
+
+---
+
+## 5. Scope Control Rule
+
+Each interaction must:
+
+* Focus on ONE problem
+* Avoid expanding scope unless requested
+* Respect current milestone boundaries
+
+---
+
+## 6. Output Discipline
+
+When requested, the assistant must:
+
+* Provide ready-to-use prompts
+* Provide production-grade documentation
+* Avoid partial or exploratory outputs
+
+---
+
+## 7. Milestone Awareness Rule
+
+All decisions must be evaluated against:
+
+* Current milestone
+* Project maturity
+* Avoid overengineering early-stage features
