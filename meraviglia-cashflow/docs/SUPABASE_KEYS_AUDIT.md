@@ -1,6 +1,7 @@
 # Audit mirato: utilizzo chiavi Supabase
 
 Data audit: 2026-03-31
+Aggiornamento migrazione chiavi: 2026-03-31
 
 ## Metodo
 Ricerca testuale nel repository per:
@@ -12,19 +13,19 @@ Ricerca testuale nel repository per:
 ## Punti di creazione client trovati
 1. `src/lib/supabaseClient.ts`
    - import `createClient` da `@supabase/supabase-js`
-   - istanziazione singleton modulo: `export const supabase = createClient(supabaseUrl, supabaseAnonKey)`
-   - env usate: `import.meta.env.VITE_SUPABASE_URL`, `import.meta.env.VITE_SUPABASE_ANON_KEY`
+   - istanziazione singleton modulo: `export const supabase = createClient(supabaseUrl, supabasePublishableKey)`
+   - env usate: `import.meta.env.VITE_SUPABASE_URL`, `import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY`
    - classificazione runtime: **browser/client** (pattern Vite `import.meta.env` + uso in repository frontend)
 
 ## Tabella sintetica
 | file | client/server | env usate | rischio |
 |---|---|---|---|
-| `src/lib/supabaseClient.ts` | client (browser) | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | basso (chiavi client pubbliche/anon) |
+| `src/lib/supabaseClient.ts` | client (browser) | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | basso (chiavi client pubbliche/publishable) |
 
 ## Ricerca env richieste
 - `VITE_SUPABASE_URL`: trovata in `src/lib/supabaseClient.ts`
-- `VITE_SUPABASE_ANON_KEY`: trovata in `src/lib/supabaseClient.ts`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`: **non trovata**
+- `VITE_SUPABASE_ANON_KEY`: **non trovata** (riferimento legacy rimosso dal codice applicativo)
+- `VITE_SUPABASE_PUBLISHABLE_KEY`: trovata in `src/lib/supabaseClient.ts`
 - `SUPABASE_SERVICE_ROLE_KEY`: **non trovata**
 - `SUPABASE_SECRET_KEY`: **non trovata**
 
