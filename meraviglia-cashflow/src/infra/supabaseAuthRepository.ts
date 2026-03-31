@@ -1,4 +1,4 @@
-import type { AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
+import type { AuthOrganizationContext, AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
 import { supabase } from "../lib/supabaseClient"
 import { toRepositoryError } from "./authorizationError"
 import { decodeExternalAuthSession } from "./authSessionDecoder"
@@ -31,6 +31,18 @@ export class SupabaseAuthRepository implements AuthRepository {
     return {
       isAdmin: isAdminResult.data === true,
       canManageRbac: canManageRbacResult.data === true,
+    }
+  }
+
+  async getOrganizationContext(): Promise<AuthOrganizationContext> {
+    const { data, error } = await supabase.rpc("current_user_organization_id")
+
+    if (error) {
+      throw toRepositoryError(error, "Unable to resolve current organization context")
+    }
+
+    return {
+      organizationId: typeof data === "string" ? data : null,
     }
   }
 
