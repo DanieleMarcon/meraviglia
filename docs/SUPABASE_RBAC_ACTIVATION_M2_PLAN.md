@@ -1,15 +1,15 @@
-# Supabase RBAC Activation Plan (M1 → M2)
+# Supabase RBAC Activation Status (M1 → M2)
 
-## 1. RBAC Current-State Assessment
+## 1. RBAC Activation Outcome (Current State)
 
-- The database already contains the full RBAC schema (`roles`, `permissions`, `role_permissions`, `user_roles`) and organization-scoped tenant isolation via RLS.
-- Current policies are mostly organization isolation policies, so RBAC is structurally present but not yet actively enforcing role-sensitive actions.
-- Existing live data confirms baseline viability (2 organizations, 1 user, 1 admin role, 1 assignment), which is enough to activate deterministic enforcement without redesign.
-- Current risk: any authenticated user in an organization can perform mutations on sensitive access-control data if those tables are only org-scoped.
+- RBAC activation SQL has been applied successfully for the current project path.
+- RBAC is no longer passive; deterministic enforcement is now active on administrative surfaces.
+- Activation used the existing RBAC schema (`roles`, `permissions`, `role_permissions`, `user_roles`) and preserved organization-scoped RLS architecture.
+- This closes the prior risk where any authenticated org member could mutate access-control data if policies were only org-scoped.
 
-## 2. Recommended Minimal Role Model
+## 2. Active Minimal Role Model
 
-Use exactly two roles now:
+Current enforced roles:
 
 - `admin`
   - Organization operator role with RBAC administration capability.
@@ -19,15 +19,15 @@ Use exactly two roles now:
   - Can operate product data in organization scope.
   - Cannot mutate RBAC structures.
 
-Why this is sufficient now:
+Why this remains sufficient now:
 
 - Matches current product maturity (no invite flow, no org switching, no org access UI).
 - Keeps behavior deterministic and understandable.
 - Avoids role proliferation before Organization & Access Management is product-ready.
 
-## 3. Recommended Minimal Permission Set
+## 3. Active Canonical Permission Set
 
-Activate a minimal explicit vocabulary:
+Current canonical vocabulary:
 
 - `organization.read`
 - `workspace.manage`
@@ -36,7 +36,7 @@ Activate a minimal explicit vocabulary:
 - `interaction.manage`
 - `rbac.manage`
 
-Assignment model now:
+Assignment model:
 
 - `admin`: all six permissions.
 - `member`: all except `rbac.manage`.
@@ -46,9 +46,9 @@ Notes:
 - Keep existing legacy permission keys for backward compatibility; do not remove in this milestone.
 - Use the new set as canonical for enforcement starting now.
 
-## 4. What Should Be Role-Enforced Now
+## 4. Current Role-Enforced Surface
 
-Role-aware enforcement should start only on security-sensitive / administration surfaces:
+Role-aware enforcement is active on security-sensitive / administration surfaces:
 
 - `roles`: INSERT/UPDATE/DELETE gated by `rbac.manage`.
 - `role_permissions`: INSERT/DELETE gated by `rbac.manage`.
@@ -61,9 +61,9 @@ Role-aware enforcement should start only on security-sensitive / administration 
   - org-scoped UPDATE gated by `rbac.manage`,
   - client INSERT/DELETE denied.
 
-This creates active RBAC without expanding architecture.
+This keeps RBAC active without expanding architecture.
 
-## 5. What Should Remain Org-Scoped Only For Now
+## 5. Current Org-Scoped-Only Operational Surface
 
 Keep these tables organization-isolated with no role split yet:
 
@@ -79,9 +79,9 @@ Reason:
 - Current milestone needs secure tenant isolation and deterministic RBAC activation, not feature-level operation segmentation.
 - Product-level separation (e.g., workspace editor vs viewer) should wait until access UX and membership lifecycle exist.
 
-## 6. Recommended SQL Activation Plan
+## 6. Activation Reference (Applied)
 
-Apply `docs/SUPABASE_PLATFORM_CORE_STEP6_RBAC_ACTIVATION.sql` as the minimal activation patch:
+`docs/SUPABASE_PLATFORM_CORE_STEP6_RBAC_ACTIVATION.sql` was used as the minimal activation patch:
 
 1. Add narrow helper functions:
    - `public.has_role(role_name)`
@@ -94,13 +94,13 @@ Apply `docs/SUPABASE_PLATFORM_CORE_STEP6_RBAC_ACTIVATION.sql` as the minimal act
 5. Update RLS policies to make access-control table mutations admin-gated.
 6. Harden `users` and `organizations` mutation policies to avoid broad org-level write access.
 
-Execution notes:
+Execution notes retained:
 
 - Run in a transaction (`begin`/`commit`) as provided.
 - Idempotent seed logic uses `on conflict do nothing`.
 - Policy changes use `drop policy if exists` for deterministic re-runs.
 
-## 7. Future Backlog / Explicitly Postponed
+## 7. Explicitly Postponed (Still Pending)
 
 Postpone to Organization & Access Management slice:
 
@@ -121,15 +121,13 @@ Postpone to Organization & Access Management slice:
 - Preserves single-organization membership model.
 - Prevents overengineering while still moving RBAC from passive to active.
 
-## 9. Documentation Impact Check
+## 9. Documentation Impact Check (Completed Direction)
 
-Recommended documentation actions with this activation:
+Required documentation alignment after this activation:
 
-- Update `docs/SUPABASE_DATABASE_ARCHITECTURE_STATUS.md`:
-  - move RBAC from “schema present” to “active enforcement (admin-gated RBAC mutations)”.
-- Update `docs/ROADMAP_PHASES.md`:
-  - mark RBAC activation as completed milestone transition item when SQL is applied.
-- Optional: add a short “RBAC enforcement now” note in `docs/PLATFORM_DATA_MODEL.md` future extensibility section.
+- `docs/SUPABASE_DATABASE_ARCHITECTURE_STATUS.md` must describe RBAC as actively enforced on admin surfaces.
+- `docs/ROADMAP_PHASES.md` should mark DB-side RBAC activation as completed transition work.
+- `docs/PLATFORM_DATA_MODEL.md` should reflect active helper-function/policy model (`has_role`, `has_permission`).
 
 ## 10. Known Risks / Tradeoffs
 
