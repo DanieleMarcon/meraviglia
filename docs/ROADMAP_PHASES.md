@@ -48,6 +48,22 @@ Establish production-oriented identity and persistence baseline, and introduce t
 - Implemented now: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, DB-enforced RBAC baseline (`admin`/`member` with minimal canonical permissions), authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
 - Not yet implemented: invite-based onboarding, approval/activation workflow, organization management UI, organization switching, parent/child org visibility, and "mother organization sees all children" behavior.
 
+### M2-B Product Contract Freeze (Current)
+M2-B is now defined as the minimal Organization Access Foundation product slice.
+
+In-scope contract:
+- admin invite collaborator,
+- collaborator invite activation after auth,
+- baseline membership lifecycle (`invited` → `active` → `removed`),
+- role responsibility boundary remains `admin` / `member` only,
+- collaborator entry into existing org-scoped operational loop.
+
+Explicitly deferred:
+- org switching,
+- multi-org membership UX,
+- RBAC redesign/custom role systems,
+- enterprise IAM (SSO/SCIM).
+
 ### Forward Slice — Organization & Access Management Foundation (Planned)
 Objective for a future roadmap slice:
 - Introduce product-complete organization and access management workflows on top of existing tenant/security foundations.

@@ -192,3 +192,65 @@ To keep cross-chat continuity deterministic, align these documents after milesto
 5. **APP + DB follow-up chats** — execute only the deltas required for M2-C collaboration reliability.
 
 This sequence preserves stream separation while keeping milestone truth synchronized across chats.
+
+## 11. M2-B Product Contract — Organization Access Foundation (Ratified)
+
+### 11.1 Contract Goal
+Deliver the smallest collaboration-ready access workflow on top of the active RBAC foundation, without redesigning roles or introducing multi-org switching.
+
+### 11.2 Minimal User Journey (M2-B)
+1. Admin opens **Organization Access** from settings/admin area.
+2. Admin sends invite by entering collaborator email and selecting role (`member` default, `admin` optional).
+3. Collaborator receives invite link.
+4. Collaborator authenticates (new signup or existing login) and lands on invite activation screen.
+5. Collaborator accepts invite; membership transitions to active for that organization.
+6. Collaborator enters the standard organization-scoped app shell (same operational loop as founder).
+7. Collaborator operates with `member` permissions and sees admin-only actions gated.
+
+### 11.3 Role Responsibilities (M2-B)
+- `admin`
+  - invite users
+  - activate/remove membership via membership management baseline
+  - assign role only between existing roles (`admin`/`member`)
+  - manage access governance surfaces protected by `rbac.manage`
+- `member`
+  - use organization operational surfaces permitted by canonical permissions
+  - cannot invite/remove users or modify roles
+  - cannot access admin-only governance controls
+
+### 11.4 Minimal Membership Lifecycle (M2-B)
+Canonical product states:
+- `invited` — invite issued, not yet activated
+- `active` — invite accepted and app access enabled
+- `removed` — membership revoked; organization access denied
+
+No additional lifecycle states are introduced in M2-B.
+
+### 11.5 Minimum Required Screens/Flows
+1. Admin: **Invite collaborator** flow.
+2. Collaborator: **Invite activation** flow after authentication.
+3. Admin: **Membership list baseline** (email, role, state, remove action).
+4. Shared: **Access denial fallback** for non-admin attempts on governance actions.
+
+### 11.6 Explicit Deferrals
+Deferred beyond M2-B:
+- custom roles/permission editors
+- org switching and multi-org membership UX
+- enterprise IAM (SSO/SCIM/policy engine)
+- parent/child org governance and super-admin network views
+- compliance-grade audit suite
+
+### 11.7 M2-B Completion Gate
+M2-B is complete only when all are true:
+1. Admin can invite collaborator from app UI without manual DB operations.
+2. Collaborator can activate invite and enter organization-scoped app.
+3. Collaborator with `member` role can run core loop and is blocked from admin governance actions.
+4. Admin can view and remove memberships via baseline admin surface.
+5. Scope constraints remain intact (no RBAC redesign, no org switching, no enterprise IAM expansion).
+
+### 11.8 Terminology Freeze for M2-B
+Freeze these terms for documentation and implementation consistency:
+- **Organization Access Foundation** (milestone boundary)
+- **Invite activation** (post-auth acceptance step)
+- **Membership lifecycle: invited → active → removed**
+- **Role baseline: admin/member**
