@@ -57,6 +57,10 @@ Tenant root entity. Stores organization identity and lifecycle metadata.
 
 ### `public.users`
 Application identity linked 1:1 to `auth.users`. Stores tenant membership (`organization_id`), lifecycle status (`membership_status`: `invited` | `active` | `removed`), and app profile metadata.
+Lifecycle/org invariant for M2-B:
+- `active` requires non-null `organization_id`.
+- `invited` requires null `organization_id`.
+- `removed` may retain `organization_id` for history/traceability.
 
 ### `public.invites`
 Organization-scoped invite records, email-bound and limited to `admin` / `member` role assignment for activation.
