@@ -28,6 +28,21 @@ alter table public.users
   add constraint users_membership_status_check
   check (membership_status in ('invited', 'active', 'removed'));
 
+-- Enforce lifecycle/org consistency explicitly:
+-- - active  => org required
+-- - invited => org must be null
+-- - removed => org may remain for history/traceability
+alter table public.users
+  drop constraint if exists users_membership_org_consistency_check;
+
+alter table public.users
+  add constraint users_membership_org_consistency_check
+  check (
+    (membership_status = 'active' and organization_id is not null)
+    or (membership_status = 'invited' and organization_id is null)
+    or (membership_status = 'removed')
+  );
+
 -- Org context must only resolve for active members.
 create or replace function public.current_user_organization_id()
 returns uuid
@@ -42,6 +57,12 @@ as $$
     and u.membership_status = 'active'
   limit 1;
 $$;
+
+-- Users RLS compatibility note under invited/active/removed lifecycle:
+-- Existing users policies from Step 6 remain valid without redesign because:
+-- - invited users (organization_id null) do not satisfy org-scoped predicates;
+-- - removed users are denied org context by current_user_organization_id();
+-- - active users preserve existing org-scoped behavior.
 
 -- Allow auth bootstrap without forced org assignment.
 create or replace function public.handle_auth_user_created()
