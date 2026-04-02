@@ -1,3 +1,9 @@
+⚠️ Deprecated — replaced by `DELIVERY_EXECUTION_SYSTEM.md`
+
+This document is retained only for historical context. Use `docs/DELIVERY_EXECUTION_SYSTEM.md` as the single source of truth for delivery execution.
+
+---
+
 # Meraviglia OS — Delivery System
 
 **Last updated:** 2026-03-31
@@ -14,7 +20,7 @@ This document defines:
 * Current progress
 * Coordination rules
 
-It acts as the **single source of truth for project execution**.
+It is deprecated and no longer the source of truth for project execution.
 
 ---
 

@@ -66,7 +66,7 @@ Before implementation:
 
 ### Active priority
 
-👉 PRODUCT-stream M2-B product contract ratified; execute DB/APP invite + activation + membership baseline within fixed scope
+👉 Post-M2-B consolidation (doc alignment, cleanup, audit) while preserving ratified M2-B behavior and constraints
 
 ---
 
@@ -173,7 +173,7 @@ The system is working when:
 
 ## 10. Next Step
 
-👉 Execute M2-B Organization Access Foundation using coordinated stream priorities (PRODUCT contract → DB support → APP workflows)
+👉 Execute post-M2-B consolidation (doc alignment, cleanup, audit) using coordinated stream priorities (PRODUCT contract → DB support → APP workflows)
 
 APP-side RBAC alignment is now baseline-complete; the next gateway is collaboration workflow completion on top of active RBAC
 

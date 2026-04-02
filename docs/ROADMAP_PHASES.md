@@ -64,18 +64,25 @@ Explicitly deferred:
 - RBAC redesign/custom role systems,
 - enterprise IAM (SSO/SCIM).
 
-### Forward Slice — Organization & Access Management Foundation (Planned)
-Objective for a future roadmap slice:
+### Organization & Access Management
+
+#### M2-B foundation (completed)
+Objective delivered in M2-B:
 - Introduce product-complete organization and access management workflows on top of existing tenant/security foundations.
 
-Expected scope:
-- Invite-based user onboarding and membership lifecycle,
-- approval/activation flow,
-- organization management UI baseline,
-- organization switcher UX/application flow.
+Completed scope baseline:
+- Invite-based user onboarding and membership lifecycle baseline,
+- approval/activation baseline flow,
+- organization management UI baseline.
 
 Explicitly out of scope for this forward slice unless separately approved:
 - parent/child network governance and cross-org global visibility models.
+
+#### Deferred: multi-org, IAM expansion
+- organization switcher UX/application flow
+- multi-org membership UX
+- enterprise IAM (SSO/SCIM/policy engine)
+- parent/child network governance and cross-org global visibility models
 
 ### Architectural Risk
 - Early coupling of intake logic to UI forms.

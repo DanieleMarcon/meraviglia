@@ -77,7 +77,9 @@ Scope:
 Exit condition:
 - Already satisfied.
 
-### M2-B — Organization Access Foundation (**next execution milestone**)
+### M2-B — Organization Access Foundation (**foundation completed**)
+
+> Current focus: **post-M2-B consolidation and system alignment**.
 
 Scope:
 - Invite + membership activation + admin-managed membership baseline + role assignment baseline.

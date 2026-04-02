@@ -4,7 +4,7 @@
 This document defines the **ARCHITECTURE HARDENING — STEP 1** data model for a white-label, multi-tenant SaaS core on Supabase.
 
 Design constraints implemented:
-- One user belongs to exactly one organization.
+- An authenticated user may have no organization (invited state) or exactly one organization (active state).
 - Organizations are manually provisioned (no self-signup provisioning flow).
 - `auth.users` remains authentication source.
 - `public.users` is application-level identity.
@@ -58,6 +58,7 @@ Tenant root entity. Stores organization identity and lifecycle metadata.
 ### `public.users`
 Application identity linked 1:1 to `auth.users`. Stores tenant membership (`organization_id`), lifecycle status (`membership_status`: `invited` | `active` | `removed`), and app profile metadata.
 Lifecycle/org invariant for M2-B:
+- Canonical lifecycle: `invited` → `active` → `removed`.
 - `active` requires non-null `organization_id`.
 - `invited` requires null `organization_id`.
 - `removed` may retain `organization_id` for history/traceability.

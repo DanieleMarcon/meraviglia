@@ -1,26 +1,16 @@
 import { useEffect, useState } from "react"
 
 import { createInvite, listMemberships, removeMembership } from "../../application/organizationAccessService"
+import type { OrganizationMembershipDTO, OrganizationInviteRoleDTO } from "../../application/dto/OrganizationAccessDTO"
 
 type OrganizationAccessViewProps = {
   currentUserId: string | null
 }
 
-type OrganizationInviteRole = "member" | "admin"
-
-type OrganizationMembershipRecord = {
-  id: string
-  email: string
-  role: OrganizationInviteRole
-  state: "invited" | "active" | "removed"
-  source: "user" | "invite"
-  removable: boolean
-}
-
 export default function OrganizationAccessView({ currentUserId }: OrganizationAccessViewProps) {
   const [email, setEmail] = useState("")
-  const [role, setRole] = useState<OrganizationInviteRole>("member")
-  const [memberships, setMemberships] = useState<OrganizationMembershipRecord[]>([])
+  const [role, setRole] = useState<OrganizationInviteRoleDTO>("member")
+  const [memberships, setMemberships] = useState<OrganizationMembershipDTO[]>([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -86,7 +76,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
           style={{ minWidth: 260 }}
         />
 
-        <select value={role} onChange={(event) => setRole(event.target.value as OrganizationInviteRole)}>
+        <select value={role} onChange={(event) => setRole(event.target.value as OrganizationInviteRoleDTO)}>
           <option value="member">member</option>
           <option value="admin">admin</option>
         </select>
@@ -104,7 +94,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
             <tr>
               <th style={{ textAlign: "left" }}>Email</th>
               <th style={{ textAlign: "left" }}>Role</th>
-              <th style={{ textAlign: "left" }}>State</th>
+              <th style={{ textAlign: "left" }}>Membership status</th>
               <th style={{ textAlign: "left" }}>Action</th>
             </tr>
           </thead>
@@ -116,7 +106,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
                 <tr key={`${membership.source}:${membership.id}`}>
                   <td>{membership.email}</td>
                   <td>{membership.role}</td>
-                  <td>{membership.state}</td>
+                  <td>{membership.membershipStatus}</td>
                   <td>
                     {membership.removable && !isCurrentUser ? (
                       <button type="button" disabled={submitting} onClick={() => void onRemoveMembership(membership.id)}>

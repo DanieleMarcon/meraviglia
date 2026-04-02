@@ -13,7 +13,7 @@ Note: the bounded-context term in this document is a domain-modeling concept and
 1. **Tenant & Access Context**
    - Organization, user membership, and permission semantics.
    - Provides identity and authorization constraints for strategic operations.
-   - Current maturity: infrastructure/security baseline is implemented (tenant model + RLS + org-scoped RBAC), while product-level organization and access workflows (invite onboarding, activation, organization switching/management) are pending.
+   - Current maturity: foundation complete (tenant model + RLS + org-scoped RBAC + M2-B invite/membership baseline), with reliability hardening ongoing.
 
 2. **Intake Context**
    - Strategic entry aggregate for new initiatives.
