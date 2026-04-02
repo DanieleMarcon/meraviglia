@@ -1,12 +1,6 @@
--- Platform Core — M3 Interaction Scheduling Foundation (DB baseline)
--- ARCHITECTURE HARDENING — STEP 8
--- Purpose: normalize interactions persistence to M3 PRODUCT contract
---
--- IMPORTANT:
--- This file is retained as documentation/handoff reference only.
--- Canonical executable migration source is:
---   supabase/migrations/20260402100000_m3_interactions_foundation.sql
--- Execute DB changes via Supabase CLI (`supabase db push`), not from this docs file.
+-- M3 interactions scheduling foundation (canonical operational migration)
+-- Source contract: docs/PRODUCT_M3_INTERACTION_SCHEDULING_FOUNDATION_CONTRACT.md
+-- This file is the canonical executable artifact for Supabase CLI workflows.
 
 begin;
 
