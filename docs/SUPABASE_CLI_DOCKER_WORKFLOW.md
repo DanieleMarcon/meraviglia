@@ -1,12 +1,20 @@
-# Supabase CLI + Docker Workflow (Canonical DB Operations)
+# Supabase CLI Workflow Normalization (Clean Bootstrap Pending)
 
 ## Purpose
 
-This runbook defines the **canonical operational DB workflow** for Meraviglia.
+This runbook defines the **current canonical operational DB workflow** for Meraviglia.
 
 - Canonical executable DB artifacts live in `supabase/migrations/*.sql`.
 - `docs/*.sql` files are documentation/reference artifacts, not execution entrypoints.
-- DB changes are applied via Supabase CLI commands, with Docker-backed local services.
+- DB changes are applied via Supabase CLI commands.
+- Docker remains a requirement for local Supabase services, but **clean local bootstrap is not yet supported** (see support boundary below).
+
+## Contract Alignment Note (M3 interactions status)
+
+- Canonical DB status value is **`canceled`**.
+- Legacy value **`cancelled`** is migration/backfill compatibility only.
+- During transition, app/repository decode paths must remain tolerant of legacy `cancelled` reads where still encountered.
+- All new writes must converge to canonical **`canceled`**.
 
 ## Prerequisites
 
@@ -27,73 +35,51 @@ Current M3 interactions slice is canonicalized as:
 
 - `supabase/migrations/20260402100000_m3_interactions_foundation.sql`
 
-## One-time Local Setup
+## Current Support Boundary (Important)
 
-From repository root:
+The current migration set is valid for an **already-provisioned Supabase project** (remote or previously prepared environment).
+
+- ✅ Supported now: link project, reconcile migration state, push new migrations.
+- ❌ Not yet supported: `supabase db reset` against a clean empty local DB as a guaranteed path.
+
+Reason: full baseline migration-history backfill for pre-existing platform objects has not yet been completed.
+
+## Recommended Operational Commands (Current)
+
+After pulling latest main:
 
 ```bash
-supabase start
-```
-
-This boots local Supabase services through Docker.
-
-Link local repo with remote project (replace placeholder):
-
-```bash
+supabase login
 supabase link --project-ref <your-project-ref>
-```
-
-## Standard Change Flow (Future DB Work)
-
-### 1) Create migration
-
-```bash
-supabase migration new <descriptive_name>
-```
-
-Then edit the generated file under `supabase/migrations/`.
-
-### 2) Validate locally
-
-```bash
-supabase db reset
-```
-
-This replays migrations on local DB from scratch and helps catch ordering or dependency errors early.
-
-### 3) Prepare PR
-
-- Commit migration file(s) and any related docs updates.
-- Open PR for review.
-- Ensure migration intent and rollback posture are clearly described in PR notes.
-
-### 4) Post-merge operational apply
-
-After PR merge and local pull on operator machine:
-
-```bash
+supabase migration repair --status applied <version_if_needed>
 supabase db push
 ```
 
-This applies pending migrations from `supabase/migrations` to the linked remote project.
+Notes:
 
-### 5) Verify
+- Use `supabase migration repair` only when migration history must be reconciled with already-applied schema state.
+- `supabase db push` is the canonical apply command for pending migrations in linked projects.
 
-- Confirm schema/state in Supabase dashboard and/or SQL checks.
-- Run app smoke tests for affected flows.
-- If app behavior changed, continue normal deployment (e.g., Vercel deploy).
+## Future Change Flow (Until Baseline Backfill Milestone)
 
-## Developer-Oriented Delivery Sequence
+1. Create migration:
 
-For single-developer workflow:
+   ```bash
+   supabase migration new <descriptive_name>
+   ```
 
-1. Codex prepares migration + docs updates in branch.
-2. PR review.
-3. Merge PR.
-4. Developer pulls latest main locally.
-5. Developer runs explicit Supabase command(s), primarily `supabase db push`.
-6. Developer verifies DB + app behavior.
-7. Developer proceeds with Vercel deploy when app changes are included.
+2. Implement SQL in the generated file under `supabase/migrations/`.
+3. Open PR with migration rationale and compatibility notes.
+4. Merge PR.
+5. Locally run explicit operational commands (`link` / optional `repair` / `db push`).
+6. Verify schema + app behavior.
+7. Proceed with app deploy (e.g., Vercel) when relevant.
+
+## Deferred Follow-up (Explicit)
+
+A dedicated milestone will backfill full baseline migration history so `supabase db reset` on clean local DB is reliable and officially supported.
+
+Until then, treat this repo as **CLI workflow normalized** for already-provisioned projects, not yet clean-bootstrap complete.
 
 ## Guardrails
 

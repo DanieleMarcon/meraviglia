@@ -27,6 +27,7 @@ alter table public.interactions
   add column if not exists status_changed_at timestamptz not null default now();
 
 -- Migration/backfill compatibility only: converge legacy spelling to canonical M3 `canceled`.
+-- App/repository decode paths may temporarily tolerate legacy `cancelled` reads during rollout.
 update public.interactions
 set status = 'canceled'
 where status = 'cancelled';
