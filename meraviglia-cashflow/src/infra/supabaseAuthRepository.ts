@@ -70,7 +70,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         userRow.membership_status === "invited" ||
         userRow.membership_status === "removed")
     ) {
-      if (userRow.membership_status === "active" || userRow.membership_status === "removed") {
+      if (userRow.membership_status === "active") {
         return { membershipStatus: userRow.membership_status, pendingInviteToken: null }
       }
     }
@@ -99,6 +99,10 @@ export class SupabaseAuthRepository implements AuthRepository {
 
     if (pendingInviteToken || userRow?.membership_status === "invited") {
       return { membershipStatus: "invited", pendingInviteToken }
+    }
+
+    if (userRow?.membership_status === "removed") {
+      return { membershipStatus: "removed", pendingInviteToken: null }
     }
 
     return { membershipStatus: "unknown", pendingInviteToken: null }
