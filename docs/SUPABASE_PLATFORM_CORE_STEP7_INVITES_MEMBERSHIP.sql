@@ -63,6 +63,17 @@ $$;
 -- - invited users (organization_id null) do not satisfy org-scoped predicates;
 -- - removed users are denied org context by current_user_organization_id();
 -- - active users preserve existing org-scoped behavior.
+--
+-- Post M2-B corrective addition:
+-- - allow authenticated users to read only their own users row so app shell
+--   can deterministically resolve membership_status (invited/active/removed)
+--   without broadening tenant-wide users visibility.
+drop policy if exists users_self_read on public.users;
+
+create policy users_self_read
+  on public.users
+  for select
+  using (id = auth.uid());
 
 -- Allow auth bootstrap without forced org assignment.
 create or replace function public.handle_auth_user_created()

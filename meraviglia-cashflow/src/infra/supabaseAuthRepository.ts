@@ -53,19 +53,31 @@ export class SupabaseAuthRepository implements AuthRepository {
   }
 
   async getMembershipContext(session: AuthSession): Promise<AuthMembershipContext> {
-    const { data: organizationId, error: organizationError } = await supabase.rpc("current_user_organization_id")
+    const { data: userRow, error: membershipStatusError } = await supabase
+      .from("users")
+      .select("membership_status")
+      .eq("id", session.user.id)
+      .maybeSingle()
 
-    if (organizationError) {
-      throw toRepositoryError(organizationError, "Unable to resolve membership context")
+    if (membershipStatusError) {
+      throw toRepositoryError(membershipStatusError, "Unable to resolve membership status")
     }
 
-    if (typeof organizationId === "string" && organizationId) {
-      return { membershipStatus: "active", pendingInviteToken: null }
+    if (
+      userRow &&
+      typeof userRow.membership_status === "string" &&
+      (userRow.membership_status === "active" ||
+        userRow.membership_status === "invited" ||
+        userRow.membership_status === "removed")
+    ) {
+      if (userRow.membership_status === "active" || userRow.membership_status === "removed") {
+        return { membershipStatus: userRow.membership_status, pendingInviteToken: null }
+      }
     }
 
     const email = session.user.email?.trim()
     if (!email) {
-      return { membershipStatus: "unknown", pendingInviteToken: null }
+      return { membershipStatus: userRow?.membership_status === "invited" ? "invited" : "unknown", pendingInviteToken: null }
     }
 
     const { data: pendingInviteRows, error: pendingInviteError } = await supabase
@@ -85,7 +97,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         ? pendingInviteRows[0].invite_token
         : null
 
-    if (pendingInviteToken) {
+    if (pendingInviteToken || userRow?.membership_status === "invited") {
       return { membershipStatus: "invited", pendingInviteToken }
     }
 
