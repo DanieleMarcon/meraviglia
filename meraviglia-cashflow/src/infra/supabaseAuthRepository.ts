@@ -4,7 +4,6 @@ import type {
   AuthRbacState,
   AuthRepository,
   AuthSession,
-  MembershipStatus,
 } from "../repository/authRepository"
 import { supabase } from "../lib/supabaseClient"
 import { toRepositoryError } from "./authorizationError"
@@ -54,25 +53,19 @@ export class SupabaseAuthRepository implements AuthRepository {
   }
 
   async getMembershipContext(session: AuthSession): Promise<AuthMembershipContext> {
-    const { data: userRow, error: userError } = await supabase
-      .from("users")
-      .select("membership_status")
-      .eq("id", session.user.id)
-      .single()
+    const { data: organizationId, error: organizationError } = await supabase.rpc("current_user_organization_id")
 
-    if (userError) {
-      throw toRepositoryError(userError, "Unable to resolve membership context")
+    if (organizationError) {
+      throw toRepositoryError(organizationError, "Unable to resolve membership context")
     }
 
-    const membershipStatus = this.decodeMembershipStatus(userRow?.membership_status)
-
-    if (membershipStatus !== "invited") {
-      return { membershipStatus, pendingInviteToken: null }
+    if (typeof organizationId === "string" && organizationId) {
+      return { membershipStatus: "active", pendingInviteToken: null }
     }
 
     const email = session.user.email?.trim()
     if (!email) {
-      return { membershipStatus, pendingInviteToken: null }
+      return { membershipStatus: "unknown", pendingInviteToken: null }
     }
 
     const { data: pendingInviteRows, error: pendingInviteError } = await supabase
@@ -92,15 +85,11 @@ export class SupabaseAuthRepository implements AuthRepository {
         ? pendingInviteRows[0].invite_token
         : null
 
-    return { membershipStatus, pendingInviteToken }
-  }
-
-  private decodeMembershipStatus(value: unknown): MembershipStatus {
-    if (value === "invited" || value === "active" || value === "removed") {
-      return value
+    if (pendingInviteToken) {
+      return { membershipStatus: "invited", pendingInviteToken }
     }
 
-    return "unknown"
+    return { membershipStatus: "unknown", pendingInviteToken: null }
   }
 
   onAuthStateChange(listener: (session: AuthSession | null) => void): () => void {

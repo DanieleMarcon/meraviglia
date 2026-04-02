@@ -49,7 +49,12 @@ export class SupabaseOrganizationAccessRepository implements OrganizationAccessR
         .select("user_id, roles!inner(role_name, organization_id)")
         .eq("roles.organization_id", organizationId)
         .eq("roles.role_name", "admin"),
-      supabase.from("invites").select("id, email, role").eq("status", "invited").order("created_at", { ascending: false }),
+      supabase
+        .from("invites")
+        .select("id, email, role")
+        .eq("organization_id", organizationId)
+        .eq("status", "invited")
+        .order("created_at", { ascending: false }),
     ])
 
     if (userRowsResult.error) {
