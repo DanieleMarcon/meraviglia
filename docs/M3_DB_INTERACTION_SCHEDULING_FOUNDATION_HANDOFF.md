@@ -115,10 +115,26 @@ Workspace list efficiency support:
    - type: `meeting|call|follow_up`
    - status: `planned|completed|canceled`
    - provenance: `manual`
-2. User-facing label casing remains APP concern (`Canceled` display, etc.).
-3. On create, APP must send `status='planned'` (or omit and rely on default).
-4. Editing supports core fields (`type`, `scheduled_at`, `notes`, participants) and status transitions per lifecycle.
-5. For sorting closed sections, APP can use `status_changed_at desc`, fallback `scheduled_at desc` if needed.
+2. Legacy spelling compatibility: DB canonical status is only `canceled`; migration backfills historical `cancelled` values to `canceled`. APP decode paths should remain temporarily tolerant of incoming historical `cancelled` values until all deployed clients and caches converge.
+3. System writes must converge to `canceled` only; no long-term dual canonical status values.
+4. User-facing label casing remains APP concern (`Canceled` display, etc.).
+5. On create, APP must send `status='planned'` (or omit and rely on default).
+6. Participant writes can remain minimal (`interaction_id`, `contact_id`). DB derives and enforces `organization_id` and `workspace_id` via trigger.
+7. Editing supports core fields (`type`, `scheduled_at`, `notes`, participants) and status transitions per lifecycle.
+8. For sorting closed sections, APP can use `status_changed_at desc`, fallback `scheduled_at desc` if needed.
+
+### Ratification checks completed
+
+1. **Composite FK target viability**
+   - verified and enforced by explicit unique indexes in this slice:
+     - `workspaces (id, organization_id)`
+     - `contacts (id, workspace_id, organization_id)`
+     - `interactions (id, workspace_id, organization_id)`
+   - these indexes make composite FK targets valid and stable for migration execution.
+
+2. **Neutral status updates**
+   - status trigger explicitly allows `OLD.status = NEW.status`.
+   - non-status edits (notes/scheduled_at/etc.) are therefore not blocked when status is unchanged.
 
 ---
 

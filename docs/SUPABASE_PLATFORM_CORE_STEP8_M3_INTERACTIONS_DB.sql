@@ -26,6 +26,7 @@ alter table public.interactions
 alter table public.interactions
   add column if not exists status_changed_at timestamptz not null default now();
 
+-- Migration/backfill compatibility only: converge legacy spelling to canonical M3 `canceled`.
 update public.interactions
 set status = 'canceled'
 where status = 'cancelled';
@@ -102,6 +103,50 @@ alter table public.interaction_participants
 
 alter table public.interaction_participants
   alter column workspace_id set not null;
+
+create or replace function public.sync_interaction_participant_scope()
+returns trigger
+language plpgsql
+as $$
+declare
+  v_organization_id uuid;
+  v_workspace_id uuid;
+begin
+  select i.organization_id, i.workspace_id
+    into v_organization_id, v_workspace_id
+  from public.interactions i
+  where i.id = new.interaction_id;
+
+  if v_organization_id is null or v_workspace_id is null then
+    raise exception 'interaction % not found for participant linkage', new.interaction_id;
+  end if;
+
+  new.organization_id := v_organization_id;
+  new.workspace_id := v_workspace_id;
+
+  if not exists (
+    select 1
+    from public.contacts c
+    where c.id = new.contact_id
+      and c.organization_id = new.organization_id
+      and c.workspace_id = new.workspace_id
+  ) then
+    raise exception
+      'contact % must belong to the same workspace/org as interaction %',
+      new.contact_id,
+      new.interaction_id;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_interaction_participants_sync_scope on public.interaction_participants;
+create trigger trg_interaction_participants_sync_scope
+before insert or update of interaction_id, contact_id
+on public.interaction_participants
+for each row
+execute function public.sync_interaction_participant_scope();
 
 create unique index if not exists uq_contacts_id_workspace_org
   on public.contacts (id, workspace_id, organization_id);
@@ -240,20 +285,6 @@ create policy interaction_participants_org_isolation_insert
   for insert
   with check (
     organization_id = public.current_user_organization_id()
-    and exists (
-      select 1
-      from public.interactions i
-      where i.id = interaction_participants.interaction_id
-        and i.workspace_id = interaction_participants.workspace_id
-        and i.organization_id = interaction_participants.organization_id
-    )
-    and exists (
-      select 1
-      from public.contacts c
-      where c.id = interaction_participants.contact_id
-        and c.workspace_id = interaction_participants.workspace_id
-        and c.organization_id = interaction_participants.organization_id
-    )
   );
 
 create policy interaction_participants_org_isolation_update
