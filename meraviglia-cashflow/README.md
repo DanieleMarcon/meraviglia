@@ -87,7 +87,6 @@ meraviglia-cashflow/
 ├── README.md
 ├── eslint.config.js
 ├── index.html
-├── middleware.ts
 ├── package.json
 ├── tsconfig.app.json
 ├── tsconfig.json

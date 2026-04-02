@@ -1,8 +1,8 @@
 import type {
   OrganizationAccessRepository,
   OrganizationInviteRole,
-  OrganizationMembershipRecord,
 } from "../repository/organizationAccessRepository"
+import type { OrganizationMembershipDTO } from "./dto/OrganizationAccessDTO"
 
 const requireEmail = (value: string): string => {
   const normalized = value.trim().toLowerCase()
@@ -35,8 +35,17 @@ export class OrganizationAccessService {
     await this.repository.createInvite(requireEmail(email), role)
   }
 
-  async listMemberships(): Promise<OrganizationMembershipRecord[]> {
-    return this.repository.listMemberships()
+  async listMemberships(): Promise<OrganizationMembershipDTO[]> {
+    const records = await this.repository.listMemberships()
+
+    return records.map((record) => ({
+      id: record.id,
+      email: record.email,
+      role: record.role,
+      membershipStatus: record.state,
+      source: record.source,
+      removable: record.removable,
+    }))
   }
 
   async activateInvite(inviteToken: string): Promise<void> {
@@ -66,7 +75,7 @@ export const createInvite = async (email: string, role: OrganizationInviteRole =
   return getOrganizationAccessService().createInvite(email, role)
 }
 
-export const listMemberships = async (): Promise<OrganizationMembershipRecord[]> => {
+export const listMemberships = async (): Promise<OrganizationMembershipDTO[]> => {
   return getOrganizationAccessService().listMemberships()
 }
 
