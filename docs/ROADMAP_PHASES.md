@@ -45,8 +45,8 @@ Establish production-oriented identity and persistence baseline, and introduce t
 
 ### Multi-Organization Maturity Note (Current)
 - Current state is backend-ready / product-incomplete.
-- Implemented now: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, DB-enforced RBAC baseline (`admin`/`member` with minimal canonical permissions), authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
-- Not yet implemented: invite-based onboarding, approval/activation workflow, organization management UI, organization switching, parent/child org visibility, and "mother organization sees all children" behavior.
+- M2-B foundation completed: organization-scoped data model, user ↔ organization linkage, tenant RLS isolation, DB-enforced RBAC baseline (`admin`/`member` with minimal canonical permissions), invite-based onboarding, approval/activation baseline workflow, organization management UI baseline, authenticated runtime with logout, and operational loop (`intake → workspace → contacts → interactions`).
+- Deferred scope only: organization switching, multi-org membership UX, enterprise IAM (SSO/SCIM/policy engine), parent/child org visibility, and "mother organization sees all children" behavior.
 
 ### M2-B Product Contract Freeze (Current)
 M2-B is now defined as the minimal Organization Access Foundation product slice.
