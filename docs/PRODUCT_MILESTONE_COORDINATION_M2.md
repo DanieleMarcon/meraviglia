@@ -250,6 +250,12 @@ M2-B is complete only when all are true:
 4. Admin can view and remove memberships via baseline admin surface.
 5. Scope constraints remain intact (no RBAC redesign, no org switching, no enterprise IAM expansion).
 
+### 11.9 APP Stream Status Update (2026-04-02)
+- APP now exposes an admin-only **Organization Access** baseline surface for invite creation (email + `member`/`admin`) and membership listing/removal.
+- Authenticated users in `membership_status='invited'` are now routed to deterministic invite activation UX and can activate via `activate_invite(invite_token)`.
+- Authenticated users in `membership_status='removed'` now receive deterministic denied access fallback instead of entering normal organization shell.
+- Scope remains aligned with M2-B guardrails (single-org model, no IAM redesign, no role-system expansion).
+
 ### 11.8 Terminology Freeze for M2-B
 Freeze these terms for documentation and implementation consistency:
 - **Organization Access Foundation** (milestone boundary)

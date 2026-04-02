@@ -1,4 +1,10 @@
-import type { AuthOrganizationContext, AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
+import type {
+  AuthMembershipContext,
+  AuthOrganizationContext,
+  AuthRbacState,
+  AuthRepository,
+  AuthSession,
+} from "../repository/authRepository"
 
 let authRepository: AuthRepository | null = null
 
@@ -28,6 +34,10 @@ export const getRbacState = async (): Promise<AuthRbacState> => {
 
 export const getOrganizationContext = async (): Promise<AuthOrganizationContext> => {
   return getAuthRepository().getOrganizationContext()
+}
+
+export const getMembershipContext = async (session: AuthSession): Promise<AuthMembershipContext> => {
+  return getAuthRepository().getMembershipContext(session)
 }
 
 export const signIn = async (email: string, password: string): Promise<void> => {

@@ -195,3 +195,13 @@ Explicitly forbidden in this milestone:
 - org switching
 - multi-org membership productization
 - enterprise IAM scope (SSO/SCIM)
+
+### APP Execution Note (2026-04-02)
+
+M2-B APP foundation is now wired with minimal production slice:
+- admin invite flow (email + baseline role)
+- collaborator invite activation flow after authentication
+- admin membership baseline list (email, role, state, remove action)
+- deterministic invited/removed user shell behavior
+
+No architecture expansion was introduced; DB remains source of truth and existing RBAC baseline is reused as-is.

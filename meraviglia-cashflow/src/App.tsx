@@ -12,6 +12,8 @@ import PianoEditor from "./ui/components/PianoEditor"
 import IntakeView from "./ui/views/IntakeView"
 import WorkspaceView from "./ui/views/WorkspaceView"
 import UnauthorizedView from "./ui/views/UnauthorizedView"
+import InviteActivationView from "./ui/views/InviteActivationView"
+import OrganizationAccessView from "./ui/views/OrganizationAccessView"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
 import { useAuth } from "./auth/useAuth"
@@ -36,7 +38,7 @@ const SECTION_TOGGLE_LABELS = [
 ] as const
 
 function CashflowApp() {
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   const { canAccessAdminUi, rbacLoading } = useRbacGate()
   const {
     services: catalog,
@@ -78,11 +80,14 @@ function CashflowApp() {
       />
 
       {rbacLoading ? null : canAccessAdminUi ? (
-        <ServiceCatalogManager
-          services={catalog}
-          addService={addService}
-          removeService={removeService}
-        />
+        <>
+          <ServiceCatalogManager
+            services={catalog}
+            addService={addService}
+            removeService={removeService}
+          />
+          <OrganizationAccessView currentUserId={user?.id ?? null} />
+        </>
       ) : null}
 
       <AddServiceToProposal
@@ -145,6 +150,35 @@ function CashflowApp() {
   )
 }
 
+function AuthenticatedShell() {
+  const { membershipStatus, organizationId, organizationLoading, membershipLoading, user, pendingInviteToken, refreshAuthState, signOut } = useAuth()
+
+  if (membershipLoading || organizationLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (membershipStatus === "invited") {
+    return (
+      <InviteActivationView
+        email={user?.email ?? null}
+        initialInviteToken={pendingInviteToken}
+        onActivated={refreshAuthState}
+        onLogout={signOut}
+      />
+    )
+  }
+
+  if (membershipStatus === "removed") {
+    return <UnauthorizedView />
+  }
+
+  if (membershipStatus === "active" && organizationId) {
+    return <CashflowApp />
+  }
+
+  return <UnauthorizedView />
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -152,7 +186,7 @@ function App() {
         <UnauthorizedView />
       ) : (
         <ProtectedRoute>
-          <CashflowApp />
+          <AuthenticatedShell />
         </ProtectedRoute>
       )}
     </AuthProvider>
