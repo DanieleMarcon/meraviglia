@@ -1,4 +1,11 @@
-import type { AuthOrganizationContext, AuthRbacState, AuthRepository, AuthSession } from "../repository/authRepository"
+import type {
+  AuthMembershipContext,
+  AuthOrganizationContext,
+  AuthRbacState,
+  AuthRepository,
+  AuthSession,
+  MembershipStatus,
+} from "../repository/authRepository"
 import { supabase } from "../lib/supabaseClient"
 import { toRepositoryError } from "./authorizationError"
 import { decodeExternalAuthSession } from "./authSessionDecoder"
@@ -44,6 +51,56 @@ export class SupabaseAuthRepository implements AuthRepository {
     return {
       organizationId: typeof data === "string" ? data : null,
     }
+  }
+
+  async getMembershipContext(session: AuthSession): Promise<AuthMembershipContext> {
+    const { data: userRow, error: userError } = await supabase
+      .from("users")
+      .select("membership_status")
+      .eq("id", session.user.id)
+      .single()
+
+    if (userError) {
+      throw toRepositoryError(userError, "Unable to resolve membership context")
+    }
+
+    const membershipStatus = this.decodeMembershipStatus(userRow?.membership_status)
+
+    if (membershipStatus !== "invited") {
+      return { membershipStatus, pendingInviteToken: null }
+    }
+
+    const email = session.user.email?.trim()
+    if (!email) {
+      return { membershipStatus, pendingInviteToken: null }
+    }
+
+    const { data: pendingInviteRows, error: pendingInviteError } = await supabase
+      .from("invites")
+      .select("invite_token, created_at")
+      .eq("status", "invited")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+
+    if (pendingInviteError) {
+      throw toRepositoryError(pendingInviteError, "Unable to resolve pending invite")
+    }
+
+    const pendingInviteToken =
+      Array.isArray(pendingInviteRows) && pendingInviteRows.length > 0 && typeof pendingInviteRows[0].invite_token === "string"
+        ? pendingInviteRows[0].invite_token
+        : null
+
+    return { membershipStatus, pendingInviteToken }
+  }
+
+  private decodeMembershipStatus(value: unknown): MembershipStatus {
+    if (value === "invited" || value === "active" || value === "removed") {
+      return value
+    }
+
+    return "unknown"
   }
 
   onAuthStateChange(listener: (session: AuthSession | null) => void): () => void {
