@@ -110,4 +110,22 @@ describe("ContactService", () => {
       expected_updated_at: "2025-01-01T00:00:00.000Z",
     })
   })
+
+  it("returns deterministic stale update message for optimistic concurrency conflicts", async () => {
+    const repository: ContactRepository = {
+      createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue(null),
+      listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+    }
+
+    const service = new ContactService(repository)
+
+    await expect(
+      service.updateContact("ct-1", {
+        first_name: "Ada",
+        last_name: "Byron",
+        expected_updated_at: "2025-01-01T00:00:00.000Z",
+      }),
+    ).rejects.toThrow("This contact was updated elsewhere. Reloaded latest data.")
+  })
 })

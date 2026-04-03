@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 
 import { updateContact } from "../../application/contactService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
@@ -17,22 +17,51 @@ type EditDraft = {
   expectedUpdatedAt: string
 }
 
+const STALE_CONTACT_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
+
+const toEditDraft = (contact: ContactDTO): EditDraft => {
+  return {
+    firstName: contact.first_name,
+    lastName: contact.last_name,
+    email: contact.email ?? "",
+    phone: contact.phone ?? "",
+    role: contact.role ?? "",
+    expectedUpdatedAt: contact.updated_at,
+  }
+}
+
+export const syncDraftWithLatestContact = (draft: EditDraft | null, editingId: string | null, contacts: ContactDTO[]): EditDraft | null => {
+  if (!draft || !editingId) {
+    return draft
+  }
+
+  const latestContact = contacts.find((contact) => contact.id === editingId)
+  if (!latestContact) {
+    return draft
+  }
+
+  return toEditDraft(latestContact)
+}
+
 function ContactList({ contacts, onEdited }: ContactListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditDraft | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [shouldSyncDraftFromContacts, setShouldSyncDraftFromContacts] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!shouldSyncDraftFromContacts) {
+      return
+    }
+
+    setDraft((currentDraft) => syncDraftWithLatestContact(currentDraft, editingId, contacts))
+    setShouldSyncDraftFromContacts(false)
+  }, [contacts, editingId, shouldSyncDraftFromContacts])
 
   const beginEdit = (contact: ContactDTO) => {
     setEditingId(contact.id)
-    setDraft({
-      firstName: contact.first_name,
-      lastName: contact.last_name,
-      email: contact.email ?? "",
-      phone: contact.phone ?? "",
-      role: contact.role ?? "",
-      expectedUpdatedAt: contact.updated_at,
-    })
+    setDraft(toEditDraft(contact))
     setErrorMessage(null)
   }
 
@@ -60,7 +89,14 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
       setDraft(null)
       await onEdited()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to edit contact")
+      const message = error instanceof Error ? error.message : "Unable to edit contact"
+
+      if (message === STALE_CONTACT_UPDATE_MESSAGE) {
+        setShouldSyncDraftFromContacts(true)
+        await onEdited()
+      }
+
+      setErrorMessage(message)
     } finally {
       setIsSaving(false)
     }
