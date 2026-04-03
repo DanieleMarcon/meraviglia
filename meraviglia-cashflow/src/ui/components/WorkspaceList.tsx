@@ -37,9 +37,10 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
     void loadContacts()
   }, [loadContacts])
 
+  const isContactsReady = !isContactsLoading
+
   return (
     <li
-      key={workspace.id}
       style={{ border: "1px solid #ddd", borderRadius: 4, padding: 12, marginBottom: 8 }}
     >
       <p><strong>Name:</strong> {workspace.workspace_name}</p>
@@ -48,7 +49,7 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
       <WorkspaceContactsPanel
         workspaceId={workspace.id}
         contacts={contacts}
-        isLoading={isContactsLoading}
+        isContactsReady={isContactsReady}
         errorMessage={contactsErrorMessage}
         onCreated={loadContacts}
       />
@@ -56,6 +57,7 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
         workspaceId={workspace.id}
         contacts={contacts}
         isContactsLoading={isContactsLoading}
+        isContactsReady={isContactsReady}
       />
     </li>
   )
