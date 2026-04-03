@@ -47,17 +47,15 @@ Lifecycle state for operational execution continuity.
 Examples:
 - `planned`
 - `completed`
-- `cancelled`
+- `canceled`
 
 ### InteractionProvenance
 Traceability of origin.
 
-Examples:
+Current implementation:
 - `manual`
-- `from_calendar_sync`
-- `from_ai_review`
 
-Provenance does not imply all origins are implemented now; it preserves contract stability for future ingestion paths.
+Other provenance origins are not part of the current implemented runtime.
 
 ## Boundary Rules
 - Interaction records are always workspace-owned.
@@ -68,7 +66,7 @@ Provenance does not imply all origins are implemented now; it preserves contract
 ## Scheduling Foundation Framing
 Scheduling Foundation is the **first implementation slice of the Interaction Layer**, not the full layer.
 
-Likely v1 scope:
+Implemented M3 scope:
 - create a workspace-linked interaction,
 - associate one or more contacts/participants,
 - display planned interactions in workspace context,

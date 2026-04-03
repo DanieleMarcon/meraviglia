@@ -97,6 +97,7 @@ src/
  ├── infra
  ├── state
  ├── auth
+ ├── shared
  ├── assets
 ```
 
@@ -174,7 +175,7 @@ Persistence contracts.
 
 Contains repository interfaces used by the application layer.
 
-Current interfaces include workspace, intake, and contact persistence ports.
+Current interfaces include workspace, intake, contact, and interaction persistence ports.
 
 ---
 
@@ -188,7 +189,7 @@ Examples:
 * API clients
 * Supabase implementations
 
-Current adapters include Supabase repositories and decoder/write-payload seams for workspace, intake, and contact persistence.
+Current adapters include Supabase repositories and decoder/write-payload seams for workspace, intake, contact, and interaction persistence.
 
 ---
 
@@ -238,6 +239,22 @@ Dependency rules:
 
 ---
 
+### shared/
+
+Dependency-neutral shared utilities.
+
+Responsibilities:
+
+* cross-layer utility helpers without business orchestration ownership
+* deterministic transformations shared by multiple layers (for example datetime helpers)
+
+Dependency rules:
+
+* may be imported by `ui`, `application`, `infra`, and `engine`
+* must not depend on `ui`, `application`, `domain`, `repository`, or `infra`
+
+---
+
 ### assets/
 
 Static resources used by the UI.
@@ -267,6 +284,7 @@ Allowed dependency flow:
 * `engine → domain`
 * `state → ui | application`
 * `auth → application | repository`
+* `ui | application | infra | engine → shared`
 * `assets → ui`
 
 Forbidden dependencies:
@@ -279,6 +297,7 @@ Forbidden dependencies:
 * `ui → repository`
 * `state → domain | repository | infra`
 * `auth → domain | infra`
+* `shared → ui | application | domain | repository | infra | engine`
 * `assets → domain | application | repository | infra | engine`
 
 These dependency rules are defined by the Architecture Freeze and must always be respected.
