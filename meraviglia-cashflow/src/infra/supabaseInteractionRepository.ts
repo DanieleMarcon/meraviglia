@@ -150,7 +150,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
   async listParticipantsByWorkspace(workspaceId: string): Promise<InteractionParticipantRecord[]> {
     const { data, error } = await supabase
       .from(INTERACTION_PARTICIPANTS_TABLE)
-      .select(`${SELECT_PARTICIPANT_FIELDS}, interactions!inner(workspace_id)`)
+      .select(`${SELECT_PARTICIPANT_FIELDS}, interactions!interaction_participants_interaction_workspace_org_fk!inner(workspace_id)`)
       .eq("interactions.workspace_id", workspaceId)
 
     if (error) {

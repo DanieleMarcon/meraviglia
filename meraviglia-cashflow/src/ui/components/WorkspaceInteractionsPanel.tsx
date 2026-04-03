@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { listContactsByWorkspace } from "../../application/contactService"
 import { listInteractionsByWorkspace, updateInteractionStatus } from "../../application/interactionService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import type { InteractionDTO } from "../../application/dto/InteractionDTO"
@@ -9,10 +8,12 @@ import InteractionList from "./InteractionList"
 
 type WorkspaceInteractionsPanelProps = {
   workspaceId: string
+  contacts: ContactDTO[]
+  isContactsLoading: boolean
+  isContactsReady: boolean
 }
 
-function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelProps) {
-  const [contacts, setContacts] = useState<ContactDTO[]>([])
+function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, isContactsReady }: WorkspaceInteractionsPanelProps) {
   const [interactions, setInteractions] = useState<InteractionDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -23,12 +24,7 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
     setErrorMessage(null)
 
     try {
-      const [workspaceContacts, workspaceInteractions] = await Promise.all([
-        listContactsByWorkspace(workspaceId),
-        listInteractionsByWorkspace(workspaceId),
-      ])
-
-      setContacts(workspaceContacts)
+      const workspaceInteractions = await listInteractionsByWorkspace(workspaceId)
       setInteractions(workspaceInteractions)
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to load interactions")
@@ -59,16 +55,17 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
     }
   }
 
-  const hasNoContacts = !isLoading && contacts.length === 0
+  const hasNoContacts = !isLoading && isContactsReady && contacts.length === 0
+  const canRenderContactDependentUi = isContactsReady
 
   return (
     <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
         <h4 style={{ margin: 0 }}>Interactions</h4>
-        <button type="button" onClick={() => setIsCreateOpen(true)}>New interaction</button>
+        <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading}>New interaction</button>
       </div>
 
-      {isCreateOpen ? (
+      {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
           workspaceId={workspaceId}
           contacts={contacts}
@@ -77,13 +74,15 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
         />
       ) : null}
 
+      {isCreateOpen && !canRenderContactDependentUi ? <p>Loading contacts before creating interaction...</p> : null}
+
       {isLoading ? <p>Loading interactions...</p> : null}
 
       {!isLoading && interactions.length === 0 ? (
         <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
           <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
           <p style={{ margin: "0 0 8px" }}>Track planned calls, meetings, and follow-ups for this workspace.</p>
-          <button type="button" onClick={() => setIsCreateOpen(true)}>Create first interaction</button>
+          <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading}>Create first interaction</button>
         </div>
       ) : null}
 
@@ -91,9 +90,11 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
         <p style={{ color: "#555" }}>You need at least one contact before creating an interaction.</p>
       ) : null}
 
-      {!isLoading && interactions.length > 0 ? (
+      {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (
         <InteractionList interactions={interactions} contacts={contacts} onStatusChange={handleStatusChange} onEdited={loadData} />
       ) : null}
+
+      {!isLoading && interactions.length > 0 && !canRenderContactDependentUi ? <p>Loading contacts...</p> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )
