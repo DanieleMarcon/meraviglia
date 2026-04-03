@@ -57,6 +57,7 @@ Current capabilities include:
 - Proposal composition with payment logic
 - Cashflow simulation
 - Parallel scenario comparison
+- Interactions preserve historical integrity; contact deletion follows interaction-reference lifecycle constraints
 - PNG/SVG visual export
 - Local service catalog persistence
 

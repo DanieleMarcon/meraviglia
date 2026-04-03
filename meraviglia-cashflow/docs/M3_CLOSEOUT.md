@@ -13,7 +13,7 @@
 
 ## Explicitly Not Included Yet
 - Multiple-interactions UX enhancements beyond current baseline list/form flows.
-- Contact deletion policy definition and associated workflow.
+- Advanced contact deletion UX beyond policy-enforcement baseline.
 - Advanced filtering and timeline-specific interaction UI.
 
 ---
@@ -96,3 +96,31 @@ When querying participants with interaction joins, explicit FK embedding is requ
 - UX refinements for managing larger interaction sets.
 - Formal contact deletion governance.
 - Advanced interaction filtering views.
+
+---
+
+## M3.x Consolidation Addendum — Contact Lifecycle and Historical Integrity
+
+### Contact Lifecycle Policy (Authoritative)
+- A contact can be deleted only if it is not referenced by any interaction.
+- A contact referenced by at least one interaction cannot be deleted.
+- Participants of an interaction can be modified only if the interaction is in `planned` state.
+- Interactions in `completed` or `canceled` state are historical records and participant composition is immutable.
+- An interaction must always have at least one participant.
+- A contact becomes deletable again only after it is no longer referenced by any interaction.
+
+### Interaction Semantics Clarification
+Interactions are treated as workspace historical events, not only scheduling objects.
+
+- `planned` interactions remain mutable for operational updates.
+- `completed` and `canceled` interactions are immutable historical state.
+
+This is an intentional integrity boundary to preserve trustworthy workspace history.
+
+### Future evolution — history fidelity
+Short-term architecture direction for stronger historical traceability:
+- audit trail for interaction changes over time,
+- participant replacement history (who was replaced and when),
+- participant revisions through versioned participant snapshots.
+
+This note defines evolution direction only; it is not a roadmap or timeline commitment.

@@ -48,6 +48,8 @@ Repository-level modularity rule:
 ### Interaction Layer implementation note
 Interaction ownership is workspace-first. New scheduling-related modules must treat interaction artifacts as workspace-scoped operational records (participants + timing + provenance + status), not as calendar-first entities or CRM activity streams.
 
+Lifecycle ownership rule: contact deletion is constrained by interaction references, and participant mutations are allowed only while interaction status is `planned`; `completed` and `canceled` interactions are immutable historical records.
+
 ---
 
 ## 2. Root Repository Structure

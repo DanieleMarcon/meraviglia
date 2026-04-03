@@ -20,6 +20,8 @@ describe("ContactService", () => {
       }),
       updateContact: vi.fn().mockResolvedValue(null),
       listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(false),
+      deleteContact: vi.fn().mockResolvedValue(true),
     }
 
     const service = new ContactService(repository)
@@ -63,6 +65,8 @@ describe("ContactService", () => {
           updated_at: "2025-01-01T00:00:00.000Z",
         },
       ]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(false),
+      deleteContact: vi.fn().mockResolvedValue(true),
     }
 
     const service = new ContactService(repository)
@@ -88,6 +92,8 @@ describe("ContactService", () => {
         updated_at: "2025-01-02T00:00:00.000Z",
       }),
       listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(false),
+      deleteContact: vi.fn().mockResolvedValue(true),
     }
 
     const service = new ContactService(repository)
@@ -116,6 +122,8 @@ describe("ContactService", () => {
       createContact: vi.fn(),
       updateContact: vi.fn().mockResolvedValue(null),
       listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(false),
+      deleteContact: vi.fn().mockResolvedValue(true),
     }
 
     const service = new ContactService(repository)
@@ -127,5 +135,39 @@ describe("ContactService", () => {
         expected_updated_at: "2025-01-01T00:00:00.000Z",
       }),
     ).rejects.toThrow("This contact was updated elsewhere. Reloaded latest data.")
+  })
+
+  it("blocks deletion when contact is referenced by interactions", async () => {
+    const repository: ContactRepository = {
+      createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue(null),
+      listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(true),
+      deleteContact: vi.fn().mockResolvedValue(true),
+    }
+
+    const service = new ContactService(repository)
+
+    await expect(service.deleteContact("ct-1")).rejects.toThrow(
+      "Contact cannot be deleted because it is referenced by one or more interactions.",
+    )
+    expect(repository.deleteContact).not.toHaveBeenCalled()
+  })
+
+  it("allows deletion only when contact has no interaction references", async () => {
+    const repository: ContactRepository = {
+      createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue(null),
+      listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+      isContactReferencedByAnyInteraction: vi.fn().mockResolvedValue(false),
+      deleteContact: vi.fn().mockResolvedValue(true),
+    }
+
+    const service = new ContactService(repository)
+
+    await service.deleteContact(" ct-1 ")
+
+    expect(repository.isContactReferencedByAnyInteraction).toHaveBeenCalledWith("ct-1")
+    expect(repository.deleteContact).toHaveBeenCalledWith("ct-1")
   })
 })

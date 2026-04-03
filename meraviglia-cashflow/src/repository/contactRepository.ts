@@ -36,4 +36,6 @@ export interface ContactRepository {
   createContact(input: CreateContactRecordInput): Promise<ContactRecord>
   updateContact(id: string, input: UpdateContactRecordInput): Promise<ContactRecord | null>
   listContactsByWorkspace(workspaceId: string): Promise<ContactRecord[]>
+  isContactReferencedByAnyInteraction(contactId: string): Promise<boolean>
+  deleteContact(id: string): Promise<boolean>
 }

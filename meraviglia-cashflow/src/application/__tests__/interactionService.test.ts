@@ -85,4 +85,40 @@ describe("InteractionService", () => {
       service.updateInteractionStatus("in-1", { status: "completed", expected_updated_at: baseInteraction.updated_at }),
     ).rejects.toThrow("This interaction was updated elsewhere. Reloaded latest status.")
   })
+
+  it("rejects participant membership changes for completed interactions", async () => {
+    const repository = buildRepository()
+    repository.getInteractionById = vi.fn().mockResolvedValue({ ...baseInteraction, status: "completed" })
+    repository.listParticipantsByWorkspace = vi.fn().mockResolvedValue([{ interaction_id: "in-1", contact_id: "ct-1" }])
+    const service = new InteractionService(repository)
+
+    await expect(
+      service.updateInteraction("in-1", {
+        type: "meeting",
+        scheduled_at: "2025-01-01T10:00:00.000Z",
+        notes: "kept",
+        participant_contact_ids: ["ct-2"],
+        expected_updated_at: baseInteraction.updated_at,
+      }),
+    ).rejects.toThrow("Participants can only be edited while interaction status is planned.")
+
+    expect(repository.replaceParticipants).not.toHaveBeenCalled()
+  })
+
+  it("allows updates for completed interactions when participant membership is unchanged", async () => {
+    const repository = buildRepository()
+    repository.getInteractionById = vi.fn().mockResolvedValue({ ...baseInteraction, status: "completed" })
+    repository.listParticipantsByWorkspace = vi.fn().mockResolvedValue([{ interaction_id: "in-1", contact_id: "ct-1" }])
+    const service = new InteractionService(repository)
+
+    await service.updateInteraction("in-1", {
+      type: "meeting",
+      scheduled_at: "2025-01-02T10:00:00.000Z",
+      notes: "updated",
+      participant_contact_ids: ["ct-1"],
+      expected_updated_at: baseInteraction.updated_at,
+    })
+
+    expect(repository.replaceParticipants).toHaveBeenCalledWith("in-1", ["ct-1"])
+  })
 })

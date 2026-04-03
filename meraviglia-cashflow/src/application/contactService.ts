@@ -23,6 +23,7 @@ const normalizeOptional = (value: string | null | undefined): string | null | un
 }
 
 const STALE_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
+const CONTACT_REFERENCED_DELETE_MESSAGE = "Contact cannot be deleted because it is referenced by one or more interactions."
 
 export class ContactService {
   private readonly contactRepository: ContactRepository
@@ -69,6 +70,21 @@ export class ContactService {
 
     return mapContactRecordToDTO(updated)
   }
+
+  async deleteContact(id: string): Promise<void> {
+    const contactId = requireNonEmpty(id, "id")
+    const isReferenced = await this.contactRepository.isContactReferencedByAnyInteraction(contactId)
+
+    if (isReferenced) {
+      throw new Error(CONTACT_REFERENCED_DELETE_MESSAGE)
+    }
+
+    const deleted = await this.contactRepository.deleteContact(contactId)
+
+    if (!deleted) {
+      throw new Error("Contact not found")
+    }
+  }
 }
 
 let contactService: ContactService | null = null
@@ -95,4 +111,8 @@ export const listContactsByWorkspace = async (workspaceId: string): Promise<Cont
 
 export const updateContact = async (id: string, input: UpdateContactInput): Promise<ContactDTO> => {
   return getContactService().updateContact(id, input)
+}
+
+export const deleteContact = async (id: string): Promise<void> => {
+  return getContactService().deleteContact(id)
 }

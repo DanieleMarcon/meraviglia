@@ -4,6 +4,7 @@ import { mapInteractionRecordToDTO } from "./mappers/interactionMappers"
 import type { InteractionRepository } from "../repository/interactionRepository"
 
 const STALE_UPDATE_MESSAGE = "This interaction was updated elsewhere. Reloaded latest status."
+const PARTICIPANT_IMMUTABLE_MESSAGE = "Participants can only be edited while interaction status is planned."
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
   const normalized = value.trim()
@@ -32,6 +33,15 @@ const requireParticipants = (contactIds: string[]): string[] => {
   }
 
   return [...new Set(normalized)]
+}
+
+const areParticipantSetsEqual = (left: string[], right: string[]): boolean => {
+  if (left.length !== right.length) {
+    return false
+  }
+
+  const rightSet = new Set(right)
+  return left.every((value) => rightSet.has(value))
 }
 
 const assertStatusTransition = (currentStatus: InteractionDTO["status"], nextStatus: InteractionDTO["status"]): void => {
@@ -117,6 +127,16 @@ export class InteractionService {
       throw new Error("Interaction not found")
     }
 
+    const requestedParticipantIds = requireParticipants(input.participant_contact_ids)
+    const allWorkspaceParticipants = await this.interactionRepository.listParticipantsByWorkspace(current.workspace_id)
+    const currentParticipantIds = allWorkspaceParticipants
+      .filter((participant) => participant.interaction_id === current.id)
+      .map((participant) => participant.contact_id)
+
+    if (current.status !== "planned" && !areParticipantSetsEqual(currentParticipantIds, requestedParticipantIds)) {
+      throw new Error(PARTICIPANT_IMMUTABLE_MESSAGE)
+    }
+
     const updatedRecord = await this.interactionRepository.updateInteraction(interactionId, {
       type: input.type,
       scheduled_at: requireNonEmpty(input.scheduled_at, "scheduled_at"),
@@ -128,7 +148,7 @@ export class InteractionService {
       throw new Error(STALE_UPDATE_MESSAGE)
     }
 
-    await this.interactionRepository.replaceParticipants(updatedRecord.id, requireParticipants(input.participant_contact_ids))
+    await this.interactionRepository.replaceParticipants(updatedRecord.id, requestedParticipantIds)
     const participants = await this.interactionRepository.listParticipantsByWorkspace(updatedRecord.workspace_id)
 
     return mapInteractionRecordToDTO(updatedRecord, participants)
