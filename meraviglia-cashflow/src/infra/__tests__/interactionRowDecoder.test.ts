@@ -12,6 +12,8 @@ describe("interactionRowDecoder", () => {
         scheduled_at: "2025-01-01T10:00:00.000Z",
         status: "planned",
         provenance: "manual",
+        notes: null,
+        status_changed_at: "2025-01-01T00:00:00.000Z",
         created_at: "2025-01-01T00:00:00.000Z",
         updated_at: "2025-01-01T00:00:00.000Z",
       },

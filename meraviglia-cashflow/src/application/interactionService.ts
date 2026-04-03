@@ -1,7 +1,9 @@
-import type { CreateInteractionInput, UpdateInteractionStatusInput } from "./dto/InteractionContracts"
+import type { CreateInteractionInput, UpdateInteractionInput, UpdateInteractionStatusInput } from "./dto/InteractionContracts"
 import type { InteractionDTO } from "./dto/InteractionDTO"
 import { mapInteractionRecordToDTO } from "./mappers/interactionMappers"
 import type { InteractionRepository } from "../repository/interactionRepository"
+
+const STALE_UPDATE_MESSAGE = "This interaction was updated elsewhere. Reloaded latest status."
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
   const normalized = value.trim()
@@ -11,6 +13,15 @@ const requireNonEmpty = (value: string, fieldName: string): string => {
   }
 
   return normalized
+}
+
+const normalizeNotes = (value: string | undefined): string | null => {
+  if (typeof value !== "string") {
+    return null
+  }
+
+  const normalized = value.trim()
+  return normalized ? normalized : null
 }
 
 const requireParticipants = (contactIds: string[]): string[] => {
@@ -28,12 +39,16 @@ const assertStatusTransition = (currentStatus: InteractionDTO["status"], nextSta
     return
   }
 
-  if (currentStatus !== "planned") {
-    throw new Error("Only planned interactions can be updated")
+  if (currentStatus === "planned") {
+    if (nextStatus === "completed" || nextStatus === "canceled") {
+      return
+    }
+
+    throw new Error("Interaction status can only transition from planned to completed or canceled")
   }
 
-  if (nextStatus !== "completed" && nextStatus !== "cancelled") {
-    throw new Error("Interaction status can only transition from planned to completed or cancelled")
+  if (nextStatus !== "planned") {
+    throw new Error("Completed or canceled interactions can only be reopened to planned")
   }
 }
 
@@ -50,7 +65,8 @@ export class InteractionService {
       type: input.type,
       scheduled_at: requireNonEmpty(input.scheduled_at, "scheduled_at"),
       status: input.status ?? "planned",
-      provenance: input.provenance ?? "manual",
+      provenance: "manual",
+      notes: normalizeNotes(input.notes),
       participant_contact_ids: requireParticipants(input.participant_contact_ids),
     })
 
@@ -81,8 +97,38 @@ export class InteractionService {
 
     const updatedRecord = await this.interactionRepository.updateInteractionStatus(interactionId, {
       status: input.status,
+      expected_updated_at: requireNonEmpty(input.expected_updated_at, "expected_updated_at"),
     })
 
+    if (!updatedRecord) {
+      throw new Error(STALE_UPDATE_MESSAGE)
+    }
+
+    const participants = await this.interactionRepository.listParticipantsByWorkspace(updatedRecord.workspace_id)
+
+    return mapInteractionRecordToDTO(updatedRecord, participants)
+  }
+
+  async updateInteraction(id: string, input: UpdateInteractionInput): Promise<InteractionDTO> {
+    const interactionId = requireNonEmpty(id, "id")
+    const current = await this.interactionRepository.getInteractionById(interactionId)
+
+    if (!current) {
+      throw new Error("Interaction not found")
+    }
+
+    const updatedRecord = await this.interactionRepository.updateInteraction(interactionId, {
+      type: input.type,
+      scheduled_at: requireNonEmpty(input.scheduled_at, "scheduled_at"),
+      notes: normalizeNotes(input.notes),
+      expected_updated_at: requireNonEmpty(input.expected_updated_at, "expected_updated_at"),
+    })
+
+    if (!updatedRecord) {
+      throw new Error(STALE_UPDATE_MESSAGE)
+    }
+
+    await this.interactionRepository.replaceParticipants(updatedRecord.id, requireParticipants(input.participant_contact_ids))
     const participants = await this.interactionRepository.listParticipantsByWorkspace(updatedRecord.workspace_id)
 
     return mapInteractionRecordToDTO(updatedRecord, participants)
@@ -116,4 +162,8 @@ export const updateInteractionStatus = async (
   input: UpdateInteractionStatusInput,
 ): Promise<InteractionDTO> => {
   return getInteractionService().updateInteractionStatus(id, input)
+}
+
+export const updateInteraction = async (id: string, input: UpdateInteractionInput): Promise<InteractionDTO> => {
+  return getInteractionService().updateInteraction(id, input)
 }

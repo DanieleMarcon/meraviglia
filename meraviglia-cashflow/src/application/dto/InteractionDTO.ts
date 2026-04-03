@@ -9,6 +9,8 @@ export interface InteractionDTO {
   scheduled_at: string
   status: InteractionStatus
   provenance: InteractionProvenance
+  notes: string | null
+  status_changed_at: string
   participant_contact_ids: string[]
   created_at: string
   updated_at: string

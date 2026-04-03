@@ -1,4 +1,8 @@
-import type { CreateInteractionRecordInput, UpdateInteractionStatusRecordInput } from "../repository/interactionRepository"
+import type {
+  CreateInteractionRecordInput,
+  UpdateInteractionRecordInput,
+  UpdateInteractionStatusRecordInput,
+} from "../repository/interactionRepository"
 
 type CreateInteractionWritePayload = {
   organization_id: string
@@ -7,11 +11,22 @@ type CreateInteractionWritePayload = {
   scheduled_at: string
   status: CreateInteractionRecordInput["status"]
   provenance: CreateInteractionRecordInput["provenance"]
+  notes: string | null
 }
 
 type InteractionParticipantWritePayload = {
   interaction_id: string
   contact_id: string
+}
+
+type UpdateInteractionStatusWritePayload = {
+  status: UpdateInteractionStatusRecordInput["status"]
+}
+
+type UpdateInteractionWritePayload = {
+  type: UpdateInteractionRecordInput["type"]
+  scheduled_at: string
+  notes: string | null
 }
 
 const assertString = (value: unknown, fieldName: string, context: string): string => {
@@ -32,6 +47,7 @@ export const adaptCreateInteractionWritePayload = (
     scheduled_at: assertString(input.scheduled_at, "scheduled_at", "createInteraction"),
     status: input.status,
     provenance: input.provenance,
+    notes: input.notes,
   }
 }
 
@@ -47,8 +63,16 @@ export const adaptInteractionParticipantWritePayloads = (
 
 export const adaptUpdateInteractionStatusWritePayload = (
   input: UpdateInteractionStatusRecordInput,
-): UpdateInteractionStatusRecordInput => {
+): UpdateInteractionStatusWritePayload => {
   return {
     status: input.status,
+  }
+}
+
+export const adaptUpdateInteractionWritePayload = (input: UpdateInteractionRecordInput): UpdateInteractionWritePayload => {
+  return {
+    type: input.type,
+    scheduled_at: assertString(input.scheduled_at, "scheduled_at", "updateInteraction"),
+    notes: input.notes,
   }
 }
