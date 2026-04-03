@@ -15,6 +15,7 @@ describe("interactionWritePayloadAdapter", () => {
       scheduled_at: "2025-01-01T10:00:00.000Z",
       status: "planned",
       provenance: "manual",
+      notes: null,
       participant_contact_ids: ["ct-1"],
     })
 
@@ -31,7 +32,8 @@ describe("interactionWritePayloadAdapter", () => {
         scheduled_at: "2025-01-01T10:00:00.000Z",
         status: "planned",
         provenance: "manual",
-        participant_contact_ids: ["ct-1"],
+        notes: null,
+      participant_contact_ids: ["ct-1"],
       }),
     ).toThrow("`organization_id` must be a string")
   })
@@ -43,7 +45,7 @@ describe("interactionWritePayloadAdapter", () => {
   })
 
   it("adapts status update payload", () => {
-    const result = adaptUpdateInteractionStatusWritePayload({ status: "completed" })
+    const result = adaptUpdateInteractionStatusWritePayload({ status: "completed", expected_updated_at: "2025-01-01T00:00:00.000Z" })
 
     expect(result.status).toBe("completed")
   })

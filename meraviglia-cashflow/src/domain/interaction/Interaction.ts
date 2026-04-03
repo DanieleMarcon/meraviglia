@@ -9,6 +9,8 @@ export interface Interaction {
   scheduledAt: string
   status: InteractionStatus
   provenance: InteractionProvenance
+  notes: string | null
+  statusChangedAt: string
   createdAt: string
   updatedAt: string
 }

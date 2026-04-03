@@ -7,6 +7,8 @@ type RawInteractionRow = {
   scheduled_at?: unknown
   status?: unknown
   provenance?: unknown
+  notes?: unknown
+  status_changed_at?: unknown
   created_at?: unknown
   updated_at?: unknown
 }
@@ -28,6 +30,14 @@ const asString = (value: unknown, fieldName: string, context: string): string =>
   return value
 }
 
+const asOptionalString = (value: unknown, fieldName: string, context: string): string | null => {
+  if (value === null || value === undefined) {
+    return null
+  }
+
+  return asString(value, fieldName, context)
+}
+
 const asType = (value: unknown, context: string): InteractionRecord["type"] => {
   if (value === "meeting" || value === "call" || value === "follow_up") {
     return value
@@ -37,19 +47,19 @@ const asType = (value: unknown, context: string): InteractionRecord["type"] => {
 }
 
 const asStatus = (value: unknown, context: string): InteractionRecord["status"] => {
-  if (value === "planned" || value === "completed" || value === "cancelled") {
-    return value
+  if (value === "planned" || value === "completed" || value === "canceled" || value === "cancelled") {
+    return value === "cancelled" ? "canceled" : value
   }
 
-  throw new Error(`Invalid interaction row: status must be planned, completed, or cancelled (${context})`)
+  throw new Error(`Invalid interaction row: status must be planned, completed, or canceled (${context})`)
 }
 
 const asProvenance = (value: unknown, context: string): InteractionRecord["provenance"] => {
-  if (value === "manual" || value === "from_calendar_sync" || value === "from_ai_review") {
+  if (value === "manual") {
     return value
   }
 
-  throw new Error(`Invalid interaction row: provenance must be manual, from_calendar_sync, or from_ai_review (${context})`)
+  throw new Error(`Invalid interaction row: provenance must be manual (${context})`)
 }
 
 export const decodeInteractionRow = (raw: unknown, context: string): InteractionRecord => {
@@ -66,6 +76,8 @@ export const decodeInteractionRow = (raw: unknown, context: string): Interaction
     scheduled_at: asString(row.scheduled_at, "scheduled_at", context),
     status: asStatus(row.status, context),
     provenance: asProvenance(row.provenance, context),
+    notes: asOptionalString(row.notes, "notes", context),
+    status_changed_at: asString(row.status_changed_at, "status_changed_at", context),
     created_at: asString(row.created_at, "created_at", context),
     updated_at: asString(row.updated_at, "updated_at", context),
   }

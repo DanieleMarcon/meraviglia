@@ -5,6 +5,7 @@ import type {
   InteractionParticipantRecord,
   InteractionRecord,
   InteractionRepository,
+  UpdateInteractionRecordInput,
   UpdateInteractionStatusRecordInput,
 } from "../repository/interactionRepository"
 import {
@@ -16,11 +17,13 @@ import {
   adaptCreateInteractionWritePayload,
   adaptInteractionParticipantWritePayloads,
   adaptUpdateInteractionStatusWritePayload,
+  adaptUpdateInteractionWritePayload,
 } from "./interactionWritePayloadAdapter"
 
 const INTERACTIONS_TABLE = "interactions"
 const INTERACTION_PARTICIPANTS_TABLE = "interaction_participants"
-const SELECT_INTERACTION_FIELDS = "id, workspace_id, type, scheduled_at, status, provenance, created_at, updated_at"
+const SELECT_INTERACTION_FIELDS =
+  "id, workspace_id, type, scheduled_at, status, provenance, notes, status_changed_at, created_at, updated_at"
 const SELECT_PARTICIPANT_FIELDS = "interaction_id, contact_id"
 
 export class SupabaseInteractionRepository implements InteractionRepository {
@@ -28,11 +31,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
     const organizationId = await this.resolveCurrentOrganizationId()
     const writePayload = adaptCreateInteractionWritePayload({ ...input, organization_id: organizationId })
 
-    const { data, error } = await supabase
-      .from(INTERACTIONS_TABLE)
-      .insert(writePayload)
-      .select(SELECT_INTERACTION_FIELDS)
-      .single()
+    const { data, error } = await supabase.from(INTERACTIONS_TABLE).insert(writePayload).select(SELECT_INTERACTION_FIELDS).single()
 
     if (error || !data) {
       throw toRepositoryError(error, "Failed to create interaction")
@@ -62,6 +61,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .from(INTERACTIONS_TABLE)
       .select(SELECT_INTERACTION_FIELDS)
       .eq("workspace_id", workspaceId)
+      .order("status", { ascending: true })
       .order("scheduled_at", { ascending: true })
 
     if (error) {
@@ -72,11 +72,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
   }
 
   async getInteractionById(id: string): Promise<InteractionRecord | null> {
-    const { data, error } = await supabase
-      .from(INTERACTIONS_TABLE)
-      .select(SELECT_INTERACTION_FIELDS)
-      .eq("id", id)
-      .maybeSingle()
+    const { data, error } = await supabase.from(INTERACTIONS_TABLE).select(SELECT_INTERACTION_FIELDS).eq("id", id).maybeSingle()
 
     if (error) {
       throw toRepositoryError(error, "Failed to load interaction")
@@ -89,28 +85,52 @@ export class SupabaseInteractionRepository implements InteractionRepository {
     return decodeInteractionRow(data, "getInteractionById")
   }
 
-  async updateInteractionStatus(id: string, input: UpdateInteractionStatusRecordInput): Promise<InteractionRecord> {
+  async updateInteractionStatus(id: string, input: UpdateInteractionStatusRecordInput): Promise<InteractionRecord | null> {
     const writePayload = adaptUpdateInteractionStatusWritePayload(input)
 
     const { data, error } = await supabase
       .from(INTERACTIONS_TABLE)
       .update(writePayload)
       .eq("id", id)
+      .eq("updated_at", input.expected_updated_at)
       .select(SELECT_INTERACTION_FIELDS)
-      .single()
+      .maybeSingle()
 
-    if (error || !data) {
+    if (error) {
       throw toRepositoryError(error, "Failed to update interaction status")
+    }
+
+    if (!data) {
+      return null
     }
 
     return decodeInteractionRow(data, "updateInteractionStatus")
   }
 
+  async updateInteraction(id: string, input: UpdateInteractionRecordInput): Promise<InteractionRecord | null> {
+    const writePayload = adaptUpdateInteractionWritePayload(input)
+
+    const { data, error } = await supabase
+      .from(INTERACTIONS_TABLE)
+      .update(writePayload)
+      .eq("id", id)
+      .eq("updated_at", input.expected_updated_at)
+      .select(SELECT_INTERACTION_FIELDS)
+      .maybeSingle()
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to update interaction")
+    }
+
+    if (!data) {
+      return null
+    }
+
+    return decodeInteractionRow(data, "updateInteraction")
+  }
+
   async replaceParticipants(interactionId: string, contactIds: string[]): Promise<InteractionParticipantRecord[]> {
-    const { error: deleteError } = await supabase
-      .from(INTERACTION_PARTICIPANTS_TABLE)
-      .delete()
-      .eq("interaction_id", interactionId)
+    const { error: deleteError } = await supabase.from(INTERACTION_PARTICIPANTS_TABLE).delete().eq("interaction_id", interactionId)
 
     if (deleteError) {
       throw toRepositoryError(deleteError, "Failed to replace participants")
@@ -118,10 +138,7 @@ export class SupabaseInteractionRepository implements InteractionRepository {
 
     const payloads = adaptInteractionParticipantWritePayloads(interactionId, contactIds)
 
-    const { data, error } = await supabase
-      .from(INTERACTION_PARTICIPANTS_TABLE)
-      .insert(payloads)
-      .select(SELECT_PARTICIPANT_FIELDS)
+    const { data, error } = await supabase.from(INTERACTION_PARTICIPANTS_TABLE).insert(payloads).select(SELECT_PARTICIPANT_FIELDS)
 
     if (error) {
       throw toRepositoryError(error, "Failed to replace participants")

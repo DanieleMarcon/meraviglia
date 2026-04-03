@@ -1,1 +1,1 @@
-export type InteractionStatus = "planned" | "completed" | "cancelled"
+export type InteractionStatus = "planned" | "completed" | "canceled"

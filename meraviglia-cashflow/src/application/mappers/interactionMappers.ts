@@ -12,6 +12,8 @@ export const mapInteractionRecordToDTO = (
     scheduled_at: record.scheduled_at,
     status: record.status,
     provenance: record.provenance,
+    notes: record.notes,
+    status_changed_at: record.status_changed_at,
     participant_contact_ids: participants
       .filter((participant) => participant.interaction_id === record.id)
       .map((participant) => participant.contact_id),

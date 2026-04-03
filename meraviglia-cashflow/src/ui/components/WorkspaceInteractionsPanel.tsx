@@ -15,6 +15,7 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
   const [contacts, setContacts] = useState<ContactDTO[]>([])
   const [interactions, setInteractions] = useState<InteractionDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
@@ -40,36 +41,58 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
     void loadData()
   }, [loadData])
 
-  const handleComplete = async (interactionId: string) => {
+  const handleStatusChange = async (
+    interactionId: string,
+    status: InteractionDTO["status"],
+    expectedUpdatedAt: string,
+  ) => {
     setErrorMessage(null)
 
     try {
-      await updateInteractionStatus(interactionId, { status: "completed" })
+      await updateInteractionStatus(interactionId, { status, expected_updated_at: expectedUpdatedAt })
       await loadData()
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to update interaction")
+      if (error instanceof Error && error.message.includes("updated elsewhere")) {
+        await loadData()
+      }
     }
   }
 
-  const handleCancel = async (interactionId: string) => {
-    setErrorMessage(null)
-
-    try {
-      await updateInteractionStatus(interactionId, { status: "cancelled" })
-      await loadData()
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to update interaction")
-    }
-  }
+  const hasNoContacts = !isLoading && contacts.length === 0
 
   return (
     <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
-      <h4>Interactions</h4>
-      <InteractionForm workspaceId={workspaceId} contacts={contacts} onCreated={loadData} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <h4 style={{ margin: 0 }}>Interactions</h4>
+        <button type="button" onClick={() => setIsCreateOpen(true)}>New interaction</button>
+      </div>
+
+      {isCreateOpen ? (
+        <InteractionForm
+          workspaceId={workspaceId}
+          contacts={contacts}
+          onCreated={loadData}
+          onCancel={() => setIsCreateOpen(false)}
+        />
+      ) : null}
+
       {isLoading ? <p>Loading interactions...</p> : null}
-      {!isLoading && interactions.length === 0 ? <p>No interactions found for this workspace.</p> : null}
+
+      {!isLoading && interactions.length === 0 ? (
+        <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
+          <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
+          <p style={{ margin: "0 0 8px" }}>Track planned calls, meetings, and follow-ups for this workspace.</p>
+          <button type="button" onClick={() => setIsCreateOpen(true)}>Create first interaction</button>
+        </div>
+      ) : null}
+
+      {hasNoContacts ? (
+        <p style={{ color: "#555" }}>You need at least one contact before creating an interaction.</p>
+      ) : null}
+
       {!isLoading && interactions.length > 0 ? (
-        <InteractionList interactions={interactions} contacts={contacts} onComplete={handleComplete} onCancel={handleCancel} />
+        <InteractionList interactions={interactions} contacts={contacts} onStatusChange={handleStatusChange} onEdited={loadData} />
       ) : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
