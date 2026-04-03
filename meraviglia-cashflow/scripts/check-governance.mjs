@@ -32,9 +32,9 @@ const allowedDependencies = {
   assets: new Set(["ui"])
 }
 
-
 const surfaceAccessPolicy = {
-  lib: new Set(["infra"])
+  lib: new Set(["infra"]),
+  shared: new Set(["ui", "application", "infra", "engine"])
 }
 
 // Narrowly-governed exception: composition root is the only application seam
@@ -50,6 +50,8 @@ const dependencyExceptions = [
 
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"])
 const deterministicFolder = path.join(srcRoot, "engine")
+const uiFolder = path.join(srcRoot, "ui")
+const supabaseClientPath = path.join(srcRoot, "lib", "supabaseClient.ts")
 // Engine determinism guardrails ban known nondeterministic runtime APIs.
 // These patterns are intentionally frozen to catch regressions early.
 const deterministicForbiddenPatterns = [
@@ -59,6 +61,11 @@ const deterministicForbiddenPatterns = [
   /\bperformance\.now\s*\(/,
   /\bcrypto\.randomUUID\s*\(/
 ]
+
+const sensitiveLogPattern = /\bconsole\.(?:log|info|warn|error|debug)\s*\([^\n)]*(?:token|secret|password|authorization|api[_-]?key|bearer|jwt|session[^a-z])/i
+const unsafeUiErrorRenderPattern = /\{\s*[^}\n]*\b(?:error|err)\.(?:message|stack)\b[^}\n]*\}/
+const imgTagMissingAltPattern = /<img\b(?![^>]*\balt=)[^>]*>/i
+const autoFocusPattern = /<[^>]+\bautoFocus\b[^>]*>/
 
 function walk(dir, output = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
@@ -133,6 +140,10 @@ function isTestFile(filePath) {
   return /(?:^|\/)__tests__\//.test(filePath) || /\.test\.[cm]?[jt]sx?$/.test(filePath)
 }
 
+function addViolation(violations, filePath, type, message, detail) {
+  violations.push({ type, filePath, message, detail })
+}
+
 function main() {
   if (!fs.existsSync(srcRoot)) {
     console.error("✖ src folder not found. Run this script from the project root.")
@@ -150,20 +161,41 @@ function main() {
     const imports = parseImports(sourceText)
 
     for (const specifier of imports) {
+      if (specifier === "@supabase/supabase-js" && filePath !== supabaseClientPath) {
+        addViolation(
+          violations,
+          filePath,
+          "security",
+          "forbidden direct @supabase/supabase-js usage outside lib/supabaseClient",
+          `import '${specifier}'`
+        )
+      }
+
       const resolvedImport = resolveImport(filePath, specifier)
       if (!resolvedImport) continue
+
+      if (resolvedImport === supabaseClientPath && sourceLayer !== "infra") {
+        addViolation(
+          violations,
+          filePath,
+          "security",
+          "forbidden direct supabase client dependency outside infra",
+          `import '${specifier}'`
+        )
+      }
 
       const targetLayer = findLayer(resolvedImport)
       if (!targetLayer) {
         const targetSurface = path.relative(srcRoot, resolvedImport).split(path.sep)[0]
         const allowedSurfaceSources = surfaceAccessPolicy[targetSurface]
         if (allowedSurfaceSources && !allowedSurfaceSources.has(sourceLayer)) {
-          violations.push({
-            type: "surface",
+          addViolation(
+            violations,
             filePath,
-            message: `forbidden import surface: ${sourceLayer} -> ${targetSurface}`,
-            detail: `import '${specifier}'`
-          })
+            "surface",
+            `forbidden import surface: ${sourceLayer} -> ${targetSurface}`,
+            `import '${specifier}'`
+          )
         }
         continue
       }
@@ -179,12 +211,55 @@ function main() {
       )
 
       if (!isAllowed && !hasException) {
-        violations.push({
-          type: "dependency",
+        addViolation(
+          violations,
           filePath,
-          message: `forbidden dependency direction: ${sourceLayer} -> ${targetLayer}`,
-          detail: `import '${specifier}'`
-        })
+          "dependency",
+          `forbidden dependency direction: ${sourceLayer} -> ${targetLayer}`,
+          `import '${specifier}'`
+        )
+      }
+    }
+
+    if (sensitiveLogPattern.test(sourceText) && !isTestFile(filePath)) {
+      addViolation(
+        violations,
+        filePath,
+        "security",
+        "forbidden sensitive console logging pattern",
+        sensitiveLogPattern.toString()
+      )
+    }
+
+    if (filePath.startsWith(uiFolder) && (path.extname(filePath) === ".tsx" || path.extname(filePath) === ".jsx")) {
+      if (unsafeUiErrorRenderPattern.test(sourceText)) {
+        addViolation(
+          violations,
+          filePath,
+          "security",
+          "forbidden raw error.message/error.stack render in UI",
+          unsafeUiErrorRenderPattern.toString()
+        )
+      }
+
+      if (imgTagMissingAltPattern.test(sourceText)) {
+        addViolation(
+          violations,
+          filePath,
+          "accessibility",
+          "img elements must include an alt attribute",
+          imgTagMissingAltPattern.toString()
+        )
+      }
+
+      if (autoFocusPattern.test(sourceText)) {
+        addViolation(
+          violations,
+          filePath,
+          "accessibility",
+          "autoFocus is forbidden to preserve predictable keyboard focus",
+          autoFocusPattern.toString()
+        )
       }
     }
 
@@ -193,12 +268,13 @@ function main() {
     if (filePath.startsWith(deterministicFolder) && !isTestFile(filePath)) {
       for (const pattern of deterministicForbiddenPatterns) {
         if (pattern.test(sourceText)) {
-          violations.push({
-            type: "determinism",
+          addViolation(
+            violations,
             filePath,
-            message: "forbidden nondeterministic API in engine source",
-            detail: pattern.toString()
-          })
+            "determinism",
+            "forbidden nondeterministic API in engine source",
+            pattern.toString()
+          )
         }
       }
     }
@@ -208,12 +284,12 @@ function main() {
     console.error(`✖ Governance check failed with ${violations.length} violation(s):`)
     for (const violation of violations) {
       const relativeFile = path.relative(projectRoot, violation.filePath)
-      console.error(`  - ${relativeFile}: ${violation.message} (${violation.detail})`)
+      console.error(`  - ${relativeFile}: [${violation.type}] ${violation.message} (${violation.detail})`)
     }
     process.exit(1)
   }
 
-  console.log("✔ Governance check passed: dependency directions and deterministic engine API guards are compliant.")
+  console.log("✔ Governance check passed: layer dependencies, deterministic engine APIs, and lightweight security/privacy/accessibility guardrails are compliant.")
 }
 
 main()

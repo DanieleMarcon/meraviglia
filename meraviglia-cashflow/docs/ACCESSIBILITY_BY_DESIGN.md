@@ -35,6 +35,7 @@ These rules apply directly to current app patterns:
 
 ## Enforcement map (M3.x post-consolidation)
 ### Code level (must enforce)
+- **Automated JSX guardrails:** `npm run check:governance` blocks `<img>` without `alt` and forbids `autoFocus` to reduce predictable keyboard-focus regressions.
 - **UI component rules:** interactive components must use semantic elements (`button`, `input`, `label`) or equivalent ARIA semantics when native elements are impossible.
 - **Error/blocked states:** mutation failures and blocked actions must render deterministic explanatory text, not generic toasts only.
 - **Minimal reusable patterns:** shared form-field and state-message patterns should be reused to keep labeling/error behavior consistent.

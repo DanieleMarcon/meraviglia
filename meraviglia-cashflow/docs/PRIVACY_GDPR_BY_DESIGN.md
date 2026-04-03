@@ -47,6 +47,7 @@ This section is a planning obligation and does **not** claim these items are alr
 
 ## Enforcement map (M3.x post-consolidation)
 ### Code level (must enforce)
+- **Automated architecture checks:** `npm run check:governance` enforces repository/DTO boundary dependency directions and shared-surface access constraints.
 - **DTO design constraints:** application DTOs expose only product-needed fields; repository records must be mapped explicitly to DTOs (no raw record pass-through to UI).
 - **Schema evolution rules:** new personal-data fields require explicit purpose note in PR and matching DTO/mapping updates.
 - **Deletion/retention implications:** mutation logic must preserve interaction history integrity; destructive changes require explicit handling decision (delete, anonymize, or block with reason).

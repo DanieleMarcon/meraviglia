@@ -68,4 +68,11 @@ Required local check before push:
 npm run check
 ```
 
-Use the repository PR template and complete all governance checklist items.
+`npm run check:governance` now automatically enforces a lightweight high-signal set of rules:
+- layer/surface dependency directions (including shared/lib boundaries)
+- deterministic engine API bans
+- Supabase client boundary protection (infra-only)
+- obvious sensitive console logging patterns
+- basic JSX accessibility guards (`img` requires `alt`, no `autoFocus`)
+
+Use the repository PR template and complete all governance checklist items for rules that remain review-only.
