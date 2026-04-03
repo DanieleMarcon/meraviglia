@@ -1,4 +1,4 @@
-import type { CreateContactInput } from "./dto/ContactContracts"
+import type { CreateContactInput, UpdateContactInput } from "./dto/ContactContracts"
 import type { ContactDTO } from "./dto/ContactDTO"
 import type { ContactRepository } from "../repository/contactRepository"
 import { mapContactRecordToDTO } from "./mappers/contactMappers"
@@ -21,6 +21,8 @@ const normalizeOptional = (value: string | null | undefined): string | null | un
   const normalized = value.trim()
   return normalized ? normalized : null
 }
+
+const STALE_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
 
 export class ContactService {
   private readonly contactRepository: ContactRepository
@@ -49,6 +51,24 @@ export class ContactService {
 
     return records.map(mapContactRecordToDTO)
   }
+
+  async updateContact(id: string, input: UpdateContactInput): Promise<ContactDTO> {
+    const contactId = requireNonEmpty(id, "id")
+    const updated = await this.contactRepository.updateContact(contactId, {
+      first_name: requireNonEmpty(input.first_name, "first_name"),
+      last_name: requireNonEmpty(input.last_name, "last_name"),
+      email: normalizeOptional(input.email) ?? null,
+      phone: normalizeOptional(input.phone) ?? null,
+      role: normalizeOptional(input.role) ?? null,
+      expected_updated_at: requireNonEmpty(input.expected_updated_at, "expected_updated_at"),
+    })
+
+    if (!updated) {
+      throw new Error(STALE_UPDATE_MESSAGE)
+    }
+
+    return mapContactRecordToDTO(updated)
+  }
 }
 
 let contactService: ContactService | null = null
@@ -71,4 +91,8 @@ export const createContact = async (input: CreateContactInput): Promise<ContactD
 
 export const listContactsByWorkspace = async (workspaceId: string): Promise<ContactDTO[]> => {
   return getContactService().listContactsByWorkspace(workspaceId)
+}
+
+export const updateContact = async (id: string, input: UpdateContactInput): Promise<ContactDTO> => {
+  return getContactService().updateContact(id, input)
 }

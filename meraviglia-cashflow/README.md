@@ -44,6 +44,7 @@ Current status of the codebase in relation to the target architecture:
 - ✅ Operational UI baseline available for Intake and Workspace workflows
 - ✅ M3 Interactions foundation completed and merged
 - ✅ Workspace contacts/interactions runtime stabilization completed
+- ✅ M3.x extension: historical interaction log ordering + contact edit workflow
 
 This means the repository is in a transition stage between MVP cashflow tooling and full Meraviglia OS modular architecture.
 

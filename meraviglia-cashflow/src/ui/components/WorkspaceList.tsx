@@ -51,7 +51,7 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
         contacts={contacts}
         isContactsReady={isContactsReady}
         errorMessage={contactsErrorMessage}
-        onCreated={loadContacts}
+        onChanged={loadContacts}
       />
       <WorkspaceInteractionsPanel
         workspaceId={workspace.id}

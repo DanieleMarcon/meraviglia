@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { adaptCreateContactWritePayload } from "../contactWritePayloadAdapter"
+import { adaptCreateContactWritePayload, adaptUpdateContactWritePayload } from "../contactWritePayloadAdapter"
 
 describe("contactWritePayloadAdapter", () => {
   it("adapts create payload shape", () => {
@@ -49,5 +49,24 @@ describe("contactWritePayloadAdapter", () => {
         provenance: "manual",
       }),
     ).toThrow("`organization_id` must be a string")
+  })
+
+  it("adapts update payload shape", () => {
+    const payload = adaptUpdateContactWritePayload({
+      first_name: "Ada",
+      last_name: "Byron",
+      email: null,
+      phone: "123",
+      role: "Founder",
+      expected_updated_at: "2025-01-01T00:00:00.000Z",
+    })
+
+    expect(payload).toEqual({
+      first_name: "Ada",
+      last_name: "Byron",
+      email: null,
+      phone: "123",
+      role: "Founder",
+    })
   })
 })

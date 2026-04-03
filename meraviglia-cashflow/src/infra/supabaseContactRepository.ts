@@ -1,8 +1,13 @@
 import { supabase } from "../lib/supabaseClient"
 import { toRepositoryError } from "./authorizationError"
 import { decodeContactRow, decodeContactRows } from "./contactRowDecoder"
-import { adaptCreateContactWritePayload } from "./contactWritePayloadAdapter"
-import type { ContactRepository, ContactRecord, CreateContactRecordInput } from "../repository/contactRepository"
+import { adaptCreateContactWritePayload, adaptUpdateContactWritePayload } from "./contactWritePayloadAdapter"
+import type {
+  ContactRepository,
+  ContactRecord,
+  CreateContactRecordInput,
+  UpdateContactRecordInput,
+} from "../repository/contactRepository"
 
 const TABLE_NAME = "contacts"
 const SELECT_FIELDS =
@@ -46,5 +51,27 @@ export class SupabaseContactRepository implements ContactRepository {
     }
 
     return decodeContactRows(data ?? [], "listContactsByWorkspace")
+  }
+
+  async updateContact(id: string, input: UpdateContactRecordInput): Promise<ContactRecord | null> {
+    const writePayload = adaptUpdateContactWritePayload(input)
+
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .update(writePayload)
+      .eq("id", id)
+      .eq("updated_at", input.expected_updated_at)
+      .select(SELECT_FIELDS)
+      .maybeSingle()
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to update contact")
+    }
+
+    if (!data) {
+      return null
+    }
+
+    return decodeContactRow(data, "updateContact")
   }
 }

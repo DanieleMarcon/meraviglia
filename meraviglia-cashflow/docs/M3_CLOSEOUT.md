@@ -65,6 +65,7 @@ When querying participants with interaction joins, explicit FK embedding is requ
 ## Runtime Behavior Guarantees
 - Shared contacts state is lifted at workspace item level and reused by contacts + interactions panels.
 - Interactions UI does not require manual refresh to reflect create/edit/status changes (reload orchestration handled in panel/service flows).
+- Interactions list supports historical multi-entry rendering with deterministic ordering by schedule timestamp.
 - Readiness gating avoids inconsistent UI rendering when contacts are not yet ready.
 - Optimistic concurrency guard (`expected_updated_at`) plus stale-update handling is enforced.
 - Deterministic stale-update error messaging is implemented.

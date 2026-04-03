@@ -18,6 +18,7 @@ describe("ContactService", () => {
         created_at: "2025-01-01T00:00:00.000Z",
         updated_at: "2025-01-01T00:00:00.000Z",
       }),
+      updateContact: vi.fn().mockResolvedValue(null),
       listContactsByWorkspace: vi.fn().mockResolvedValue([]),
     }
 
@@ -47,6 +48,7 @@ describe("ContactService", () => {
   it("lists contacts by workspace", async () => {
     const repository: ContactRepository = {
       createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue(null),
       listContactsByWorkspace: vi.fn().mockResolvedValue([
         {
           id: "ct-1",
@@ -68,5 +70,62 @@ describe("ContactService", () => {
 
     expect(repository.listContactsByWorkspace).toHaveBeenCalledWith("wk-1")
     expect(result).toHaveLength(1)
+  })
+
+  it("updates contacts preserving manual normalization rules", async () => {
+    const repository: ContactRepository = {
+      createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue({
+        id: "ct-1",
+        workspace_id: "wk-1",
+        first_name: "Ada",
+        last_name: "Byron",
+        email: null,
+        phone: "555",
+        role: "Founder",
+        provenance: "manual",
+        created_at: "2025-01-01T00:00:00.000Z",
+        updated_at: "2025-01-02T00:00:00.000Z",
+      }),
+      listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+    }
+
+    const service = new ContactService(repository)
+
+    await service.updateContact(" ct-1 ", {
+      first_name: " Ada ",
+      last_name: " Byron ",
+      email: "   ",
+      phone: " 555 ",
+      role: " Founder ",
+      expected_updated_at: "2025-01-01T00:00:00.000Z",
+    })
+
+    expect(repository.updateContact).toHaveBeenCalledWith("ct-1", {
+      first_name: "Ada",
+      last_name: "Byron",
+      email: null,
+      phone: "555",
+      role: "Founder",
+      expected_updated_at: "2025-01-01T00:00:00.000Z",
+    })
+  })
+
+  it("returns deterministic stale update message for optimistic concurrency conflicts", async () => {
+    const repository: ContactRepository = {
+      createContact: vi.fn(),
+      updateContact: vi.fn().mockResolvedValue(null),
+      listContactsByWorkspace: vi.fn().mockResolvedValue([]),
+    }
+
+    const service = new ContactService(repository)
+
+    await expect(
+      service.updateContact("ct-1", {
+        first_name: "Ada",
+        last_name: "Byron",
+        expected_updated_at: "2025-01-01T00:00:00.000Z",
+      }),
+    ).rejects.toThrow("This contact was updated elsewhere. Reloaded latest data.")
   })
 })
