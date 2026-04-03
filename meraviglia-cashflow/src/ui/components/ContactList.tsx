@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react"
 
-import { updateContact } from "../../application/contactService"
+import { deleteContact, updateContact } from "../../application/contactService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import { syncDraftWithLatestContact, toEditDraft, type EditDraft } from "./contactListUtils"
 
@@ -15,6 +15,7 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditDraft | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [shouldSyncDraftFromContacts, setShouldSyncDraftFromContacts] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -70,6 +71,25 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
     }
   }
 
+  const handleDelete = async (contactId: string) => {
+    setErrorMessage(null)
+    setDeletingId(contactId)
+
+    try {
+      await deleteContact(contactId)
+      if (editingId === contactId) {
+        setEditingId(null)
+        setDraft(null)
+      }
+      await onEdited()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to delete contact"
+      setErrorMessage(message)
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
@@ -113,7 +133,12 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
                   <p><strong>Phone:</strong> {contact.phone ?? "-"}</p>
                   <p><strong>Role:</strong> {contact.role ?? "-"}</p>
                   <p><strong>Provenance:</strong> {contact.provenance}</p>
-                  <button type="button" onClick={() => beginEdit(contact)}>Edit</button>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button type="button" onClick={() => beginEdit(contact)} disabled={deletingId === contact.id}>Edit</button>
+                    <button type="button" onClick={() => void handleDelete(contact.id)} disabled={deletingId === contact.id}>
+                      {deletingId === contact.id ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
                 </>
               )}
             </li>

@@ -13,6 +13,7 @@ type InteractionListProps = {
 }
 
 type EditDraft = {
+  status: InteractionDTO["status"]
   type: InteractionDTO["type"]
   scheduledAt: string
   notes: string
@@ -62,6 +63,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
     const datetimeValue = formatIsoToLocalDateTimeInput(interaction.scheduled_at)
     setEditingId(interaction.id)
     setDraft({
+      status: interaction.status,
       type: interaction.type,
       scheduledAt: datetimeValue,
       notes: interaction.notes ?? "",
@@ -116,6 +118,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {orderedInteractions.map((interaction) => {
           const isEditing = editingId === interaction.id && draft
+          const canEditParticipants = isEditing ? draft.status === "planned" : interaction.status === "planned"
 
           return (
             <li key={interaction.id} style={{ border: "1px solid #ddd", borderRadius: 4, padding: 8, marginBottom: 8 }}>
@@ -137,20 +140,26 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
                           onChange={(event) => setDraft({ ...draft, scheduledAt: event.target.value })}
                         />
                       </label>
-                      <fieldset>
-                        <legend>Participants</legend>
-                        {contacts.map((contact) => (
-                          <label key={contact.id} style={{ display: "block" }}>
-                            <input
-                              type="checkbox"
-                              checked={draft.participantIds.includes(contact.id)}
-                              onChange={(event) => toggleDraftParticipant(contact.id, event.target.checked)}
-                            />
-                            {" "}
-                            {contact.first_name} {contact.last_name}
-                          </label>
-                        ))}
-                      </fieldset>
+                      {canEditParticipants ? (
+                        <fieldset>
+                          <legend>Participants</legend>
+                          {contacts.map((contact) => (
+                            <label key={contact.id} style={{ display: "block" }}>
+                              <input
+                                type="checkbox"
+                                checked={draft.participantIds.includes(contact.id)}
+                                onChange={(event) => toggleDraftParticipant(contact.id, event.target.checked)}
+                              />
+                              {" "}
+                              {contact.first_name} {contact.last_name}
+                            </label>
+                          ))}
+                        </fieldset>
+                      ) : (
+                        <p style={{ margin: "8px 0" }}>
+                          <strong>Participants:</strong> immutable when interaction status is {STATUS_LABELS[draft.status].toLowerCase()}.
+                        </p>
+                      )}
                       <label style={{ display: "block" }}>
                         Notes
                         <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} rows={2} />

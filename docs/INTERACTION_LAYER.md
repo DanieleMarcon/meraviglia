@@ -69,6 +69,7 @@ Other provenance origins are not part of the current implemented runtime.
 - A contact referenced by one or more interactions cannot be deleted.
 - Interaction participants can be modified only while interaction status is `planned`.
 - Interactions in `completed` or `canceled` status are historical records; participants are immutable.
+- If an interaction is reopened to `planned`, participant membership becomes editable again under the same rules.
 - If a contact was previously blocked from deletion due to interaction references, it becomes deletable again only after all such references are removed.
 
 ## Interaction Semantics (Historical Record)

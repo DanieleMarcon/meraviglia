@@ -13,7 +13,7 @@
 
 ## Explicitly Not Included Yet
 - Multiple-interactions UX enhancements beyond current baseline list/form flows.
-- Contact deletion policy definition and associated workflow.
+- Advanced contact deletion UX beyond policy-enforcement baseline.
 - Advanced filtering and timeline-specific interaction UI.
 
 ---

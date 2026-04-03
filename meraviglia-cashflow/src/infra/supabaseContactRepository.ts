@@ -10,6 +10,7 @@ import type {
 } from "../repository/contactRepository"
 
 const TABLE_NAME = "contacts"
+const INTERACTION_PARTICIPANTS_TABLE = "interaction_participants"
 const SELECT_FIELDS =
   "id, workspace_id, first_name, last_name, email, phone, role, provenance, created_at, updated_at"
 
@@ -73,5 +74,29 @@ export class SupabaseContactRepository implements ContactRepository {
     }
 
     return decodeContactRow(data, "updateContact")
+  }
+
+  async isContactReferencedByAnyInteraction(contactId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from(INTERACTION_PARTICIPANTS_TABLE)
+      .select("contact_id")
+      .eq("contact_id", contactId)
+      .limit(1)
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to validate contact interaction references")
+    }
+
+    return (data ?? []).length > 0
+  }
+
+  async deleteContact(id: string): Promise<boolean> {
+    const { data, error } = await supabase.from(TABLE_NAME).delete().eq("id", id).select("id").maybeSingle()
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to delete contact")
+    }
+
+    return Boolean(data)
   }
 }
