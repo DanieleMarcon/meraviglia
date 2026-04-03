@@ -1,38 +1,33 @@
 # Technical Decisions Log
 
-## Why React + Vite?
+## Frontend Foundation
+### Why React + Vite?
+- Fast iteration for operational UI flows.
+- Clear component boundaries for layered architecture.
 
-- Fast iteration
-- Lightweight setup
-- Modern ecosystem
+### Why TypeScript strict mode?
+- Prevents silent contract drift across domain/application/infra/ui.
+- Enforces safer DTO and mapper boundaries.
 
----
+## Backend and Data Access
+### Why Supabase (Postgres + PostgREST)?
+- Managed Postgres with RLS support for org isolation.
+- PostgREST enables typed repository adapters with explicit query contracts.
 
-## Why TypeScript strict mode?
+### Why repository pattern?
+- Keeps application services storage-agnostic.
+- Centralizes Supabase-specific behavior inside `infra` adapters.
 
-- Prevent silent financial logic errors
-- Maintain long-term scalability
+### Why DTO + mapper separation?
+- Stabilizes UI-facing contracts.
+- Isolates decode/normalization and persistence shape concerns.
 
----
+## State and Runtime
+### Why local lifted state (no global state manager)?
+- Current interaction/contacts scope is workspace-local and manageable without global stores.
+- Keeps runtime behavior explicit (readiness gating + reload orchestration).
 
-## Why localStorage first?
-
-- Zero backend dependency
-- Fast prototyping
-- Replaceable persistence layer
-
----
-
-## Why CSS Grid for Timeline?
-
-- Structural alignment guarantee
-- Scalable to 24+ months
-- Clean overlay support
-
----
-
-## Why pure financial engine?
-
-- Testable
-- Deterministic
-- Portable to backend later
+## Infrastructure
+### Why Docker for local and Vercel for deploy?
+- Docker standardizes local service workflows.
+- Vercel provides predictable frontend deployment for current app shape.

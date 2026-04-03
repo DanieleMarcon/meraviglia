@@ -42,8 +42,8 @@ Current status of the codebase in relation to the target architecture:
 - ✅ Governance baseline for multi-tenant RBAC and isolation formalized
 - ✅ Intake baseline implemented
 - ✅ Operational UI baseline available for Intake and Workspace workflows
-- 🔜 Further refinement planned in upcoming roadmap phases
-- ⏳ Application-layer-first architecture transition in progress
+- ✅ M3 Interactions foundation completed and merged
+- ✅ Workspace contacts/interactions runtime stabilization completed
 
 This means the repository is in a transition stage between MVP cashflow tooling and full Meraviglia OS modular architecture.
 
@@ -60,12 +60,18 @@ Current capabilities include:
 - Local service catalog persistence
 
 ## Tech Stack
-- React + Vite
+- React (Vite)
 - TypeScript (strict mode)
-- Recharts
-- html-to-image
-- UUID
-- Supabase (auth foundation)
+- Supabase (Postgres + PostgREST)
+- Repository pattern with DTO mappers
+- Local lifted state (no global state manager)
+- Docker (local development)
+- Vercel (deployment)
+
+## M3 Closeout Reference
+Authoritative M3 closure and implementation-aligned runtime notes are documented in:
+
+- [`docs/M3_CLOSEOUT.md`](docs/M3_CLOSEOUT.md)
 
 ## Clean Project Tree (Current)
 ```text
@@ -81,6 +87,7 @@ meraviglia-cashflow/
 │   ├── infra/
 │   ├── lib/
 │   ├── repository/
+│   ├── shared/
 │   ├── state/
 │   └── ui/
 ├── CODEX_SYSTEM_PROMPT.md
