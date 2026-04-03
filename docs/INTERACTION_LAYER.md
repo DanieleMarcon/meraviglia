@@ -60,8 +60,24 @@ Other provenance origins are not part of the current implemented runtime.
 ## Boundary Rules
 - Interaction records are always workspace-owned.
 - Participant linkage must resolve to workspace-compatible contact references.
+- Interaction must always include at least one participant.
 - Outcome and memory linkage are optional and can remain deferred in early slices.
 - External calendars, AI generation, recurrence logic, and workflow automation are integration concerns, not foundational interaction ownership.
+
+## Contact Lifecycle Policy (Authoritative)
+- A contact can be deleted only when it is not referenced by any interaction.
+- A contact referenced by one or more interactions cannot be deleted.
+- Interaction participants can be modified only while interaction status is `planned`.
+- Interactions in `completed` or `canceled` status are historical records; participants are immutable.
+- If a contact was previously blocked from deletion due to interaction references, it becomes deletable again only after all such references are removed.
+
+## Interaction Semantics (Historical Record)
+Interactions are workspace history artifacts, not just scheduling containers.
+
+- `planned`: mutable operational state (including participant updates under lifecycle rules).
+- `completed` / `canceled`: immutable historical state for participant composition.
+
+This immutability boundary is intentional and preserves workspace historical integrity.
 
 ## Scheduling Foundation Framing
 Scheduling Foundation is the **first implementation slice of the Interaction Layer**, not the full layer.
@@ -88,3 +104,12 @@ Future slices may add:
 - AI-assisted review under augmentation-layer controls.
 
 These extensions must preserve strategic ownership in workspace context and must not redefine Meraviglia OS as a calendar or CRM system.
+
+## Future evolution — history fidelity
+Potential history-fidelity extensions are intentionally scoped to record quality:
+
+- audit trail support to track interaction-level changes over time,
+- participant replacement history (who was replaced and when),
+- participant revisions via versioned participant snapshots.
+
+These are architectural continuity directions for stronger historical traceability, not a delivery roadmap.
