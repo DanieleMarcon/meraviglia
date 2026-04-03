@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { listContactsByWorkspace } from "../../application/contactService"
 import { listInteractionsByWorkspace, updateInteractionStatus } from "../../application/interactionService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import type { InteractionDTO } from "../../application/dto/InteractionDTO"
@@ -9,10 +8,11 @@ import InteractionList from "./InteractionList"
 
 type WorkspaceInteractionsPanelProps = {
   workspaceId: string
+  contacts: ContactDTO[]
+  isContactsLoading: boolean
 }
 
-function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelProps) {
-  const [contacts, setContacts] = useState<ContactDTO[]>([])
+function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading }: WorkspaceInteractionsPanelProps) {
   const [interactions, setInteractions] = useState<InteractionDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -23,12 +23,7 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
     setErrorMessage(null)
 
     try {
-      const [workspaceContacts, workspaceInteractions] = await Promise.all([
-        listContactsByWorkspace(workspaceId),
-        listInteractionsByWorkspace(workspaceId),
-      ])
-
-      setContacts(workspaceContacts)
+      const workspaceInteractions = await listInteractionsByWorkspace(workspaceId)
       setInteractions(workspaceInteractions)
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to load interactions")
@@ -59,7 +54,7 @@ function WorkspaceInteractionsPanel({ workspaceId }: WorkspaceInteractionsPanelP
     }
   }
 
-  const hasNoContacts = !isLoading && contacts.length === 0
+  const hasNoContacts = !isLoading && !isContactsLoading && contacts.length === 0
 
   return (
     <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
