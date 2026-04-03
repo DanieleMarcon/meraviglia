@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "../../ui/components/interactionDateTime"
+import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "../../shared/utils/interactionDateTime"
 
 describe("interactionDateTime", () => {
   it("formats ISO UTC values for datetime-local without UTC slicing", () => {

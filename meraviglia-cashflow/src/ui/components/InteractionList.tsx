@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 
 import { updateInteraction } from "../../application/interactionService"
-import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "./interactionDateTime"
+import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "../../shared/utils/interactionDateTime"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import type { InteractionDTO } from "../../application/dto/InteractionDTO"
 

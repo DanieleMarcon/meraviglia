@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from "react"
 
 import { createInteraction } from "../../application/interactionService"
-import { localDateTimeInputToIso } from "./interactionDateTime"
+import { localDateTimeInputToIso } from "../../shared/utils/interactionDateTime"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 
 type InteractionTypeOption = "meeting" | "call" | "follow_up"
