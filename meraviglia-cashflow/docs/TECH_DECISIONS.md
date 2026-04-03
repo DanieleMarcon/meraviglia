@@ -31,3 +31,11 @@
 ### Why Docker for local and Vercel for deploy?
 - Docker standardizes local service workflows.
 - Vercel provides predictable frontend deployment for current app shape.
+
+## Development Governance Baseline
+### Why dedicated by-design policy docs?
+- Keep security, privacy/GDPR, and accessibility constraints implementation-oriented and reviewable during normal delivery.
+- Avoid fragmented guidance by centralizing practical guardrails and PR checklists in:
+  - `SECURITY_BY_DESIGN.md`
+  - `PRIVACY_GDPR_BY_DESIGN.md`
+  - `ACCESSIBILITY_BY_DESIGN.md`

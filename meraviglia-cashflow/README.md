@@ -75,6 +75,12 @@ Authoritative M3 closure and implementation-aligned runtime notes are documented
 
 - [`docs/M3_CLOSEOUT.md`](docs/M3_CLOSEOUT.md)
 
+## Development Guardrails
+The module now follows practical by-design development policies for:
+- Security: [`docs/SECURITY_BY_DESIGN.md`](docs/SECURITY_BY_DESIGN.md)
+- Privacy/GDPR: [`docs/PRIVACY_GDPR_BY_DESIGN.md`](docs/PRIVACY_GDPR_BY_DESIGN.md)
+- Accessibility: [`docs/ACCESSIBILITY_BY_DESIGN.md`](docs/ACCESSIBILITY_BY_DESIGN.md)
+
 ## Clean Project Tree (Current)
 ```text
 meraviglia-cashflow/
