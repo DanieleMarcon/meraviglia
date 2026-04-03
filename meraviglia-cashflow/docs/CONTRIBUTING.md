@@ -50,3 +50,22 @@ feature/* → development branches
 - Engine isolation
 - UI separation
 - Type safety
+
+---
+
+## Governance enforcement (required)
+
+Every PR must satisfy security, privacy, and accessibility by-design controls:
+
+1. Keep architecture boundaries intact (`ui -> application -> repository/infra`).
+2. Preserve deterministic, sanitized error handling.
+3. Apply data minimization for DTO/schema changes.
+4. Keep keyboard/label/error-state accessibility behavior intact for UI changes.
+
+Required local check before push:
+
+```bash
+npm run check
+```
+
+Use the repository PR template and complete all governance checklist items.

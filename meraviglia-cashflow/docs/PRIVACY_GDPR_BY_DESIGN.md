@@ -44,3 +44,23 @@ This section is a planning obligation and does **not** claim these items are alr
 - [ ] Are retention implications explicit (or intentionally deferred with owner noted)?
 - [ ] Does the workflow consider export/deletion implications?
 - [ ] Are contact/interaction history integrity constraints preserved?
+
+## Enforcement map (M3.x post-consolidation)
+### Code level (must enforce)
+- **DTO design constraints:** application DTOs expose only product-needed fields; repository records must be mapped explicitly to DTOs (no raw record pass-through to UI).
+- **Schema evolution rules:** new personal-data fields require explicit purpose note in PR and matching DTO/mapping updates.
+- **Deletion/retention implications:** mutation logic must preserve interaction history integrity; destructive changes require explicit handling decision (delete, anonymize, or block with reason).
+
+### PR review level (must enforce)
+- Any schema or DTO change must include data-minimization rationale.
+- Any new personal-data field must identify retention intent (`defined now` or `deferred with owner`).
+- Any deletion flow change must state impact on linked interactions and auditability.
+
+### Architecture level (must enforce)
+- Repository pattern remains the only persistence abstraction for personal-data entities.
+- RLS remains active on tenant-sensitive tables; privacy controls never rely on UI filtering.
+- DTO contracts remain an anti-leak boundary between persistence model and UI model.
+
+### Guideline-only (for now)
+- Automated static scan for personal-data field naming drift.
+- Full retention scheduler and DSAR workflow automation (planned, not blocked for current milestone).

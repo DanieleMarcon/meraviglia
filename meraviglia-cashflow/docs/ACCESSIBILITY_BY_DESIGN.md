@@ -32,3 +32,23 @@ These rules apply directly to current app patterns:
 - [ ] Do blocked actions explain reason and recovery path?
 - [ ] Is focus behavior coherent after mutation and error states?
 - [ ] Are loading/empty/error states explicit and predictable?
+
+## Enforcement map (M3.x post-consolidation)
+### Code level (must enforce)
+- **UI component rules:** interactive components must use semantic elements (`button`, `input`, `label`) or equivalent ARIA semantics when native elements are impossible.
+- **Error/blocked states:** mutation failures and blocked actions must render deterministic explanatory text, not generic toasts only.
+- **Minimal reusable patterns:** shared form-field and state-message patterns should be reused to keep labeling/error behavior consistent.
+
+### PR review level (must enforce)
+- PRs touching forms/actions must confirm keyboard operability and visible labeling.
+- PRs introducing blocked states must include reason + recovery message.
+- PR reviewer verifies that accessibility regressions are not introduced in loading/empty/error states.
+
+### Architecture level (must enforce)
+- Accessibility behavior is part of UI acceptance criteria, not post-hoc polish.
+- Deterministic application error mapping is preserved so UI messages stay understandable.
+- Reusable UI primitives are preferred over ad-hoc per-screen implementations when available.
+
+### Guideline-only (for now)
+- Automated a11y testing in CI (deferred until lightweight tooling is selected).
+- Formal WCAG conformance scoring workflow.

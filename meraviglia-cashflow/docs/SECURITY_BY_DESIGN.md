@@ -40,3 +40,23 @@ This document defines mandatory development guardrails for the current Meravigli
 - [ ] Are error messages sanitized for UI while remaining actionable for developers?
 - [ ] Are secrets/credentials handled only via environment configuration?
 - [ ] Are new dependencies justified and reviewed?
+
+## Enforcement map (M3.x post-consolidation)
+### Code level (must enforce)
+- **Input validation location:** application services validate command inputs before repository writes; repositories reject invalid persistence shapes as a second guard.
+- **Error model standardization:** application/domain throw typed, sanitized errors; UI renders only mapped user-facing messages.
+- **Repository vs UI boundaries:** UI must call application services only; direct UI calls to Supabase clients are forbidden.
+
+### PR review level (must enforce)
+- Every PR touching mutations must show where input validation runs.
+- Every PR introducing new error paths must map to deterministic user-facing messages.
+- Every PR touching data access must confirm boundary integrity (UI → application → repository/infra).
+
+### Architecture level (must enforce)
+- Keep RLS authoritative for tenant isolation.
+- Keep composition root as the only place wiring infra adapters into application services.
+- Preserve dependency-direction governance checks (`npm run check:governance`) as required CI gate.
+
+### Guideline-only (for now)
+- Centralized validation helper unification across all services.
+- Unified telemetry/error-code catalog for developer diagnostics.
