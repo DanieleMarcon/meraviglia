@@ -47,24 +47,15 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
-  const grouped = useMemo(() => {
-    const planned = interactions
-      .filter((item) => item.status === "planned")
-      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
+  const orderedInteractions = useMemo(() => {
+    return [...interactions].sort((left, right) => {
+      const scheduledDelta = new Date(right.scheduled_at).getTime() - new Date(left.scheduled_at).getTime()
+      if (scheduledDelta !== 0) {
+        return scheduledDelta
+      }
 
-    const completed = interactions
-      .filter((item) => item.status === "completed")
-      .sort((a, b) => new Date(b.status_changed_at).getTime() - new Date(a.status_changed_at).getTime())
-
-    const canceled = interactions
-      .filter((item) => item.status === "canceled")
-      .sort((a, b) => new Date(b.status_changed_at).getTime() - new Date(a.status_changed_at).getTime())
-
-    return [
-      { key: "planned", label: "Planned", items: planned },
-      { key: "completed", label: "Completed", items: completed },
-      { key: "canceled", label: "Canceled", items: canceled },
-    ] as const
+      return new Date(right.created_at).getTime() - new Date(left.created_at).getTime()
+    })
   }, [interactions])
 
   const beginEdit = (interaction: InteractionDTO) => {
@@ -122,16 +113,12 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
 
   return (
     <div>
-      {grouped.map((group) => (
-        <div key={group.key} style={{ marginBottom: 12 }}>
-          <h5 style={{ marginBottom: 8 }}>{group.label}</h5>
-          {group.items.length === 0 ? <p style={{ margin: 0 }}>No {group.label.toLowerCase()} interactions.</p> : null}
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {group.items.map((interaction) => {
-              const isEditing = editingId === interaction.id && draft
+      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        {orderedInteractions.map((interaction) => {
+          const isEditing = editingId === interaction.id && draft
 
-              return (
-                <li key={interaction.id} style={{ border: "1px solid #ddd", borderRadius: 4, padding: 8, marginBottom: 8 }}>
+          return (
+            <li key={interaction.id} style={{ border: "1px solid #ddd", borderRadius: 4, padding: 8, marginBottom: 8 }}>
                   {isEditing ? (
                     <div>
                       <label style={{ display: "block" }}>
@@ -205,12 +192,10 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
                       </div>
                     </>
                   )}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      ))}
+            </li>
+          )
+        })}
+      </ul>
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </div>
   )

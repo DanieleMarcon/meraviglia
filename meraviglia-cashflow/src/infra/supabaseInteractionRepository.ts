@@ -61,8 +61,8 @@ export class SupabaseInteractionRepository implements InteractionRepository {
       .from(INTERACTIONS_TABLE)
       .select(SELECT_INTERACTION_FIELDS)
       .eq("workspace_id", workspaceId)
-      .order("status", { ascending: true })
-      .order("scheduled_at", { ascending: true })
+      .order("scheduled_at", { ascending: false })
+      .order("created_at", { ascending: false })
 
     if (error) {
       throw toRepositoryError(error, "Failed to list interactions")

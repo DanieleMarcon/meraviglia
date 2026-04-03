@@ -51,7 +51,6 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
       setNotes("")
       setParticipantIds([])
       await onCreated()
-      onCancel()
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to create interaction")
     } finally {

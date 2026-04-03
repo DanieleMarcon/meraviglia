@@ -1,4 +1,4 @@
-import type { CreateContactRecordInput } from "../repository/contactRepository"
+import type { CreateContactRecordInput, UpdateContactRecordInput } from "../repository/contactRepository"
 
 type CreateContactWritePayload = {
   organization_id: string
@@ -9,6 +9,14 @@ type CreateContactWritePayload = {
   phone?: string | null
   role?: string | null
   provenance: CreateContactRecordInput["provenance"]
+}
+
+type UpdateContactWritePayload = {
+  first_name: string
+  last_name: string
+  email?: string | null
+  phone?: string | null
+  role?: string | null
 }
 
 const isObject = (value: unknown): value is Record<string, unknown> => {
@@ -76,6 +84,32 @@ export const adaptCreateContactWritePayload = (
 
   return payload
 }
+
+export const adaptUpdateContactWritePayload = (input: UpdateContactRecordInput): UpdateContactWritePayload => {
+  if (!isObject(input)) {
+    throw new Error("Invalid updateContact payload: input must be an object")
+  }
+
+  const payload: UpdateContactWritePayload = {
+    first_name: assertString(input.first_name, "first_name", "updateContact"),
+    last_name: assertString(input.last_name, "last_name", "updateContact"),
+  }
+
+  if ("email" in input && input.email !== undefined) {
+    payload.email = assertNullableString(input.email, "email", "updateContact")
+  }
+
+  if ("phone" in input && input.phone !== undefined) {
+    payload.phone = assertNullableString(input.phone, "phone", "updateContact")
+  }
+
+  if ("role" in input && input.role !== undefined) {
+    payload.role = assertNullableString(input.role, "role", "updateContact")
+  }
+
+  return payload
+}
+
 const isContactProvenance = (value: unknown): value is CreateContactRecordInput["provenance"] => {
   return value === "manual" || value === "from_intake" || value === "from_ai_review"
 }
