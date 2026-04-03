@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react"
 
 import { createInteraction } from "../../application/interactionService"
+import { localDateTimeInputToIso } from "./interactionDateTime"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 
 type InteractionTypeOption = "meeting" | "call" | "follow_up"
@@ -35,7 +36,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
     setErrorMessage(null)
 
     try {
-      const scheduledAtIso = new Date(scheduledAt).toISOString()
+      const scheduledAtIso = localDateTimeInputToIso(scheduledAt)
 
       await createInteraction({
         workspace_id: workspaceId,

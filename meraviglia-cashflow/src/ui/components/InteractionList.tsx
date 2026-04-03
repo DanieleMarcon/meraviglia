@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 
 import { updateInteraction } from "../../application/interactionService"
+import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "./interactionDateTime"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import type { InteractionDTO } from "../../application/dto/InteractionDTO"
 
@@ -67,7 +68,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
   }, [interactions])
 
   const beginEdit = (interaction: InteractionDTO) => {
-    const datetimeValue = interaction.scheduled_at.slice(0, 16)
+    const datetimeValue = formatIsoToLocalDateTimeInput(interaction.scheduled_at)
     setEditingId(interaction.id)
     setDraft({
       type: interaction.type,
@@ -104,7 +105,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
     try {
       await updateInteraction(interactionId, {
         type: draft.type,
-        scheduled_at: new Date(draft.scheduledAt).toISOString(),
+        scheduled_at: localDateTimeInputToIso(draft.scheduledAt),
         notes: draft.notes,
         participant_contact_ids: draft.participantIds,
         expected_updated_at: draft.expectedUpdatedAt,
