@@ -12,6 +12,7 @@ function IntakeView() {
   const [intakes, setIntakes] = useState<IntakeDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const loadIntakes = useCallback(async () => {
     setIsLoading(true)
@@ -31,15 +32,18 @@ function IntakeView() {
     void loadIntakes()
   }, [loadIntakes])
 
-  const handleConverted = useCallback(async () => {
+  const handleConverted = useCallback(async (workspace: { id: string; workspace_name: string }) => {
     await loadIntakes()
-    window.dispatchEvent(new Event(WORKSPACE_CONVERTED_EVENT))
+    setSuccessMessage(`Intake converted. Workspace "${workspace.workspace_name}" is ready below.`)
+    window.dispatchEvent(new CustomEvent(WORKSPACE_CONVERTED_EVENT, { detail: workspace }))
+    document.getElementById("workspaces-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
   }, [loadIntakes])
 
   return (
     <section style={{ marginTop: 32 }}>
       <h1>Intake Operations</h1>
       <IntakeForm onCreated={loadIntakes} />
+      {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
       {isLoading ? <p>Loading intakes...</p> : <IntakeList intakes={intakes} onConverted={handleConverted} />}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>

@@ -16,11 +16,13 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
   const [role, setRole] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
     setErrorMessage(null)
+    setSuccessMessage(null)
 
     try {
       await createContact({
@@ -39,6 +41,7 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
       setPhone("")
       setRole("")
       await onCreated()
+      setSuccessMessage("Contact added. It is now available for interactions.")
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create contact"))
     } finally {
@@ -71,6 +74,7 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
       </label>
       <button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating..." : "Add contact"}</button>
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
+      {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
     </form>
   )
 }

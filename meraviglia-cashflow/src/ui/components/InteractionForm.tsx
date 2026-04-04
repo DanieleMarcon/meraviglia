@@ -33,6 +33,12 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (participantIds.length === 0) {
+      setErrorMessage("Select at least one participant before saving this interaction.")
+      return
+    }
+
     setIsSubmitting(true)
     setErrorMessage(null)
 

@@ -5,7 +5,7 @@ import { convertIntakeToWorkspace } from "../../application/intakeService"
 
 type ConvertIntakeButtonProps = {
   intakeId: string
-  onConverted: () => Promise<void> | void
+  onConverted: (workspace: { id: string; workspace_name: string }) => Promise<void> | void
 }
 
 function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps) {
@@ -17,8 +17,8 @@ function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps
     setErrorMessage(null)
 
     try {
-      await convertIntakeToWorkspace(intakeId)
-      await onConverted()
+      const { workspace } = await convertIntakeToWorkspace(intakeId)
+      await onConverted({ id: workspace.id, workspace_name: workspace.workspace_name })
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to convert intake"))
     } finally {
