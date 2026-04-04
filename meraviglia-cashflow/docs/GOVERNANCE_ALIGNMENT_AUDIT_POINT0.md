@@ -13,13 +13,13 @@ What is strong right now:
 - Governance docs are explicit about their enforcement map and explicitly state automation limits.
 
 What is still weak:
-- UI error sanitization is inconsistent with the written security policy: raw repository error messages can still reach UI.
+- UI-facing error propagation now uses sanitized deterministic mapping; raw backend/internal message passthrough is closed for Point 0.
 - Privacy/GDPR documentation declares retention/deletion handling requirements, but runtime currently enforces only delete-block semantics for referenced contacts.
 - Accessibility automation is intentionally shallow (correct choice), but several expectations remain review-only and therefore fragile under delivery pressure.
 
 Bottom line:
 - **No architecture reset needed.**
-- **One must-fix gap before UX hardening:** deterministic sanitized error mapping end-to-end.
+- The previously must-fix sanitized error mapping gap has been resolved.
 - Everything else can proceed under controlled deferral.
 
 ---
@@ -41,7 +41,7 @@ Bottom line:
 - Repositories use typed row decoders and write payload adapters.
 
 Gap inside this area:
-- `toRepositoryError` can pass through raw backend error messages, which conflicts with policy-level requirement to avoid exposing infrastructure internals.
+- No open Point 0 blocker remains in this area after sanitized deterministic mapping closure.
 
 #### Policy/review-only
 - Validation completeness for all mutation paths remains partially review-dependent (the script does not inspect semantic validation coverage).
@@ -128,17 +128,15 @@ Correct direction: keep this gate lightweight + high-signal, and enforce deeper 
 - M3 closeout semantics align with interaction/contact lifecycle behavior.
 
 ### Contradictions / overstatements
-1. **Security doc vs runtime behavior**: policy states UI-facing errors must not expose internals, but infra error mapper can return backend error messages.
-2. **Legacy prompt docs drift**: root prompt protocol and task template still reference obsolete milestone framing and outdated layer naming, which can generate governance-misaligned prompts.
+1. **Legacy prompt docs drift**: root prompt protocol and task template still reference obsolete milestone framing and outdated layer naming, which can generate governance-misaligned prompts.
 
 ---
 
 ## 2.5 Critical gaps (actionable only)
 
-### Must fix before UX hardening
+### Resolved
 1. **Sanitized error mapping gap (security + accessibility coherence)**
-   - Enforce a deterministic app-level error catalog/mapping so UI never surfaces raw backend/internal messages.
-   - Keep developer diagnostics in secure logs/tests, not user messages.
+   - Deterministic user-safe mapping is now enforced for UI-facing error propagation paths.
 
 ### Safe to defer
 1. **Retention/DSAR operationalization**
@@ -178,22 +176,29 @@ This is the baseline state for all next phases:
 
 ## 4) Go / No-Go for First Usable Version + UX Hardening
 
-Status: **Conditional GO**.
+Status: **GO (constrained)**.
 
 Ready means:
 1. Architecture boundaries remain unchanged and check-governance stays mandatory.
 2. UX hardening work does not bypass application services or DTO boundaries.
-3. One blocking gap is closed first: deterministic sanitized error mapping.
+3. Sanitized deterministic error mapping remains mandatory and already implemented.
 
-If that blocker is not fixed, UX hardening will likely increase inconsistency and surface internal messages to users.
+FUV can proceed under explicit operational constraints.
 
 ---
 
 ## 5) Recommended next step (minimal)
 
-Execute a narrow "M3.x governance patch":
-1. Introduce centralized user-safe error mapping at application boundary.
-2. Refactor existing services/views to consume mapped messages only.
-3. Add targeted tests proving internal/backend messages are not rendered in UI paths.
+Start First Usable Version / UX Hardening under constrained execution:
+1. No new business logic in `state`.
+2. No UI → infra shortcuts.
+3. Only sanitized mapped errors in UI.
+4. Prompting Protocol V2 as the sole valid entry point.
 
-Then start First Usable Version / UX Hardening immediately after this patch.
+## Point 0 — Final Status
+
+- Status: CLOSED
+- Blockers: none
+- Known risks:
+  - state-layer orchestration drift (review-controlled)
+  - prompt surface legacy artifacts (review-controlled)

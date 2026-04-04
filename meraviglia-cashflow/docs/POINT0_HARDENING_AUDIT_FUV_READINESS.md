@@ -5,9 +5,9 @@ Scope: Focused Point 0 operational readiness audit (error boundary, state bounda
 
 ## 1) Point 0 readiness verdict
 
-**READY WITH NARROW CONDITIONS**
+**CLOSED / FUV READY WITH CONSTRAINTS**
 
-Rationale: the operational baseline is largely stable and check-gated (`npm run check` green), but one governance-critical seam remains too permissive for FUV: repository error fallback still allows raw backend/internal messages to reach user-facing UI render paths.
+Rationale: the operational baseline is stable and check-gated (`npm run check` green), and the previously identified governance-critical seam is now resolved through deterministic sanitized error mapping across repository/application/UI pathways.
 
 ---
 
@@ -21,12 +21,11 @@ Rationale: the operational baseline is largely stable and check-gated (`npm run 
 - Governance script blocks direct JSX rendering of `error.message`/`error.stack` object properties, reducing one class of raw-leak regressions.
 
 #### What is weak
-- `toRepositoryError` still falls back to `error?.message` for non-mapped cases. This can propagate raw backend/provider/internal text (including implementation details) to upstream callers.
-- UI paths widely render caught `Error.message` directly (`error instanceof Error ? error.message : fallback`), so any raw message escaping the mapper remains user-visible.
-- Sanitization is deterministic only for selected classes (authz/authn), not for the full repository/application error surface.
+- No remaining Point 0 blocker is open in this area after sanitized deterministic mapping closure.
+- Error propagation to UI now follows mapped user-safe messages for repository/application failure paths.
 
 #### Point 0 implication
-- This is the primary drift vector still capable of violating the stated deterministic sanitized-error policy during UX hardening.
+- Resolved for Point 0 closure; continue enforcing mapped user-safe messages during FUV changes.
 
 ---
 
@@ -69,11 +68,11 @@ Rationale: the operational baseline is largely stable and check-gated (`npm run 
 - Error states are rendered textually in primary flows rather than hidden-only side effects.
 
 #### What is weak
-- Error message determinism is not guaranteed end-to-end because UI relies on thrown message text.
+- Error message determinism is now governed by sanitized mapped errors for UI-facing flows.
 - Some “blocked” outcomes are represented mostly by disabled controls with minimal recovery guidance depth (adequate for Point 0, but still review-enforced quality).
 
 #### Point 0 implication
-- UX-state coverage is sufficiently present for hardening, provided the error-sanitization seam is tightened first.
+- UX-state coverage is sufficiently present for hardening under the defined operational constraints.
 
 ---
 
@@ -96,35 +95,38 @@ Rationale: the operational baseline is largely stable and check-gated (`npm run 
 - **intentionally deferred**
   - Stricter state-boundary tightening (e.g., reducing practical shortcut opportunity) can be deferred if FUV is executed with explicit guardrails.
 
-- **still blocking (for unconstrained FUV)**
-  - Repository error fallback can still expose raw backend/internal messages to user-facing render paths.
+- **resolved**
+  - Error-boundary blocker closed via sanitized deterministic mapping; raw backend/internal message passthrough is no longer a Point 0 blocker.
 
 ---
 
-## 4) Required actions before FUV
+## 4) Operational guardrails for FUV
 
-### Must fix now
-1. **Close the remaining raw-message leak seam at repository/application boundary**
-   - Remove `error?.message` passthrough fallback behavior for user-facing propagation paths.
-   - Enforce deterministic sanitized mapping for all non-explicitly classified backend failures.
-   - Keep developer diagnostics out of UI message channel.
+1. No new business logic in `state`.
+2. No UI → infra shortcuts.
+3. Only sanitized mapped errors in UI.
+4. Prompting Protocol V2 is the only valid entry point.
 
-### Safe to defer
-1. **State-boundary hardening refinement**
-   - Keep current matrix for now, but define a narrow review rule that new business/lifecycle logic must not be added to `state` modules.
-2. **Prompt surface consolidation cleanup**
-   - Retire or clearly mark legacy prompt artifact(s) to reduce accidental old-template reuse.
-3. **Blocked-state UX depth improvements**
-   - Expand recovery guidance quality as part of FUV polish, after error seam closure.
+Deferred-but-active review risks:
+- State-layer orchestration drift remains review-controlled (not a blocker).
+- Prompt surface legacy artifacts remain review-controlled (not a blocker).
 
 ---
 
 ## 5) Final recommendation
 
-**FUV / UX Hardening should start with constraints, not unconstrained rollout.**
+**Point 0 is closed. FUV / UX Hardening is ready to start with constraints.**
 
-Execution condition:
-- First merge one narrow fix to guarantee deterministic sanitized error mapping for all repository-origin failures.
-- Then proceed with UX hardening while maintaining a review checklist that blocks additional state-orchestration drift and legacy prompt reuse.
+## Point 0 — Final Status
 
-This keeps Point 0 governance intact while avoiding overengineering or architecture reshuffle.
+- Status: CLOSED
+- Blockers: none
+- Known risks:
+  - state-layer orchestration drift (review-controlled)
+  - prompt surface legacy artifacts (review-controlled)
+
+**FUV can start immediately under the following constraints:**
+- no new business logic in `state`
+- no UI → infra shortcuts
+- only sanitized mapped errors in UI
+- Prompting Protocol V2 is the only valid entry point
