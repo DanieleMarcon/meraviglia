@@ -35,6 +35,7 @@ These rules apply directly to current app patterns:
 
 ## Enforcement map (M3.x post-consolidation)
 ### Code level (must enforce)
+- **Automated JSX guardrails:** `npm run check:governance` blocks `<img>` without `alt` and forbids `autoFocus` to reduce predictable keyboard-focus regressions.
 - **UI component rules:** interactive components must use semantic elements (`button`, `input`, `label`) or equivalent ARIA semantics when native elements are impossible.
 - **Error/blocked states:** mutation failures and blocked actions must render deterministic explanatory text, not generic toasts only.
 - **Minimal reusable patterns:** shared form-field and state-message patterns should be reused to keep labeling/error behavior consistent.
@@ -48,6 +49,19 @@ These rules apply directly to current app patterns:
 - Accessibility behavior is part of UI acceptance criteria, not post-hoc polish.
 - Deterministic application error mapping is preserved so UI messages stay understandable.
 - Reusable UI primitives are preferred over ad-hoc per-screen implementations when available.
+
+
+## Automation limitations (current state)
+- Current accessibility automation in `npm run check:governance` is heuristic and pattern-based.
+- These checks are **not** AST-accurate and can still produce false positives or false negatives.
+- Example: `<img data-alt="..." />` is not accessible and simple patterns may still be imperfect around edge-case markup.
+- Accessibility review remains authoritative; automation is a guardrail, not a guarantee.
+
+## Governance automation philosophy
+- Governance automation should prioritize high-signal rules, low complexity, and fast developer feedback.
+- Pattern-based checks (for logging, raw JSX error rendering, and accessibility guardrails) are intentionally limited in scope.
+- These checks must stay readable, maintainable, and resistant to noisy false positives.
+- Do not evolve this layer into complex or opaque regex systems ("regex jungle").
 
 ### Guideline-only (for now)
 - Automated a11y testing in CI (deferred until lightweight tooling is selected).

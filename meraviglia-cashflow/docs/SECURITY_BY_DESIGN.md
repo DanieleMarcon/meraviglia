@@ -43,6 +43,7 @@ This document defines mandatory development guardrails for the current Meravigli
 
 ## Enforcement map (M3.x post-consolidation)
 ### Code level (must enforce)
+- **Automated boundary checks:** `npm run check:governance` blocks direct UI/auth/state/application usage of Supabase clients and flags obvious sensitive console logging patterns.
 - **Input validation location:** application services validate command inputs before repository writes; repositories reject invalid persistence shapes as a second guard.
 - **Error model standardization:** application/domain throw typed, sanitized errors; UI renders only mapped user-facing messages.
 - **Repository vs UI boundaries:** UI must call application services only; direct UI calls to Supabase clients are forbidden.
