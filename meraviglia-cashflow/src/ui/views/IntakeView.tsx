@@ -34,22 +34,22 @@ function IntakeView() {
 
   const handleConverted = useCallback(async (workspace: { id: string; workspace_name: string }) => {
     await loadIntakes()
-    setSuccessMessage(`Intake converted to workspace context "${workspace.workspace_name}". Continue in Workspaces to add relationships and log events.`)
+    setSuccessMessage(`Entry qualified. Workspace "${workspace.workspace_name}" is ready for relationships and history.`)
     window.dispatchEvent(new CustomEvent(WORKSPACE_CONVERTED_EVENT, { detail: workspace }))
     document.getElementById("workspaces-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
   }, [loadIntakes])
 
   return (
     <section aria-labelledby="intake-operations-heading">
-      <h2 id="intake-operations-heading" style={{ marginTop: 0 }}>Intake Operations</h2>
-      <p style={{ margin: "0 0 8px", color: "#555" }}><strong>Entry area:</strong> capture and qualify requests before workspace execution.</p>
+      <h2 id="intake-operations-heading" style={{ marginTop: 0 }}>Entry &amp; Qualification</h2>
+      <p style={{ margin: "0 0 8px", color: "#555" }}><strong>Stage 1:</strong> capture the incoming activity, then decide if it should become a workspace.</p>
       <p style={{ marginTop: 0, color: "#444" }}>
-        Step 1 — Intake captures the starting request so it can become an actionable workspace context.
+        (Previously called Intake.) Not every entry becomes a workspace: keep low-continuity entries archived and qualify active ones.
       </p>
       <IntakeForm onCreated={loadIntakes} />
       {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
-      {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {intakes.filter((item) => item.status === "converted").length} of {intakes.length} intakes converted into workspace context.</p> : null}
-      {isLoading ? <p>Loading intakes...</p> : <IntakeList intakes={intakes} onConverted={handleConverted} />}
+      {!isLoading ? <p style={{ color: "#555" }}>Progress: {intakes.filter((item) => item.status === "converted").length} of {intakes.length} entries promoted to workspace.</p> : null}
+      {isLoading ? <p>Loading entries...</p> : <IntakeList intakes={intakes} onConverted={handleConverted} />}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )

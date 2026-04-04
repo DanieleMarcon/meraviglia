@@ -68,7 +68,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 12, border: "1px solid #ddd", borderRadius: 4, padding: 8 }}>
       <p style={{ marginBottom: 8 }}><strong>New interaction</strong></p>
-      <p style={{ marginTop: 0, color: "#555" }}>Log the event so this workspace context keeps a reliable relationship history.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Log what happened with one or more relationship contacts in this workspace.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         Type
         <select value={type} onChange={(event) => setType(event.target.value as InteractionTypeOption)}>
@@ -82,9 +82,9 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
         <input type="datetime-local" value={scheduledAt} onChange={(event) => setScheduledAt(event.target.value)} required />
       </label>
       <fieldset style={{ marginBottom: 8 }}>
-        <legend>Participants</legend>
+        <legend>Relationship participants</legend>
         {contacts.length === 0 ? <p style={{ margin: 0 }}>You need at least one contact before creating an interaction.</p> : null}
-        {contacts.length > 0 ? <p style={{ margin: "0 0 6px", color: "#555" }}>Allowed: this action can create an event because relationships are available to participate.</p> : null}
+        {contacts.length > 0 ? <p style={{ margin: "0 0 6px", color: "#555" }}>Pick the contacts involved in this interaction.</p> : null}
         {contacts.map((contact) => (
           <label key={contact.id} style={{ display: "block" }}>
             <input

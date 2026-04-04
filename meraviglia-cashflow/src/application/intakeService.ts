@@ -58,9 +58,12 @@ export class IntakeService {
     const intake = mapIntakeRecordToDTO(intakeRecord)
     if (intake.status === "converted") throw new Error("Intake already converted")
 
+    const workspaceName = intake.first_name.trim()
+    const workspaceSlug = workspaceName.toLowerCase().replace(/\s+/g, "-")
+
     const workspace = await this.workspaceService.createWorkspace({
-      workspace_name: `${intake.first_name} ${intake.last_name}`.trim(),
-      workspace_slug: `${intake.first_name}-${intake.last_name}`.toLowerCase().replace(/\s+/g, "-"),
+      workspace_name: workspaceName,
+      workspace_slug: workspaceSlug,
     })
     const updatedIntakeRecord = await this.intakeRepository.convertToWorkspace(intake.id, workspace.id)
 

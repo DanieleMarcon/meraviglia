@@ -50,7 +50,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
     try {
       await updateInteractionStatus(interactionId, { status, expected_updated_at: expectedUpdatedAt })
       await loadData()
-      setFeedbackMessage(`Event status is now ${status}. This update is recorded in workspace history below for reliable follow-through.`)
+      setFeedbackMessage(`Interaction marked as ${status}.`)
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to update interaction"))
       if (toUserFacingErrorMessage(error, "Unable to update interaction") === STALE_INTERACTION_UPDATE_MESSAGE) {
@@ -71,7 +71,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const handleCreated = async () => {
     await loadData()
     setIsCreateOpen(false)
-    setFeedbackMessage("Interaction event recorded. Review it below to confirm timing, participants, and next follow-up state.")
+    setFeedbackMessage("Interaction saved in workspace history.")
   }
 
   return (
@@ -80,7 +80,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
         <h4 style={{ margin: 0 }}>Interactions</h4>
         <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>New interaction</button>
       </div>
-      <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are your event history for this workspace context.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are the running history of what happened in this workspace.</p>
       {!isLoading ? (
         <p style={{ color: "#555" }}>
           {!hasRelationships
@@ -93,10 +93,10 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       {!isLoading ? (
         <p style={{ color: "#555" }}>
           Why this matters: {!hasRelationships
-            ? "without relationship and event context, follow-up decisions stay fragile."
+            ? "without relationship records, interaction history cannot start."
             : !hasEventHistory
-              ? "until the first event is logged, follow-up decisions rely on memory."
-              : "history makes follow-up decisions faster and easier to trust."}
+              ? "without logged interactions, follow-up relies on memory."
+              : "history keeps follow-up clear and consistent."}
         </p>
       ) : null}
       {!isLoading ? (

@@ -9,6 +9,11 @@ Define the canonical Interaction Layer so Scheduling Foundation can be implement
 - Interaction depends on workspace context and relationship continuity (contacts/participants).
 - Interaction is future-compatible with memory artifacts, AI review/ingestion, and external calendar integrations through governed contracts.
 
+Operational framing sequence (authoritative):
+`entry → qualification → workspace context → relationships → interactions/history`
+
+Interaction starts only after workspace exists; it is never an entry-stage concept.
+
 Interaction is therefore:
 - **not** a CRM activity stream,
 - **not** merely a calendar event,
@@ -60,6 +65,7 @@ Other provenance origins are not part of the current implemented runtime.
 ## Boundary Rules
 - Interaction records are always workspace-owned.
 - Participant linkage must resolve to workspace-compatible contact references.
+- Contacts are relationship records in workspace scope and can be created with partial data, then enriched later.
 - Interaction must always include at least one participant.
 - Outcome and memory linkage are optional and can remain deferred in early slices.
 - External calendars, AI generation, recurrence logic, and workflow automation are integration concerns, not foundational interaction ownership.
