@@ -149,3 +149,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when flow completion is possible but users still hesitate due to extra fields, verbose copy, or blocked-action dead ends
 - Avoid next time: do not replace one friction point with hidden complexity or long instructional text
+
+## [2026-04-04] FUV micro-fix: visible blocked recovery + contract-safe optional fields
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: apply a narrow UX correction without reopening scope or changing domain/service contracts
+- Why it worked:
+  - isolated the fix to two verifiable behaviors (field handling + blocked recovery visibility)
+  - required explicit visual affordance and recoverability at the exact blocked location
+- Guardrails that mattered:
+  - keep existing required backend/application constraints unchanged
+  - avoid fake parsing tricks that hide data expectations from users
+  - keep recovery action keyboard-visible and colocated with blocked reason
+- What was corrected during execution: restored separate contact fields and made blocked interaction recovery prominent with scroll+focus+highlight to contact creation
+- Reusable snippet:
+  ```
+  Apply a final micro-fix to an existing flow: restore natural field structure while preserving current service constraints, and make blocked states explicitly actionable with an adjacent recovery CTA that visibly moves the user to the next valid step.
+  ```
+- Reuse conditions: use when a near-merge UX pass has 1–2 concrete regressions and needs strict scope control
+- Avoid next time: do not hide blocked recovery in passive text or rely on subtle links

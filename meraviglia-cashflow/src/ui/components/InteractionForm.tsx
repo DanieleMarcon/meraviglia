@@ -113,11 +113,15 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel, onRequest
         </button>
         <button type="button" onClick={onCancel} disabled={isSubmitting}>Cancel</button>
       </div>
-      {contacts.length === 0 ? <p style={{ color: "#555" }}>Blocked: no relationships to attach as participants yet. Next step: add contacts first.</p> : null}
       {contacts.length === 0 ? (
-        <button type="button" onClick={onRequestAddContact} disabled={isSubmitting}>
-          Add contact now
-        </button>
+        <div style={{ marginTop: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
+          <p style={{ color: "#5c4500", margin: "0 0 6px" }}>
+            Interaction is blocked: no contact is available yet.
+          </p>
+          <button type="button" onClick={onRequestAddContact} disabled={isSubmitting}>
+            Add contact now
+          </button>
+        </div>
       ) : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </form>

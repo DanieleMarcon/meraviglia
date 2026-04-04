@@ -6,10 +6,12 @@ import { createContact } from "../../application/contactService"
 type ContactFormProps = {
   workspaceId: string
   onCreated: () => Promise<void>
+  isHighlighted?: boolean
 }
 
-function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
-  const [contactName, setContactName] = useState("")
+function ContactForm({ workspaceId, onCreated, isHighlighted = false }: ContactFormProps) {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [role, setRole] = useState("")
@@ -19,27 +21,32 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    const normalizedFirstName = firstName.trim()
+    const normalizedLastName = lastName.trim()
+
+    if (!normalizedFirstName && !normalizedLastName) {
+      setErrorMessage("Add at least a first name or a last name.")
+      setSuccessMessage(null)
+      return
+    }
+
     setIsSubmitting(true)
     setErrorMessage(null)
     setSuccessMessage(null)
 
     try {
-      const normalizedName = contactName.trim()
-      const [firstNameToken, ...lastNameTokens] = normalizedName.split(/\s+/)
-      const firstName = firstNameToken ?? ""
-      const lastName = lastNameTokens.join(" ") || "-"
-
       await createContact({
         workspace_id: workspaceId,
-        first_name: firstName,
-        last_name: lastName,
+        first_name: normalizedFirstName || normalizedLastName,
+        last_name: normalizedLastName || "-",
         email,
         phone,
         role,
         provenance: "manual",
       })
 
-      setContactName("")
+      setFirstName("")
+      setLastName("")
       setEmail("")
       setPhone("")
       setRole("")
@@ -53,12 +60,20 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
   }
 
   return (
-    <form id={`workspace-${workspaceId}-contact-form`} onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
+    <form
+      id={`workspace-${workspaceId}-contact-form`}
+      onSubmit={handleSubmit}
+      style={{ marginBottom: 12, border: isHighlighted ? "2px solid #2c8a3f" : "none", borderRadius: 6, padding: isHighlighted ? 8 : 0 }}
+    >
       <p style={{ marginBottom: 8 }}><strong>Add relationship contact</strong></p>
-      <p style={{ marginTop: 0, color: "#555" }}>Start with a name. Add extra details only if useful right now.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Start with only what you know. First name and last name are both optional, but add at least one.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
-        Contact name
-        <input value={contactName} onChange={(event) => setContactName(event.target.value)} required />
+        First name
+        <input id={`workspace-${workspaceId}-contact-first-name`} value={firstName} onChange={(event) => setFirstName(event.target.value)} />
+      </label>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Last name
+        <input value={lastName} onChange={(event) => setLastName(event.target.value)} />
       </label>
       <label style={{ display: "block", marginBottom: 8 }}>
         Email

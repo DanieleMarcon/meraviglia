@@ -7,11 +7,12 @@ type WorkspaceContactsPanelProps = {
   contacts: ContactDTO[]
   usedContactIds: string[]
   isContactsReady: boolean
+  isCreateHighlightActive: boolean
   errorMessage: string | null
   onChanged: () => Promise<void>
 }
 
-function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isContactsReady, errorMessage, onChanged }: WorkspaceContactsPanelProps) {
+function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isContactsReady, isCreateHighlightActive, errorMessage, onChanged }: WorkspaceContactsPanelProps) {
   const hasRelationships = contacts.length > 0
   const relationshipsInHistory = contacts.filter((contact) => usedContactIds.includes(contact.id)).length
 
@@ -28,7 +29,7 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
               : `${relationshipsInHistory} contact${relationshipsInHistory === 1 ? "" : "s"} already used in interactions.`}
         </p>
       ) : null}
-      <ContactForm workspaceId={workspaceId} onCreated={onChanged} />
+      <ContactForm workspaceId={workspaceId} onCreated={onChanged} isHighlighted={isCreateHighlightActive} />
       {!isContactsReady ? <p>Loading contacts...</p> : null}
       {isContactsReady && contacts.length === 0 ? (
         <p>No relationships yet. Add the first one with only known details; you can enrich it later.</p>
