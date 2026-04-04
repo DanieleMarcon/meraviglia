@@ -25,7 +25,6 @@ function IntakeList({ intakes, onConverted }: IntakeListProps) {
         {intakes.map((intake) => (
           <li key={intake.id} style={{ border: "1px solid #ddd", padding: 12, marginBottom: 8 }}>
             <p><strong>Activity / business:</strong> {intake.first_name}</p>
-            <p><strong>Entry label:</strong> {intake.last_name}</p>
             <p><strong>Email:</strong> {intake.email}</p>
             <p><strong>Status:</strong> {statusLabel[intake.status]}</p>
             {intake.notes ? <p><strong>Notes:</strong> {intake.notes}</p> : null}

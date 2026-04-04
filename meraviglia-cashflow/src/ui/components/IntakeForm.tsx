@@ -8,8 +8,7 @@ type IntakeFormProps = {
 }
 
 type IntakeFormState = {
-  first_name: string
-  last_name: string
+  activity: string
   email: string
   address: string
   is_online: boolean
@@ -17,8 +16,7 @@ type IntakeFormState = {
 }
 
 const INITIAL_STATE: IntakeFormState = {
-  first_name: "",
-  last_name: "",
+  activity: "",
   email: "",
   address: "",
   is_online: false,
@@ -40,15 +38,15 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
 
     try {
       await createIntake({
-        first_name: formState.first_name,
-        last_name: formState.last_name,
+        first_name: formState.activity,
+        last_name: "Entry",
         email: formState.email,
         address: formState.address || null,
         is_online: formState.is_online,
         notes: formState.notes || null,
       })
       setFormState(INITIAL_STATE)
-      setSuccessMessage("Entry saved. Qualify it when continuity is real, then create a workspace.")
+      setSuccessMessage("Entry saved. Next: qualify it and create a workspace.")
       await onCreated()
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create intake"))
@@ -63,25 +61,16 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       <p style={{ marginTop: 0, color: "#555" }}>Start with the activity or business first. Person details can be refined later in workspace contacts.</p>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Activity / business (primary)
+        Activity / business
         <input
-          value={formState.first_name}
-          onChange={(event) => setFormState((prev) => ({ ...prev, first_name: event.target.value }))}
+          value={formState.activity}
+          onChange={(event) => setFormState((prev) => ({ ...prev, activity: event.target.value }))}
           required
         />
       </label>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Entry label
-        <input
-          value={formState.last_name}
-          onChange={(event) => setFormState((prev) => ({ ...prev, last_name: event.target.value }))}
-          required
-        />
-      </label>
-
-      <label style={{ display: "block", marginBottom: 8 }}>
-        Main email for this entry
+        Main email
         <input
           type="email"
           value={formState.email}
@@ -111,7 +100,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       </div>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Qualification notes
+        Notes (optional)
         <textarea
           rows={4}
           value={formState.notes}

@@ -130,3 +130,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when users can see activity/history but still cannot infer whether the system is becoming operationally useful
 - Avoid next time: do not introduce percentages, dashboards, or new derived business rules for readiness
+
+## [2026-04-04] FUV friction-removal micro-simplification pass
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: remove micro-friction from Entry → Workspace → Contacts → Interactions without adding features or changing architecture
+- Why it worked:
+  - pushed every change through a strict "remove a decision or a step" filter
+  - treated copy as part of flow logic (short, direct, next-action language)
+- Guardrails that mattered:
+  - no new fields/features, only simplification of existing forms and feedback
+  - preserve deterministic errors and explicit loading/blocked states
+  - keep UI changes inside existing `ui -> application` boundaries
+- What was corrected during execution: removed low-value fields, shortened verbose system text, and added in-context "add contact now" recovery from interaction blocking
+- Reusable snippet:
+  ```
+  Execute a friction-removal slice on the existing end-to-end flow. Remove unclear or low-value fields, reduce required input to the minimum viable start, place key actions near blocking points, and rewrite feedback to short "done + next step" messages. No new features, no architecture/database changes.
+  ```
+- Reuse conditions: use when flow completion is possible but users still hesitate due to extra fields, verbose copy, or blocked-action dead ends
+- Avoid next time: do not replace one friction point with hidden complexity or long instructional text

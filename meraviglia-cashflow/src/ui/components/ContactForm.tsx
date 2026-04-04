@@ -9,8 +9,7 @@ type ContactFormProps = {
 }
 
 function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [contactName, setContactName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [role, setRole] = useState("")
@@ -25,6 +24,11 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
     setSuccessMessage(null)
 
     try {
+      const normalizedName = contactName.trim()
+      const [firstNameToken, ...lastNameTokens] = normalizedName.split(/\s+/)
+      const firstName = firstNameToken ?? ""
+      const lastName = lastNameTokens.join(" ") || "-"
+
       await createContact({
         workspace_id: workspaceId,
         first_name: firstName,
@@ -35,13 +39,12 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
         provenance: "manual",
       })
 
-      setFirstName("")
-      setLastName("")
+      setContactName("")
       setEmail("")
       setPhone("")
       setRole("")
       await onCreated()
-      setSuccessMessage("Relationship added. Find it in the contacts list below, then include it in your next interaction event.")
+      setSuccessMessage("Contact added. You can use it in the next interaction.")
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create contact"))
     } finally {
@@ -50,16 +53,12 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
+    <form id={`workspace-${workspaceId}-contact-form`} onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
       <p style={{ marginBottom: 8 }}><strong>Add relationship contact</strong></p>
-      <p style={{ marginTop: 0, color: "#555" }}>Keep this practical. Start with basic details, then enrich as the relationship evolves.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Start with a name. Add extra details only if useful right now.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
-        First name
-        <input value={firstName} onChange={(event) => setFirstName(event.target.value)} required />
-      </label>
-      <label style={{ display: "block", marginBottom: 8 }}>
-        Last name
-        <input value={lastName} onChange={(event) => setLastName(event.target.value)} required />
+        Contact name
+        <input value={contactName} onChange={(event) => setContactName(event.target.value)} required />
       </label>
       <label style={{ display: "block", marginBottom: 8 }}>
         Email
