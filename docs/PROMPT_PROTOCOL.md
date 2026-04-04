@@ -164,7 +164,35 @@ Why bad:
 
 ---
 
-## 6) Prompt acceptance rule
+## 6) Prompt Pattern Capture Rule (lightweight execution memory)
+
+Prompting Protocol V2 remains the sole authoritative prompt entry point. This rule adds lightweight execution memory only; it does not create a second protocol.
+
+After a **successful relevant execution prompt**, append one short reusable record to `docs/PROMPT_PATTERNS.md`.
+
+Capture only prompts that produced reusable execution value.
+
+Relevant prompt classes:
+- feature development
+- refactor / hardening
+- audit / review
+- documentation alignment
+
+Do **not** capture:
+- brainstorming
+- exploratory chats
+- discarded prompts
+- trivial one-off clarifications
+
+Operational constraints:
+- Capture is append-only in `docs/PROMPT_PATTERNS.md`.
+- Keep each entry short and normalized using the file template.
+- Pattern capture must never block delivery; if shipping is time-critical, append right after completion.
+- Review remains authoritative; this memory supports execution quality but does not override governance decisions.
+
+---
+
+## 7) Prompt acceptance rule
 
 A prompt is acceptable only if:
 1. it is bounded,
