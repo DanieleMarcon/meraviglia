@@ -41,7 +41,7 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
       setPhone("")
       setRole("")
       await onCreated()
-      setSuccessMessage("Contact added. It is now available for interactions.")
+      setSuccessMessage("Relationship added. Find it in the contacts list below, then include it in your next interaction event.")
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create contact"))
     } finally {
@@ -52,6 +52,7 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
       <p style={{ marginBottom: 8 }}><strong>Create contact</strong></p>
+      <p style={{ marginTop: 0, color: "#555" }}>Add a relationship that this workspace needs to coordinate with.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         First name
         <input value={firstName} onChange={(event) => setFirstName(event.target.value)} required />

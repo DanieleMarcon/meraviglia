@@ -50,7 +50,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
     try {
       await updateInteractionStatus(interactionId, { status, expected_updated_at: expectedUpdatedAt })
       await loadData()
-      setFeedbackMessage(`Interaction status updated to ${status}.`)
+      setFeedbackMessage(`Event status is now ${status}. This update is recorded in workspace history below for reliable follow-through.`)
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to update interaction"))
       if (toUserFacingErrorMessage(error, "Unable to update interaction") === STALE_INTERACTION_UPDATE_MESSAGE) {
@@ -66,7 +66,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const handleCreated = async () => {
     await loadData()
     setIsCreateOpen(false)
-    setFeedbackMessage("Interaction saved. The updated interaction list is shown below.")
+    setFeedbackMessage("Interaction event recorded. Review it below to confirm timing, participants, and next follow-up state.")
   }
 
   return (
@@ -75,6 +75,8 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
         <h4 style={{ margin: 0 }}>Interactions</h4>
         <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>New interaction</button>
       </div>
+      <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are your event history for this workspace context.</p>
+      {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {interactions.length} event{interactions.length === 1 ? "" : "s"} logged in this history.</p> : null}
 
       {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
@@ -92,13 +94,13 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       {!isLoading && interactions.length === 0 ? (
         <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
           <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
-          <p style={{ margin: "0 0 8px" }}>Track planned calls, meetings, and follow-ups for this workspace.</p>
+          <p style={{ margin: "0 0 8px" }}>Start the event history by logging the first planned call, meeting, or follow-up.</p>
           <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>Create first interaction</button>
         </div>
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>Interaction creation is blocked: add at least one contact in the Contacts section above, then create your interaction.</p>
+        <p style={{ color: "#555" }}>Interaction creation is blocked: add at least one relationship in Contacts above, then log your first event.</p>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (

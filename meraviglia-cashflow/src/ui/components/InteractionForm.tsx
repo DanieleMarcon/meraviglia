@@ -68,6 +68,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 12, border: "1px solid #ddd", borderRadius: 4, padding: 8 }}>
       <p style={{ marginBottom: 8 }}><strong>New interaction</strong></p>
+      <p style={{ marginTop: 0, color: "#555" }}>Log the event so this workspace context keeps a reliable relationship history.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         Type
         <select value={type} onChange={(event) => setType(event.target.value as InteractionTypeOption)}>
@@ -106,7 +107,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
       </label>
       <div style={{ display: "flex", gap: 8 }}>
         <button type="submit" disabled={isSubmitting || contacts.length === 0}>
-          {isSubmitting ? "Saving..." : "Save interaction"}
+          {isSubmitting ? "Saving..." : "Record interaction event"}
         </button>
         <button type="button" onClick={onCancel} disabled={isSubmitting}>Cancel</button>
       </div>

@@ -48,7 +48,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
         notes: formState.notes || null,
       })
       setFormState(INITIAL_STATE)
-      setSuccessMessage("Intake created. You can now convert it into a workspace.")
+      setSuccessMessage("Intake created. Next: convert it to establish workspace context for relationships and event history.")
       await onCreated()
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create intake"))
@@ -60,6 +60,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
       <h2>Create Intake</h2>
+      <p style={{ marginTop: 0, color: "#555" }}>Capture the initial request clearly so conversion creates a reliable workspace context.</p>
 
       <label style={{ display: "block", marginBottom: 8 }}>
         First name

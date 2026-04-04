@@ -29,7 +29,7 @@ function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps
   return (
     <>
       <button onClick={handleConvert} disabled={isConverting}>
-        {isConverting ? "Converting..." : "Convert to Workspace"}
+        {isConverting ? "Converting..." : "Convert to Workspace Context"}
       </button>
       {errorMessage ? <p style={{ color: "crimson", margin: "4px 0 0" }}>{errorMessage}</p> : null}
     </>

@@ -73,3 +73,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when existing features work technically but do not yet feel like one coherent product flow
 - Avoid next time: do not widen scope into new product capabilities or generic visual redesign
+
+## [2026-04-04] FUV UX orientation + value reinforcement pass
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: strengthen "where am I / what changed / what next" clarity across an existing Intake → Workspace → Contacts → Interactions flow without adding features
+- Why it worked:
+  - constrained work to lightweight contextual copy, progress cues, and transition feedback inside existing components
+  - required explicit post-action outcome messaging tied to user value, not generic success states
+- Guardrails that mattered:
+  - no new entities, features, or architecture changes
+  - maintain terminology consistency (workspace=context, contact=relationship, interaction=event/history)
+  - preserve deterministic loading/blocked/error states
+- What was corrected during execution: generic success text and dead cognition zones between section boundaries
+- Reusable snippet:
+  ```
+  Harden this existing multi-step UX flow without feature expansion. For each step, add 1–2 lines that explain purpose/value, add lightweight progress cues, and rewrite post-action feedback to explicitly answer: what changed, where to go next, and why it matters.
+  ```
+- Reuse conditions: use when a flow is technically complete but user confidence and perceived progress remain weak
+- Avoid next time: do not introduce new navigation systems (e.g., steppers) when textual and structural cues are sufficient
