@@ -75,8 +75,8 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   }
 
   return (
-    <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+    <section style={{ padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fcfcfc" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
         <h4 style={{ margin: 0 }}>Interactions</h4>
         <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>New interaction</button>
       </div>

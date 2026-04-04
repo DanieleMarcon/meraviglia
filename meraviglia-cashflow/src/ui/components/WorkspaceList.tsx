@@ -97,36 +97,46 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   return (
     <li
       id={`workspace-${workspace.id}`}
-      style={{ border: isHighlighted ? "2px solid #2c8a3f" : "1px solid #ddd", borderRadius: 4, padding: 12, marginBottom: 8 }}
+      style={{
+        border: isHighlighted ? "2px solid #2c8a3f" : "1px solid #ddd",
+        borderRadius: 8,
+        padding: 14,
+        marginBottom: 12,
+        background: "#fff",
+      }}
     >
-      <p><strong>Name:</strong> {workspace.workspace_name}</p>
-      <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
-      <p><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>
-        Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"}, {interactions.length} event{interactions.length === 1 ? "" : "s"}.
-      </p>
-      <p style={{ color: "#555", marginTop: 0 }}>{readinessStatusLabel}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>Why this matters now: {readinessSummary}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>{followUpReadinessHint}</p>
-      {!isInteractionsLoading ? (
-        <p style={{ color: "#555", marginTop: 0 }}>
-          Recency: {recentInteractions.length === 0 ? "No events recorded in the last 7 days." : `${recentInteractions.length} recorded in the last 7 days.`}
+      <header style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid #eee" }}>
+        <p style={{ margin: "0 0 6px" }}><strong>{workspace.workspace_name}</strong></p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}><strong>Slug:</strong> {workspace.workspace_slug}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}>
+          Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"}, {interactions.length} event{interactions.length === 1 ? "" : "s"}.
         </p>
-      ) : null}
-      <WorkspaceContactsPanel
-        workspaceId={workspace.id}
-        contacts={contacts}
-        usedContactIds={usedContactIds}
-        isContactsReady={isContactsReady}
-        errorMessage={contactsErrorMessage}
-        onChanged={loadContacts}
-      />
-      <WorkspaceInteractionsPanel
-        workspaceId={workspace.id}
-        contacts={contacts}
-        isContactsLoading={isContactsLoading}
-        isContactsReady={isContactsReady}
-      />
+        <p style={{ margin: "0 0 4px", color: "#555" }}>{readinessStatusLabel}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}>Why this matters now: {readinessSummary}</p>
+        <p style={{ margin: 0, color: "#555" }}>{followUpReadinessHint}</p>
+        {!isInteractionsLoading ? (
+          <p style={{ margin: "6px 0 0", color: "#555" }}>
+            Recency: {recentInteractions.length === 0 ? "No events recorded in the last 7 days." : `${recentInteractions.length} recorded in the last 7 days.`}
+          </p>
+        ) : null}
+      </header>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 12 }}>
+        <WorkspaceContactsPanel
+          workspaceId={workspace.id}
+          contacts={contacts}
+          usedContactIds={usedContactIds}
+          isContactsReady={isContactsReady}
+          errorMessage={contactsErrorMessage}
+          onChanged={loadContacts}
+        />
+        <WorkspaceInteractionsPanel
+          workspaceId={workspace.id}
+          contacts={contacts}
+          isContactsLoading={isContactsLoading}
+          isContactsReady={isContactsReady}
+        />
+      </div>
       {interactionsErrorMessage ? <p style={{ color: "crimson" }}>{interactionsErrorMessage}</p> : null}
     </li>
   )

@@ -65,7 +65,7 @@ function CashflowApp() {
   }
 
   return (
-    <div style={{ padding: 40 }}>
+    <div style={{ padding: 32, textAlign: "left" }}>
       <h1>Meraviglia Cashflow Engine</h1>
 
       <div style={{ marginBottom: 20 }}>
@@ -129,9 +129,29 @@ function CashflowApp() {
         onUpdatePaymentStrategy={updatePropostaAServicePaymentStrategy}
       />
 
-      <IntakeView />
+      <section
+        style={{
+          marginTop: 28,
+          padding: 16,
+          border: "1px solid #d9d9d9",
+          borderRadius: 8,
+          background: "#fafafa",
+        }}
+      >
+        <IntakeView />
+      </section>
 
-      <WorkspaceView />
+      <section
+        style={{
+          marginTop: 24,
+          padding: 16,
+          border: "2px solid #c8ddcc",
+          borderRadius: 8,
+          background: "#f7fbf8",
+        }}
+      >
+        <WorkspaceView />
+      </section>
 
       <React.Suspense fallback={<div style={{ padding: 16 }}>Loading...</div>}>
         <ProposteCompareView

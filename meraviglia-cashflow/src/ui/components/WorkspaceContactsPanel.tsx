@@ -16,8 +16,8 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
   const relationshipsInHistory = contacts.filter((contact) => usedContactIds.includes(contact.id)).length
 
   return (
-    <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
-      <h4>Contacts</h4>
+    <section style={{ padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fcfcfc" }}>
+      <h4 style={{ marginTop: 0 }}>Contacts</h4>
       <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts are the relationships in this workspace context.</p>
       {isContactsReady ? (
         <p style={{ marginTop: 0, color: "#555" }}>
