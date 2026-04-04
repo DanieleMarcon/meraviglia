@@ -5,12 +5,13 @@ import ContactList from "./ContactList"
 type WorkspaceContactsPanelProps = {
   workspaceId: string
   contacts: ContactDTO[]
+  usedContactIds: string[]
   isContactsReady: boolean
   errorMessage: string | null
   onChanged: () => Promise<void>
 }
 
-function WorkspaceContactsPanel({ workspaceId, contacts, isContactsReady, errorMessage, onChanged }: WorkspaceContactsPanelProps) {
+function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isContactsReady, errorMessage, onChanged }: WorkspaceContactsPanelProps) {
   return (
     <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
       <h4>Contacts</h4>
@@ -21,7 +22,7 @@ function WorkspaceContactsPanel({ workspaceId, contacts, isContactsReady, errorM
         <p>No relationships yet. Add your first contact to unlock interaction event tracking.</p>
       ) : null}
       {isContactsReady && contacts.length > 0 ? <p style={{ color: "#555" }}>Next step: use these contacts as participants when logging interactions.</p> : null}
-      {isContactsReady && contacts.length > 0 ? <ContactList contacts={contacts} onEdited={onChanged} /> : null}
+      {isContactsReady && contacts.length > 0 ? <ContactList contacts={contacts} usedContactIds={usedContactIds} onEdited={onChanged} /> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )

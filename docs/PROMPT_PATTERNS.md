@@ -92,3 +92,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when a flow is technically complete but user confidence and perceived progress remain weak
 - Avoid next time: do not introduce new navigation systems (e.g., steppers) when textual and structural cues are sufficient
+
+## [2026-04-04] FUV trust layer reinforcement (UI-only)
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: increase reliability/trust perception across Workspace, Contacts, and Interactions using existing state only
+- Why it worked:
+  - split scope into five concrete UX trust signals (status, confidence, continuity, temporal clarity, blocked recovery)
+  - explicitly prohibited new features and backend changes, preventing drift
+- Guardrails that mattered:
+  - surface existing data only (counts, recency, usage) with no new domain rules
+  - keep deterministic loading/blocked/error states
+  - require recovery hints for blocked actions
+- What was corrected during execution: continuity between contacts and interactions was made explicit at both panel and item level
+- Reusable snippet:
+  ```
+  Implement a UI-only trust-layer pass for an existing multi-step flow. Add lightweight status signals, explicit action allow/block reasons, and cross-panel continuity cues using existing state only. Improve temporal readability and blocked-state recovery guidance without adding features or new architecture.
+  ```
+- Reuse conditions: use when flows are functionally complete but users still perceive low predictability or weak system state awareness
+- Avoid next time: avoid introducing analytics/timeline/filter capabilities when only trust clarity is requested

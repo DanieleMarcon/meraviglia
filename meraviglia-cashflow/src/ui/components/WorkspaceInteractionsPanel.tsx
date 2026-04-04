@@ -62,6 +62,9 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const hasNoContacts = !isLoading && isContactsReady && contacts.length === 0
   const canRenderContactDependentUi = isContactsReady
   const isCreateBlocked = isContactsReady && contacts.length === 0
+  const hasRecentInteractions = interactions.some((interaction) => {
+    return Date.now() - new Date(interaction.scheduled_at).getTime() <= 7 * 24 * 60 * 60 * 1000
+  })
 
   const handleCreated = async () => {
     await loadData()
@@ -77,6 +80,9 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       </div>
       <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are your event history for this workspace context.</p>
       {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {interactions.length} event{interactions.length === 1 ? "" : "s"} logged in this history.</p> : null}
+      {!isLoading ? <p style={{ color: "#555" }}>Recency signal: {hasRecentInteractions ? "Event history is active this week." : "No recent interactions this week yet."}</p> : null}
+      {isContactsLoading ? <p style={{ color: "#555" }}>Action status: create interaction is temporarily blocked while relationships are loading.</p> : null}
+      {!isContactsLoading && !isCreateBlocked ? <p style={{ color: "#555" }}>Action status: create interaction is enabled because at least one relationship is available as a participant.</p> : null}
 
       {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
@@ -100,7 +106,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>Interaction creation is blocked: add at least one relationship in Contacts above, then log your first event.</p>
+        <p style={{ color: "#555" }}>Interaction creation is blocked: no relationships exist yet. Recovery: add at least one contact in Contacts above, then log the first event in this history.</p>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (
