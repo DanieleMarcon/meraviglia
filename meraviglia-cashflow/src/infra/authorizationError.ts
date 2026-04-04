@@ -38,5 +38,5 @@ export const toRepositoryError = (error: ErrorLike | null | undefined, fallbackM
     return new Error(ADMIN_REQUIRED_ERROR_MESSAGE)
   }
 
-  return new Error(error?.message ?? fallbackMessage)
+  return new Error(fallbackMessage)
 }

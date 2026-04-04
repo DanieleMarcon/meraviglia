@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
-import { listInteractionsByWorkspace, updateInteractionStatus } from "../../application/interactionService"
+import { STALE_INTERACTION_UPDATE_MESSAGE, listInteractionsByWorkspace, updateInteractionStatus } from "../../application/interactionService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import type { InteractionDTO } from "../../application/dto/InteractionDTO"
 import InteractionForm from "./InteractionForm"
@@ -27,7 +28,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       const workspaceInteractions = await listInteractionsByWorkspace(workspaceId)
       setInteractions(workspaceInteractions)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to load interactions")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to load interactions"))
     } finally {
       setIsLoading(false)
     }
@@ -48,8 +49,8 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       await updateInteractionStatus(interactionId, { status, expected_updated_at: expectedUpdatedAt })
       await loadData()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to update interaction")
-      if (error instanceof Error && error.message.includes("updated elsewhere")) {
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to update interaction"))
+      if (toUserFacingErrorMessage(error, "Unable to update interaction") === STALE_INTERACTION_UPDATE_MESSAGE) {
         await loadData()
       }
     }

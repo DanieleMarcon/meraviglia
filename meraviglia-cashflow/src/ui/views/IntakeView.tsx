@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { listIntakes } from "../../application/intakeService"
 import type { IntakeDTO } from "../../application/dto/IntakeDTO"
@@ -20,7 +21,7 @@ function IntakeView() {
       const results = await listIntakes()
       setIntakes(results)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to load intakes")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to load intakes"))
     } finally {
       setIsLoading(false)
     }

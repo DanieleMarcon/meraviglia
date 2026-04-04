@@ -22,8 +22,8 @@ describe("toRepositoryError", () => {
     expect(result.message).toBe(AUTHENTICATION_REQUIRED_ERROR_MESSAGE)
   })
 
-  it("keeps non-authorization errors unchanged", () => {
+  it("falls back to deterministic message for non-authorization errors", () => {
     const result = toRepositoryError({ message: "network timeout" }, "fallback")
-    expect(result.message).toBe("network timeout")
+    expect(result.message).toBe("fallback")
   })
 })

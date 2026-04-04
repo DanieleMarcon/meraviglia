@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { activateInvite } from "../../application/organizationAccessService"
 
@@ -28,7 +29,7 @@ export default function InviteActivationView({ email, initialInviteToken, onActi
       await onActivated()
       setMessage("Invite activated. Loading organization workspace...")
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to activate invite")
+      setMessage(toUserFacingErrorMessage(error, "Unable to activate invite"))
     } finally {
       setSubmitting(false)
     }

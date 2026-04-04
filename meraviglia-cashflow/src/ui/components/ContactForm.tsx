@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { createContact } from "../../application/contactService"
 
@@ -39,7 +40,7 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
       setRole("")
       await onCreated()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to create contact")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to create contact"))
     } finally {
       setIsSubmitting(false)
     }

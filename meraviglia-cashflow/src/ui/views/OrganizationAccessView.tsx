@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { createInvite, listMemberships, removeMembership } from "../../application/organizationAccessService"
 import type { OrganizationMembershipDTO, OrganizationInviteRoleDTO } from "../../application/dto/OrganizationAccessDTO"
@@ -21,7 +22,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
       const nextRows = await listMemberships()
       setMemberships(nextRows)
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to load memberships")
+      setMessage(toUserFacingErrorMessage(error, "Unable to load memberships"))
     } finally {
       setLoading(false)
     }
@@ -41,7 +42,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
       await loadMemberships()
       setMessage("Invite created")
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to create invite")
+      setMessage(toUserFacingErrorMessage(error, "Unable to create invite"))
     } finally {
       setSubmitting(false)
     }
@@ -56,7 +57,7 @@ export default function OrganizationAccessView({ currentUserId }: OrganizationAc
       await loadMemberships()
       setMessage("Membership removed")
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to remove membership")
+      setMessage(toUserFacingErrorMessage(error, "Unable to remove membership"))
     } finally {
       setSubmitting(false)
     }
