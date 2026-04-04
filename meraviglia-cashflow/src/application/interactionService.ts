@@ -3,8 +3,8 @@ import type { InteractionDTO } from "./dto/InteractionDTO"
 import { mapInteractionRecordToDTO } from "./mappers/interactionMappers"
 import type { InteractionRepository } from "../repository/interactionRepository"
 
-const STALE_UPDATE_MESSAGE = "This interaction was updated elsewhere. Reloaded latest status."
-const PARTICIPANT_IMMUTABLE_MESSAGE = "Participants can only be edited while interaction status is planned."
+export const STALE_INTERACTION_UPDATE_MESSAGE = "This interaction was updated elsewhere. Reloaded latest status."
+export const PARTICIPANT_IMMUTABLE_MESSAGE = "Participants can only be edited while interaction status is planned."
 
 const requireNonEmpty = (value: string, fieldName: string): string => {
   const normalized = value.trim()
@@ -111,7 +111,7 @@ export class InteractionService {
     })
 
     if (!updatedRecord) {
-      throw new Error(STALE_UPDATE_MESSAGE)
+      throw new Error(STALE_INTERACTION_UPDATE_MESSAGE)
     }
 
     const participants = await this.interactionRepository.listParticipantsByWorkspace(updatedRecord.workspace_id)
@@ -145,7 +145,7 @@ export class InteractionService {
     })
 
     if (!updatedRecord) {
-      throw new Error(STALE_UPDATE_MESSAGE)
+      throw new Error(STALE_INTERACTION_UPDATE_MESSAGE)
     }
 
     await this.interactionRepository.replaceParticipants(updatedRecord.id, requestedParticipantIds)

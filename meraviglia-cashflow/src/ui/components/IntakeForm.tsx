@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { createIntake } from "../../application/intakeService"
 
@@ -47,7 +48,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       setFormState(INITIAL_STATE)
       await onCreated()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to create intake")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to create intake"))
     } finally {
       setIsSubmitting(false)
     }

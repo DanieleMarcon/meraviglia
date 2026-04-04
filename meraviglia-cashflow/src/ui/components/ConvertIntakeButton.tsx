@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { convertIntakeToWorkspace } from "../../application/intakeService"
 
@@ -19,7 +20,7 @@ function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps
       await convertIntakeToWorkspace(intakeId)
       await onConverted()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to convert intake")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to convert intake"))
     } finally {
       setIsConverting(false)
     }

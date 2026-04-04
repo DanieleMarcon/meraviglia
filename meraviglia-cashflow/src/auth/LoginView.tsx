@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react"
+import { toUserFacingErrorMessage } from "../application/toUserFacingErrorMessage"
 
 import { useAuth } from "./useAuth"
 
@@ -17,7 +18,7 @@ export default function LoginView() {
     try {
       await signIn(email, password)
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Login failed. Please try again."
+      const message = toUserFacingErrorMessage(error, "Login failed. Please try again.")
       setErrorMessage(message)
     } finally {
       setSubmitting(false)

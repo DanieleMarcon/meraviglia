@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { listContactsByWorkspace } from "../../application/contactService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
@@ -27,7 +28,7 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
       const items = await listContactsByWorkspace(workspace.id)
       setContacts(items)
     } catch (error) {
-      setContactsErrorMessage(error instanceof Error ? error.message : "Unable to load contacts")
+      setContactsErrorMessage(toUserFacingErrorMessage(error, "Unable to load contacts"))
     } finally {
       setIsContactsLoading(false)
     }

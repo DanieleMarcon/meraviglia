@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { updateInteraction } from "../../application/interactionService"
 import { formatIsoToLocalDateTimeInput, localDateTimeInputToIso } from "../../shared/utils/interactionDateTime"
@@ -107,7 +108,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
       setDraft(null)
       await onEdited()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to edit interaction")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to edit interaction"))
     } finally {
       setIsSaving(false)
     }

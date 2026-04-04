@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
-import { deleteContact, updateContact } from "../../application/contactService"
+import { STALE_CONTACT_UPDATE_MESSAGE, deleteContact, updateContact } from "../../application/contactService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
 import { syncDraftWithLatestContact, toEditDraft, type EditDraft } from "./contactListUtils"
 
@@ -9,7 +10,6 @@ type ContactListProps = {
   onEdited: () => Promise<void>
 }
 
-const STALE_CONTACT_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
 
 function ContactList({ contacts, onEdited }: ContactListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -58,7 +58,7 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
       setDraft(null)
       await onEdited()
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to edit contact"
+      const message = toUserFacingErrorMessage(error, "Unable to edit contact")
 
       if (message === STALE_CONTACT_UPDATE_MESSAGE) {
         setShouldSyncDraftFromContacts(true)
@@ -83,7 +83,7 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
       }
       await onEdited()
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to delete contact"
+      const message = toUserFacingErrorMessage(error, "Unable to delete contact")
       setErrorMessage(message)
     } finally {
       setDeletingId(null)

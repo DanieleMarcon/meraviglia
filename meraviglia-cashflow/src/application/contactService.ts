@@ -22,8 +22,8 @@ const normalizeOptional = (value: string | null | undefined): string | null | un
   return normalized ? normalized : null
 }
 
-const STALE_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
-const CONTACT_REFERENCED_DELETE_MESSAGE = "Contact cannot be deleted because it is referenced by one or more interactions."
+export const STALE_CONTACT_UPDATE_MESSAGE = "This contact was updated elsewhere. Reloaded latest data."
+export const CONTACT_REFERENCED_DELETE_MESSAGE = "Contact cannot be deleted because it is referenced by one or more interactions."
 
 export class ContactService {
   private readonly contactRepository: ContactRepository
@@ -65,7 +65,7 @@ export class ContactService {
     })
 
     if (!updated) {
-      throw new Error(STALE_UPDATE_MESSAGE)
+      throw new Error(STALE_CONTACT_UPDATE_MESSAGE)
     }
 
     return mapContactRecordToDTO(updated)

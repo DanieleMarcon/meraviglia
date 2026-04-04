@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { listWorkspaces } from "../../application/workspaceService"
 import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
@@ -19,7 +20,7 @@ function WorkspaceView() {
       const items = await listWorkspaces()
       setWorkspaces(items)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to load workspaces")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to load workspaces"))
     } finally {
       setIsLoading(false)
     }

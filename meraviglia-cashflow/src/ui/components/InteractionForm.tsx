@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react"
+import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { createInteraction } from "../../application/interactionService"
 import { localDateTimeInputToIso } from "../../shared/utils/interactionDateTime"
@@ -52,7 +53,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
       setParticipantIds([])
       await onCreated()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to create interaction")
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to create interaction"))
     } finally {
       setIsSubmitting(false)
     }
