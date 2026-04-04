@@ -77,57 +77,66 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   const hasEventHistory = interactions.length > 0
 
   const readinessStatusLabel = !hasRelationships
-    ? "Readiness status: not ready for follow-up continuity yet."
+    ? "Not ready: relationship context missing."
     : !hasEventHistory
-      ? "Readiness status: relationships are in place, but follow-up history is still thin."
-      : "Readiness status: operational history is forming from recorded events."
+      ? "Starting: relationships exist, event history is still thin."
+      : "Ready: relationship context and event history are active."
 
   const readinessSummary = !hasRelationships
-    ? "This workspace exists, but has no relationship context yet. Add the first relationship before event continuity can start."
+    ? "Without a contact, this workspace cannot anchor follow-up continuity."
     : !hasEventHistory
-      ? "This workspace has relationship context, but no recorded events yet. Log the first event to make follow-up continuity usable."
-      : "This workspace has both relationships and event history. Each new event strengthens continuity for future follow-up decisions."
+      ? "Relationship context exists, but decisions still rely on memory until the first event is logged."
+      : "Recorded events make follow-up decisions faster and more reliable."
 
   const followUpReadinessHint = !hasRelationships
-    ? "Next meaningful action: add the first relationship."
+    ? "Next action: add the first relationship."
     : !hasEventHistory
-      ? "Next meaningful action: log the first event."
-      : "Next meaningful action: continue building event history."
+      ? "Next action: log the first event."
+      : "Next action: keep event history current."
 
   return (
     <li
       id={`workspace-${workspace.id}`}
-      style={{ border: isHighlighted ? "2px solid #2c8a3f" : "1px solid #ddd", borderRadius: 4, padding: 12, marginBottom: 8 }}
+      style={{
+        border: isHighlighted ? "2px solid #2c8a3f" : "1px solid #ddd",
+        borderRadius: 8,
+        padding: 14,
+        marginBottom: 12,
+        background: "#fff",
+      }}
     >
-      <p><strong>Name:</strong> {workspace.workspace_name}</p>
-      <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
-      <p><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>
-        Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"} linked in this context.
-      </p>
-      <p style={{ color: "#555", marginTop: 0 }}>{readinessStatusLabel}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>Why this matters now: {readinessSummary}</p>
-      <p style={{ color: "#555", marginTop: 0 }}>{followUpReadinessHint}</p>
-      {!isInteractionsLoading ? (
-        <p style={{ color: "#555", marginTop: 0 }}>
-          System signal: {interactions.length} event{interactions.length === 1 ? "" : "s"} in history.
-          {recentInteractions.length === 0 ? " No recent interactions in the last 7 days." : ` ${recentInteractions.length} recorded in the last 7 days.`}
+      <header style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid #eee" }}>
+        <p style={{ margin: "0 0 6px" }}><strong>{workspace.workspace_name}</strong></p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}><strong>Slug:</strong> {workspace.workspace_slug}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}>
+          Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"}, {interactions.length} event{interactions.length === 1 ? "" : "s"}.
         </p>
-      ) : null}
-      <WorkspaceContactsPanel
-        workspaceId={workspace.id}
-        contacts={contacts}
-        usedContactIds={usedContactIds}
-        isContactsReady={isContactsReady}
-        errorMessage={contactsErrorMessage}
-        onChanged={loadContacts}
-      />
-      <WorkspaceInteractionsPanel
-        workspaceId={workspace.id}
-        contacts={contacts}
-        isContactsLoading={isContactsLoading}
-        isContactsReady={isContactsReady}
-      />
+        <p style={{ margin: "0 0 4px", color: "#555" }}>{readinessStatusLabel}</p>
+        <p style={{ margin: "0 0 4px", color: "#555" }}>Why this matters now: {readinessSummary}</p>
+        <p style={{ margin: 0, color: "#555" }}>{followUpReadinessHint}</p>
+        {!isInteractionsLoading ? (
+          <p style={{ margin: "6px 0 0", color: "#555" }}>
+            Recency: {recentInteractions.length === 0 ? "No events recorded in the last 7 days." : `${recentInteractions.length} recorded in the last 7 days.`}
+          </p>
+        ) : null}
+      </header>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 12 }}>
+        <WorkspaceContactsPanel
+          workspaceId={workspace.id}
+          contacts={contacts}
+          usedContactIds={usedContactIds}
+          isContactsReady={isContactsReady}
+          errorMessage={contactsErrorMessage}
+          onChanged={loadContacts}
+        />
+        <WorkspaceInteractionsPanel
+          workspaceId={workspace.id}
+          contacts={contacts}
+          isContactsLoading={isContactsLoading}
+          isContactsReady={isContactsReady}
+        />
+      </div>
       {interactionsErrorMessage ? <p style={{ color: "crimson" }}>{interactionsErrorMessage}</p> : null}
     </li>
   )

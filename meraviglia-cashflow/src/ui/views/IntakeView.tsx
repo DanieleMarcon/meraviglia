@@ -40,8 +40,9 @@ function IntakeView() {
   }, [loadIntakes])
 
   return (
-    <section style={{ marginTop: 32 }}>
-      <h1>Intake Operations</h1>
+    <section aria-labelledby="intake-operations-heading">
+      <h2 id="intake-operations-heading" style={{ marginTop: 0 }}>Intake Operations</h2>
+      <p style={{ margin: "0 0 8px", color: "#555" }}><strong>Entry area:</strong> capture and qualify requests before workspace execution.</p>
       <p style={{ marginTop: 0, color: "#444" }}>
         Step 1 — Intake captures the starting request so it can become an actionable workspace context.
       </p>

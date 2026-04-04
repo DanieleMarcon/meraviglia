@@ -16,16 +16,16 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
   const relationshipsInHistory = contacts.filter((contact) => usedContactIds.includes(contact.id)).length
 
   return (
-    <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
-      <h4>Contacts</h4>
-      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts represent the relationships inside this workspace context.</p>
+    <section style={{ padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fcfcfc" }}>
+      <h4 style={{ marginTop: 0 }}>Contacts</h4>
+      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts are the relationships in this workspace context.</p>
       {isContactsReady ? (
         <p style={{ marginTop: 0, color: "#555" }}>
-          Why this matters now: {!hasRelationships
-            ? "without at least one relationship, this workspace cannot build usable follow-up continuity."
+          {!hasRelationships
+            ? "Current state: no relationships yet."
             : relationshipsInHistory === 0
-              ? "relationships exist, but none are linked to events yet."
-              : `${relationshipsInHistory} relationship${relationshipsInHistory === 1 ? "" : "s"} already anchor recorded events in workspace history.`}
+              ? "Current state: relationships exist, but none are in event history yet."
+              : `Current state: ${relationshipsInHistory} relationship${relationshipsInHistory === 1 ? "" : "s"} already anchor event history.`}
         </p>
       ) : null}
       <ContactForm workspaceId={workspaceId} onCreated={onChanged} />
@@ -35,9 +35,9 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
       ) : null}
       {isContactsReady && contacts.length > 0 ? (
         <p style={{ color: "#555" }}>
-          Follow-up readiness: {relationshipsInHistory === 0
-            ? "log the first event with one of these relationships."
-            : "continue logging events to deepen historical continuity."}
+          {relationshipsInHistory === 0
+            ? "Next action: log the first event with one of these relationships."
+            : "Next action: keep linking events to maintain continuity."}
         </p>
       ) : null}
       {isContactsReady && contacts.length > 0 ? <ContactList contacts={contacts} usedContactIds={usedContactIds} onEdited={onChanged} /> : null}
