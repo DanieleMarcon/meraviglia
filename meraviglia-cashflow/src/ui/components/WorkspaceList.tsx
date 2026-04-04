@@ -73,6 +73,26 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   const recentInteractions = interactions.filter((interaction) => {
     return Date.now() - new Date(interaction.scheduled_at).getTime() <= 7 * 24 * 60 * 60 * 1000
   })
+  const hasRelationships = contacts.length > 0
+  const hasEventHistory = interactions.length > 0
+
+  const readinessStatusLabel = !hasRelationships
+    ? "Readiness status: not ready for follow-up continuity yet."
+    : !hasEventHistory
+      ? "Readiness status: relationships are in place, but follow-up history is still thin."
+      : "Readiness status: operational history is forming from recorded events."
+
+  const readinessSummary = !hasRelationships
+    ? "This workspace exists, but has no relationship context yet. Add the first relationship before event continuity can start."
+    : !hasEventHistory
+      ? "This workspace has relationship context, but no recorded events yet. Log the first event to make follow-up continuity usable."
+      : "This workspace has both relationships and event history. Each new event strengthens continuity for future follow-up decisions."
+
+  const followUpReadinessHint = !hasRelationships
+    ? "Next meaningful action: add the first relationship."
+    : !hasEventHistory
+      ? "Next meaningful action: log the first event."
+      : "Next meaningful action: continue building event history."
 
   return (
     <li
@@ -85,6 +105,9 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
       <p style={{ color: "#555", marginTop: 0 }}>
         Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"} linked in this context.
       </p>
+      <p style={{ color: "#555", marginTop: 0 }}>{readinessStatusLabel}</p>
+      <p style={{ color: "#555", marginTop: 0 }}>Why this matters now: {readinessSummary}</p>
+      <p style={{ color: "#555", marginTop: 0 }}>{followUpReadinessHint}</p>
       {!isInteractionsLoading ? (
         <p style={{ color: "#555", marginTop: 0 }}>
           System signal: {interactions.length} event{interactions.length === 1 ? "" : "s"} in history.
