@@ -43,6 +43,30 @@ const resolveParticipants = (participantIds: string[], contacts: ContactDTO[]): 
   return names.length > 0 ? names.join(", ") : "Removed contact"
 }
 
+const startOfDay = (input: Date): Date => {
+  const next = new Date(input)
+  next.setHours(0, 0, 0, 0)
+  return next
+}
+
+const resolveTemporalLabel = (scheduledAtIso: string): string => {
+  const now = new Date()
+  const target = new Date(scheduledAtIso)
+  const todayStart = startOfDay(now)
+  const targetStart = startOfDay(target)
+  const deltaDays = Math.floor((todayStart.getTime() - targetStart.getTime()) / (24 * 60 * 60 * 1000))
+
+  if (deltaDays === 0) {
+    return "Today"
+  }
+
+  if (deltaDays > 0 && deltaDays < 7) {
+    return "This week"
+  }
+
+  return "Earlier"
+}
+
 function InteractionList({ interactions, contacts, onStatusChange, onEdited }: InteractionListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditDraft | null>(null)
@@ -117,12 +141,16 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
   return (
     <div>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {orderedInteractions.map((interaction) => {
+        {orderedInteractions.map((interaction, index) => {
           const isEditing = editingId === interaction.id && draft
           const canEditParticipants = isEditing ? draft.status === "planned" : interaction.status === "planned"
+          const currentTemporalLabel = resolveTemporalLabel(interaction.scheduled_at)
+          const previousTemporalLabel = index > 0 ? resolveTemporalLabel(orderedInteractions[index - 1].scheduled_at) : null
+          const shouldRenderTemporalLabel = previousTemporalLabel !== currentTemporalLabel
 
           return (
             <li key={interaction.id} style={{ border: "1px solid #ddd", borderRadius: 4, padding: 8, marginBottom: 8 }}>
+                  {shouldRenderTemporalLabel ? <p style={{ margin: "0 0 8px", color: "#555" }}><strong>{currentTemporalLabel}</strong></p> : null}
                   {isEditing ? (
                     <div>
                       <label style={{ display: "block" }}>
@@ -175,7 +203,7 @@ function InteractionList({ interactions, contacts, onStatusChange, onEdited }: I
                       <p><strong>Type:</strong> {TYPE_LABELS[interaction.type]}</p>
                       <p><strong>Date &amp; time:</strong> {new Date(interaction.scheduled_at).toLocaleString()}</p>
                       <p><strong>Status:</strong> {STATUS_LABELS[interaction.status]}</p>
-                      <p><strong>Participants:</strong> {resolveParticipants(interaction.participant_contact_ids, contacts)}</p>
+                      <p><strong>Participants (relationships):</strong> {resolveParticipants(interaction.participant_contact_ids, contacts)}</p>
                       {interaction.notes ? <p><strong>Notes:</strong> {interaction.notes}</p> : null}
                       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                         {interaction.status === "planned" ? (

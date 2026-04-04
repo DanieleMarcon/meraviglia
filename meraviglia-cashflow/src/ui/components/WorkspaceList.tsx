@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react"
 import { toUserFacingErrorMessage } from "../../application/toUserFacingErrorMessage"
 
 import { listContactsByWorkspace } from "../../application/contactService"
+import { listInteractionsByWorkspace } from "../../application/interactionService"
 import type { ContactDTO } from "../../application/dto/ContactDTO"
+import type { InteractionDTO } from "../../application/dto/InteractionDTO"
 import type { WorkspaceDTO } from "../../application/dto/WorkspaceDTO"
 import WorkspaceContactsPanel from "./WorkspaceContactsPanel"
 import WorkspaceInteractionsPanel from "./WorkspaceInteractionsPanel"
@@ -19,8 +21,11 @@ type WorkspaceListItemProps = {
 
 function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps) {
   const [contacts, setContacts] = useState<ContactDTO[]>([])
+  const [interactions, setInteractions] = useState<InteractionDTO[]>([])
   const [isContactsLoading, setIsContactsLoading] = useState(true)
+  const [isInteractionsLoading, setIsInteractionsLoading] = useState(true)
   const [contactsErrorMessage, setContactsErrorMessage] = useState<string | null>(null)
+  const [interactionsErrorMessage, setInteractionsErrorMessage] = useState<string | null>(null)
 
   const loadContacts = useCallback(async () => {
     setIsContactsLoading(true)
@@ -36,9 +41,24 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
     }
   }, [workspace.id])
 
+  const loadInteractionsSummary = useCallback(async () => {
+    setIsInteractionsLoading(true)
+    setInteractionsErrorMessage(null)
+
+    try {
+      const items = await listInteractionsByWorkspace(workspace.id)
+      setInteractions(items)
+    } catch (error) {
+      setInteractionsErrorMessage(toUserFacingErrorMessage(error, "Unable to load interactions"))
+    } finally {
+      setIsInteractionsLoading(false)
+    }
+  }, [workspace.id])
+
   useEffect(() => {
     void loadContacts()
-  }, [loadContacts])
+    void loadInteractionsSummary()
+  }, [loadContacts, loadInteractionsSummary])
 
   useEffect(() => {
     if (!isHighlighted) {
@@ -49,6 +69,10 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   }, [isHighlighted, workspace.id])
 
   const isContactsReady = !isContactsLoading
+  const usedContactIds = interactions.flatMap((interaction) => interaction.participant_contact_ids)
+  const recentInteractions = interactions.filter((interaction) => {
+    return Date.now() - new Date(interaction.scheduled_at).getTime() <= 7 * 24 * 60 * 60 * 1000
+  })
 
   return (
     <li
@@ -61,9 +85,16 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
       <p style={{ color: "#555", marginTop: 0 }}>
         Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"} linked in this context.
       </p>
+      {!isInteractionsLoading ? (
+        <p style={{ color: "#555", marginTop: 0 }}>
+          System signal: {interactions.length} event{interactions.length === 1 ? "" : "s"} in history.
+          {recentInteractions.length === 0 ? " No recent interactions in the last 7 days." : ` ${recentInteractions.length} recorded in the last 7 days.`}
+        </p>
+      ) : null}
       <WorkspaceContactsPanel
         workspaceId={workspace.id}
         contacts={contacts}
+        usedContactIds={usedContactIds}
         isContactsReady={isContactsReady}
         errorMessage={contactsErrorMessage}
         onChanged={loadContacts}
@@ -74,6 +105,7 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
         isContactsLoading={isContactsLoading}
         isContactsReady={isContactsReady}
       />
+      {interactionsErrorMessage ? <p style={{ color: "crimson" }}>{interactionsErrorMessage}</p> : null}
     </li>
   )
 }

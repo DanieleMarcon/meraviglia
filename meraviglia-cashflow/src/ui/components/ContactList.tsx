@@ -7,11 +7,12 @@ import { syncDraftWithLatestContact, toEditDraft, type EditDraft } from "./conta
 
 type ContactListProps = {
   contacts: ContactDTO[]
+  usedContactIds: string[]
   onEdited: () => Promise<void>
 }
 
 
-function ContactList({ contacts, onEdited }: ContactListProps) {
+function ContactList({ contacts, usedContactIds, onEdited }: ContactListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditDraft | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -95,6 +96,7 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {contacts.map((contact) => {
           const isEditing = editingId === contact.id && draft
+          const isUsedInHistory = usedContactIds.includes(contact.id)
 
           return (
             <li key={contact.id} style={{ border: "1px solid #ddd", borderRadius: 4, padding: 8, marginBottom: 8 }}>
@@ -133,6 +135,12 @@ function ContactList({ contacts, onEdited }: ContactListProps) {
                   <p><strong>Phone:</strong> {contact.phone ?? "-"}</p>
                   <p><strong>Role:</strong> {contact.role ?? "-"}</p>
                   <p><strong>Provenance:</strong> {contact.provenance}</p>
+                  <p>
+                    <strong>Interaction history:</strong>{" "}
+                    {isUsedInHistory
+                      ? "Used in event history (this relationship is already part of logged interactions)."
+                      : "Not yet linked to any logged event."}
+                  </p>
                   <div style={{ display: "flex", gap: 8 }}>
                     <button type="button" onClick={() => beginEdit(contact)} disabled={deletingId === contact.id}>Edit</button>
                     <button type="button" onClick={() => void handleDelete(contact.id)} disabled={deletingId === contact.id}>

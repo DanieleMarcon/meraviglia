@@ -84,6 +84,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
       <fieldset style={{ marginBottom: 8 }}>
         <legend>Participants</legend>
         {contacts.length === 0 ? <p style={{ margin: 0 }}>You need at least one contact before creating an interaction.</p> : null}
+        {contacts.length > 0 ? <p style={{ margin: "0 0 6px", color: "#555" }}>Allowed: this action can create an event because relationships are available to participate.</p> : null}
         {contacts.map((contact) => (
           <label key={contact.id} style={{ display: "block" }}>
             <input
@@ -111,6 +112,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
         </button>
         <button type="button" onClick={onCancel} disabled={isSubmitting}>Cancel</button>
       </div>
+      {contacts.length === 0 ? <p style={{ color: "#555" }}>Blocked: no relationships to attach as participants yet. Next step: add contacts first.</p> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </form>
   )
