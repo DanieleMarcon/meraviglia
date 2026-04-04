@@ -58,6 +58,9 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
       <p><strong>Name:</strong> {workspace.workspace_name}</p>
       <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
       <p><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
+      <p style={{ color: "#555", marginTop: 0 }}>
+        Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"} linked in this context.
+      </p>
       <WorkspaceContactsPanel
         workspaceId={workspace.id}
         contacts={contacts}

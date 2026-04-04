@@ -8,12 +8,13 @@ type IntakeListProps = {
 
 function IntakeList({ intakes, onConverted }: IntakeListProps) {
   if (intakes.length === 0) {
-    return <p>No intakes found.</p>
+    return <p>No intakes found. Create one intake to start the flow.</p>
   }
 
   return (
     <div>
       <h2>Intakes</h2>
+      <p style={{ marginTop: 0, color: "#555" }}>Review intake readiness, then convert when you are ready to move into workspace execution.</p>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {intakes.map((intake) => (
           <li key={intake.id} style={{ border: "1px solid #ddd", padding: 12, marginBottom: 8 }}>
@@ -25,7 +26,7 @@ function IntakeList({ intakes, onConverted }: IntakeListProps) {
 
             {intake.status !== "converted" ? (
               <ConvertIntakeButton intakeId={intake.id} onConverted={onConverted} />
-            ) : null}
+            ) : <p style={{ color: "#2c8a3f", margin: 0 }}>Converted to workspace context. Continue below in Workspaces.</p>}
           </li>
         ))}
       </ul>
