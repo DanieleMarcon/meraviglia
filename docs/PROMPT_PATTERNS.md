@@ -111,3 +111,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when flows are functionally complete but users still perceive low predictability or weak system state awareness
 - Avoid next time: avoid introducing analytics/timeline/filter capabilities when only trust clarity is requested
+
+## [2026-04-04] FUV decision-readiness framing (qualitative only)
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: make current workspace state feel operationally meaningful by clarifying readiness for follow-up continuity without adding scoring or analytics
+- Why it worked:
+  - required short "why this matters now" copy tied directly to existing relationships/events state
+  - forced qualitative readiness cues (thin vs forming vs usable history) instead of metrics
+- Guardrails that mattered:
+  - no new architecture layers, backend/schema changes, or recommendations logic
+  - no faux-intelligence language ("analyzing", "recommending")
+  - guidance tone without workflow enforcement
+- What was corrected during execution: history sections were reframed from passive logs into continuity records that support next follow-up decisions
+- Reusable snippet:
+  ```
+  Add a lightweight decision-readiness layer across an existing multi-step flow using only existing state. At each panel/workspace level, provide qualitative readiness cues, a short "why this matters now" summary, and gentle next-action guidance (first relationship, first event, continue history) without scores, analytics, or recommendation logic.
+  ```
+- Reuse conditions: use when users can see activity/history but still cannot infer whether the system is becoming operationally useful
+- Avoid next time: do not introduce percentages, dashboards, or new derived business rules for readiness

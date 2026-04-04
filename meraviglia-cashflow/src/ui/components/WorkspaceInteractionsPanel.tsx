@@ -62,6 +62,8 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const hasNoContacts = !isLoading && isContactsReady && contacts.length === 0
   const canRenderContactDependentUi = isContactsReady
   const isCreateBlocked = isContactsReady && contacts.length === 0
+  const hasRelationships = contacts.length > 0
+  const hasEventHistory = interactions.length > 0
   const hasRecentInteractions = interactions.some((interaction) => {
     return Date.now() - new Date(interaction.scheduled_at).getTime() <= 7 * 24 * 60 * 60 * 1000
   })
@@ -79,6 +81,24 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
         <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>New interaction</button>
       </div>
       <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are your event history for this workspace context.</p>
+      {!isLoading ? (
+        <p style={{ color: "#555" }}>
+          Why this matters now: {!hasRelationships
+            ? "this workspace still needs its first relationship before history can start."
+            : !hasEventHistory
+              ? "relationship context exists, but continuity is still thin until the first event is logged."
+              : "recorded events now form a usable historical record for follow-up continuity in this workspace."}
+        </p>
+      ) : null}
+      {!isLoading ? (
+        <p style={{ color: "#555" }}>
+          Follow-up readiness: {!hasRelationships
+            ? "add the first relationship."
+            : !hasEventHistory
+              ? "log the first event."
+              : "continue building event history."}
+        </p>
+      ) : null}
       {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {interactions.length} event{interactions.length === 1 ? "" : "s"} logged in this history.</p> : null}
       {!isLoading ? <p style={{ color: "#555" }}>Recency signal: {hasRecentInteractions ? "Event history is active this week." : "No recent interactions this week yet."}</p> : null}
       {isContactsLoading ? <p style={{ color: "#555" }}>Action status: create interaction is temporarily blocked while relationships are loading.</p> : null}
@@ -100,7 +120,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       {!isLoading && interactions.length === 0 ? (
         <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
           <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
-          <p style={{ margin: "0 0 8px" }}>Start the event history by logging the first planned call, meeting, or follow-up.</p>
+          <p style={{ margin: "0 0 8px" }}>Start a usable historical record by logging the first planned call, meeting, or follow-up.</p>
           <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>Create first interaction</button>
         </div>
       ) : null}

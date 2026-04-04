@@ -55,6 +55,11 @@ function WorkspaceView() {
       <p style={{ marginTop: 0, color: "#444" }}>
         Step 2 — Workspace is your operating context: organize relationships (contacts) and track event history (interactions).
       </p>
+      {!isLoading ? (
+        <p style={{ marginTop: 0, color: "#555" }}>
+          Readiness lens: each workspace below shows whether it is still thin, starting continuity, or already building usable historical context.
+        </p>
+      ) : null}
       {conversionMessage ? <p style={{ color: "green" }}>{conversionMessage}</p> : null}
       {isLoading ? <p>Loading workspaces...</p> : null}
       {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {workspaces.length} workspace context{workspaces.length === 1 ? "" : "s"} available.</p> : null}
