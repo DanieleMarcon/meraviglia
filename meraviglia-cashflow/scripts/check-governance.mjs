@@ -64,7 +64,7 @@ const deterministicForbiddenPatterns = [
 
 const sensitiveLogPattern = /\bconsole\.(?:log|info|warn|error|debug)\s*\([^\n)]*(?:token|secret|password|authorization|api[_-]?key|bearer|jwt|session[^a-z])/i
 const unsafeUiErrorRenderPattern = /\{\s*[^}\n]*\b(?:error|err)\.(?:message|stack)\b[^}\n]*\}/
-const imgTagMissingAltPattern = /<img\b(?![^>]*\balt=)[^>]*>/i
+const imgTagMissingAltPattern = /<img\b(?![^>]*\balt\s*=)[^>]*>/i
 const autoFocusPattern = /<[^>]+\bautoFocus\b[^>]*>/
 
 function walk(dir, output = []) {
