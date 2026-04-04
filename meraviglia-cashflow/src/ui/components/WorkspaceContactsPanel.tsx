@@ -17,8 +17,8 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
 
   return (
     <section style={{ padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fcfcfc" }}>
-      <h4 style={{ marginTop: 0 }}>Contacts</h4>
-      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts are the relationships in this workspace context.</p>
+      <h4 style={{ marginTop: 0 }}>Relationships (contacts)</h4>
+      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts are relationship records inside this workspace, not entry-stage identity fields.</p>
       {isContactsReady ? (
         <p style={{ marginTop: 0, color: "#555" }}>
           {!hasRelationships
@@ -31,7 +31,7 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
       <ContactForm workspaceId={workspaceId} onCreated={onChanged} />
       {!isContactsReady ? <p>Loading contacts...</p> : null}
       {isContactsReady && contacts.length === 0 ? (
-        <p>No relationships yet. Add your first contact to unlock interaction event tracking.</p>
+        <p>No relationships yet. Add the first one with only known details; you can enrich it later.</p>
       ) : null}
       {isContactsReady && contacts.length > 0 ? (
         <p style={{ color: "#555" }}>

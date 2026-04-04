@@ -70,6 +70,30 @@ When querying participants with interaction joins, explicit FK embedding is requ
 - Optimistic concurrency guard (`expected_updated_at`) plus stale-update handling is enforced.
 - Deterministic stale-update error messaging is implemented.
 
+## FUV Slice 6 Concept Clarification Addendum
+
+Authoritative user mental model:
+`entry → qualification → workspace context → relationships → interactions/history`
+
+Clarifications applied in UX/documentation:
+- Entry stage is activity/business-first (not contact-book-first).
+- Entry data and relationship contacts are intentionally separate concepts.
+- Not every entry becomes a workspace; only entries with real continuity/interest are promoted.
+- Contacts are workspace relationship records and can be incomplete initially.
+- Interactions are historical events inside workspace context.
+
+## DB/Schema Impact Assessment (Slice 6)
+
+No schema change is required for this slice.
+
+Current schema already supports the clarified model:
+- `intakes` can remain non-converted records.
+- `workspaces` are created only on explicit conversion.
+- `contacts` and `interactions` remain workspace-scoped relationship/history records.
+
+Potential future minimal refinement (documented, not implemented here):
+- optional dedicated `activity_name` field on `intakes` to make activity-first identity explicit at data level rather than UI semantics.
+
 ---
 
 ## Stack (Authoritative)

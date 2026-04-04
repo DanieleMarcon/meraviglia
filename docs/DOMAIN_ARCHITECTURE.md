@@ -15,9 +15,10 @@ Note: the bounded-context term in this document is a domain-modeling concept and
    - Provides identity and authorization constraints for strategic operations.
    - Current maturity: foundation complete (tenant model + RLS + org-scoped RBAC + M2-B invite/membership baseline), with reliability hardening ongoing.
 
-2. **Intake Context**
-   - Strategic entry aggregate for new initiatives.
-   - Captures initial assumptions, constraints, and desired outcomes.
+2. **Entry & Qualification Context (formerly Intake)**
+   - Activity-first entry aggregate for new initiatives.
+   - Captures the first operational signal (inbound/outbound, online/offline) before workspace creation.
+   - Qualification decides whether continuity is strong enough to open a workspace.
 
 3. **Workspace Context**
    - Operational strategic container bound to one organization.
@@ -71,9 +72,9 @@ Domain expansion rule: new bounded capabilities must strengthen this continuity 
 
 ## Core Entities and Invariants
 - **Organization** is the hard tenant boundary.
-- **Workspace** belongs to exactly one organization and is created from intake conversion.
+- **Workspace** belongs to exactly one organization and is created only for qualified entries with operational continuity.
 - **Contact** belongs to exactly one workspace and one organization-scoped boundary.
-- **Intake** is the required starting artifact for each strategic lifecycle.
+- **Entry (intake record)** is the required starting artifact for each strategic lifecycle, but not every entry advances to workspace.
 - **Blueprint** is versioned and linked to a workspace for full traceability.
 - **Scenario** belongs to exactly one blueprint and defines active action IDs plus assumption variables.
 - **SimulationResult** belongs to one scenario and stores projected indicators and risk level.
@@ -82,8 +83,9 @@ Domain expansion rule: new bounded capabilities must strengthen this continuity 
 Key invariants:
 - No cross-tenant access to strategic entities.
 - No blueprint without workspace context.
-- No workspace lifecycle without intake lineage.
+- No workspace lifecycle without entry lineage and qualification.
 - No contact without workspace ownership and explicit provenance.
+- Contacts are relationship records inside workspace scope; they may start partial/incomplete and be enriched over time.
 - No interaction without workspace ownership, explicit type/status/provenance semantics, and participant linkage scoped to workspace context.
 - No simulation output without declared scenario assumptions.
 

@@ -48,7 +48,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
         notes: formState.notes || null,
       })
       setFormState(INITIAL_STATE)
-      setSuccessMessage("Intake created. Next: convert it to establish workspace context for relationships and event history.")
+      setSuccessMessage("Entry saved. Qualify it when continuity is real, then create a workspace.")
       await onCreated()
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create intake"))
@@ -59,11 +59,11 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
 
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
-      <h2>Create Intake</h2>
-      <p style={{ marginTop: 0, color: "#555" }}>Capture the initial request clearly so conversion creates a reliable workspace context.</p>
+      <h2>Create entry</h2>
+      <p style={{ marginTop: 0, color: "#555" }}>Start with the activity or business first. Person details can be refined later in workspace contacts.</p>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        First name
+        Activity / business (primary)
         <input
           value={formState.first_name}
           onChange={(event) => setFormState((prev) => ({ ...prev, first_name: event.target.value }))}
@@ -72,7 +72,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       </label>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Last name
+        Entry label
         <input
           value={formState.last_name}
           onChange={(event) => setFormState((prev) => ({ ...prev, last_name: event.target.value }))}
@@ -81,7 +81,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       </label>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Email
+        Main email for this entry
         <input
           type="email"
           value={formState.email}
@@ -91,7 +91,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       </label>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Address
+        Location / area (optional)
         <input
           value={formState.address}
           onChange={(event) => setFormState((prev) => ({ ...prev, address: event.target.value }))}
@@ -106,12 +106,12 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
             onChange={(event) => setFormState((prev) => ({ ...prev, is_online: event.target.checked }))}
           />
           {" "}
-          Online intake
+          Came through an online channel
         </label>
       </div>
 
       <label style={{ display: "block", marginBottom: 8 }}>
-        Notes
+        Qualification notes
         <textarea
           rows={4}
           value={formState.notes}
@@ -120,7 +120,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
       </label>
 
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : "Create Intake"}
+        {isSubmitting ? "Saving..." : "Save entry"}
       </button>
 
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}

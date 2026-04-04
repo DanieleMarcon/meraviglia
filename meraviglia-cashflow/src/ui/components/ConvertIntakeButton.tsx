@@ -20,7 +20,7 @@ function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps
       const { workspace } = await convertIntakeToWorkspace(intakeId)
       await onConverted({ id: workspace.id, workspace_name: workspace.workspace_name })
     } catch (error) {
-      setErrorMessage(toUserFacingErrorMessage(error, "Unable to convert intake"))
+      setErrorMessage(toUserFacingErrorMessage(error, "Unable to create workspace from this entry"))
     } finally {
       setIsConverting(false)
     }
@@ -29,7 +29,7 @@ function ConvertIntakeButton({ intakeId, onConverted }: ConvertIntakeButtonProps
   return (
     <>
       <button onClick={handleConvert} disabled={isConverting}>
-        {isConverting ? "Converting..." : "Convert to Workspace Context"}
+        {isConverting ? "Creating workspace..." : "Qualify & create workspace"}
       </button>
       {errorMessage ? <p style={{ color: "crimson", margin: "4px 0 0" }}>{errorMessage}</p> : null}
     </>

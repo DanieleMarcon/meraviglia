@@ -51,8 +51,8 @@ function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
 
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
-      <p style={{ marginBottom: 8 }}><strong>Create contact</strong></p>
-      <p style={{ marginTop: 0, color: "#555" }}>Add a relationship that this workspace needs to coordinate with.</p>
+      <p style={{ marginBottom: 8 }}><strong>Add relationship contact</strong></p>
+      <p style={{ marginTop: 0, color: "#555" }}>Keep this practical. Start with basic details, then enrich as the relationship evolves.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         First name
         <input value={firstName} onChange={(event) => setFirstName(event.target.value)} required />
