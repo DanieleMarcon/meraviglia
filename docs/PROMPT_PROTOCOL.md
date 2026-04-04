@@ -192,7 +192,37 @@ Operational constraints:
 
 ---
 
-## 7) Prompt acceptance rule
+## 7) Post-execution check (mandatory before merge)
+
+This check must be performed after every successful execution task and before merge.
+
+It ensures that reusable prompt patterns are not lost.
+
+#### Mandatory questions:
+- Did this task generate a reusable prompt pattern?
+- If yes, append it to `docs/PROMPT_PATTERNS.md` before merge.
+
+#### Operational rule:
+- Merge is allowed only after:
+  - `npm run check` passes
+  - Prompt Pattern capture (if applicable) has been completed
+
+#### Reusable prompt block:
+The following block should be included in execution prompts when applicable:
+
+```md
+## Post-execution check (mandatory before merge)
+- Did this task generate a reusable prompt pattern?
+- If yes, append it to PROMPT_PATTERNS.md before merge.
+```
+
+### Constraint:
+- This check must remain lightweight and must not block delivery.
+- Only capture high-signal, reusable execution patterns.
+
+---
+
+## 8) Prompt acceptance rule
 
 A prompt is acceptable only if:
 1. it is bounded,
