@@ -3,7 +3,7 @@ import ConvertIntakeButton from "./ConvertIntakeButton"
 
 type IntakeListProps = {
   intakes: IntakeDTO[]
-  onConverted: () => Promise<void> | void
+  onConverted: (workspace: { id: string; workspace_name: string }) => Promise<void> | void
 }
 
 function IntakeList({ intakes, onConverted }: IntakeListProps) {

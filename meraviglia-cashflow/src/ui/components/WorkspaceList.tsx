@@ -9,13 +9,15 @@ import WorkspaceInteractionsPanel from "./WorkspaceInteractionsPanel"
 
 type WorkspaceListProps = {
   workspaces: WorkspaceDTO[]
+  highlightWorkspaceId: string | null
 }
 
 type WorkspaceListItemProps = {
   workspace: WorkspaceDTO
+  isHighlighted: boolean
 }
 
-function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
+function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps) {
   const [contacts, setContacts] = useState<ContactDTO[]>([])
   const [isContactsLoading, setIsContactsLoading] = useState(true)
   const [contactsErrorMessage, setContactsErrorMessage] = useState<string | null>(null)
@@ -38,11 +40,20 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
     void loadContacts()
   }, [loadContacts])
 
+  useEffect(() => {
+    if (!isHighlighted) {
+      return
+    }
+
+    document.getElementById(`workspace-${workspace.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })
+  }, [isHighlighted, workspace.id])
+
   const isContactsReady = !isContactsLoading
 
   return (
     <li
-      style={{ border: "1px solid #ddd", borderRadius: 4, padding: 12, marginBottom: 8 }}
+      id={`workspace-${workspace.id}`}
+      style={{ border: isHighlighted ? "2px solid #2c8a3f" : "1px solid #ddd", borderRadius: 4, padding: 12, marginBottom: 8 }}
     >
       <p><strong>Name:</strong> {workspace.workspace_name}</p>
       <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
@@ -64,11 +75,11 @@ function WorkspaceListItem({ workspace }: WorkspaceListItemProps) {
   )
 }
 
-function WorkspaceList({ workspaces }: WorkspaceListProps) {
+function WorkspaceList({ workspaces, highlightWorkspaceId }: WorkspaceListProps) {
   return (
     <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
       {workspaces.map((workspace) => (
-        <WorkspaceListItem key={workspace.id} workspace={workspace} />
+        <WorkspaceListItem key={workspace.id} workspace={workspace} isHighlighted={highlightWorkspaceId === workspace.id} />
       ))}
     </ul>
   )

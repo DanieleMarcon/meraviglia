@@ -54,3 +54,22 @@ Keep this file small and useful.
 It exists to extract reusable patterns from real work with minimal friction.
 
 If an entry feels abstract or bureaucratic, do not add it.
+
+## [2026-04-04] FUV first end-to-end continuity slice
+- Phase: FUV
+- Prompt type: feature development
+- Goal: make Intake → Workspace → Contacts → Interactions feel like one coherent usable flow without adding features
+- Why it worked:
+  - focused on continuity and perceived outcome instead of isolated UI polish
+  - constrained scope to existing flows and UX-state clarity
+- Guardrails that mattered:
+  - no UI → infra shortcuts
+  - no business logic in state
+  - only sanitized mapped errors in UI
+- What was corrected during execution: strengthened blocked-state clarity, explicit success feedback, and visible continuity after create/convert actions
+- Reusable snippet:
+  ```
+  Implement the first complete end-to-end user experience flow across existing entities without feature expansion. Focus on continuity, explicit system state, blocked/error guidance, and immediate perceived outcome after each action.
+  ```
+- Reuse conditions: use when existing features work technically but do not yet feel like one coherent product flow
+- Avoid next time: do not widen scope into new product capabilities or generic visual redesign

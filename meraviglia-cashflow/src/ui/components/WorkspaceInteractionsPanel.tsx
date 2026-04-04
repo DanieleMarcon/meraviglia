@@ -19,6 +19,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     setIsLoading(true)
@@ -44,10 +45,12 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
     expectedUpdatedAt: string,
   ) => {
     setErrorMessage(null)
+    setFeedbackMessage(null)
 
     try {
       await updateInteractionStatus(interactionId, { status, expected_updated_at: expectedUpdatedAt })
       await loadData()
+      setFeedbackMessage(`Interaction status updated to ${status}.`)
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to update interaction"))
       if (toUserFacingErrorMessage(error, "Unable to update interaction") === STALE_INTERACTION_UPDATE_MESSAGE) {
@@ -58,19 +61,26 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
 
   const hasNoContacts = !isLoading && isContactsReady && contacts.length === 0
   const canRenderContactDependentUi = isContactsReady
+  const isCreateBlocked = isContactsReady && contacts.length === 0
+
+  const handleCreated = async () => {
+    await loadData()
+    setIsCreateOpen(false)
+    setFeedbackMessage("Interaction saved. The updated interaction list is shown below.")
+  }
 
   return (
     <section style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
         <h4 style={{ margin: 0 }}>Interactions</h4>
-        <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading}>New interaction</button>
+        <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>New interaction</button>
       </div>
 
       {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
           workspaceId={workspaceId}
           contacts={contacts}
-          onCreated={loadData}
+          onCreated={handleCreated}
           onCancel={() => setIsCreateOpen(false)}
         />
       ) : null}
@@ -83,12 +93,12 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
         <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
           <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
           <p style={{ margin: "0 0 8px" }}>Track planned calls, meetings, and follow-ups for this workspace.</p>
-          <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading}>Create first interaction</button>
+          <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>Create first interaction</button>
         </div>
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>You need at least one contact before creating an interaction.</p>
+        <p style={{ color: "#555" }}>Interaction creation is blocked: add at least one contact in the Contacts section above, then create your interaction.</p>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (
@@ -96,6 +106,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       ) : null}
 
       {!isLoading && interactions.length > 0 && !canRenderContactDependentUi ? <p>Loading contacts...</p> : null}
+      {feedbackMessage ? <p style={{ color: "green" }}>{feedbackMessage}</p> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )

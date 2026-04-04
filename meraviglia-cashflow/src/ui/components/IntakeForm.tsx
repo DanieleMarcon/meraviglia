@@ -29,12 +29,14 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
   const [formState, setFormState] = useState<IntakeFormState>(INITIAL_STATE)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     setIsSubmitting(true)
     setErrorMessage(null)
+    setSuccessMessage(null)
 
     try {
       await createIntake({
@@ -46,6 +48,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
         notes: formState.notes || null,
       })
       setFormState(INITIAL_STATE)
+      setSuccessMessage("Intake created. You can now convert it into a workspace.")
       await onCreated()
     } catch (error) {
       setErrorMessage(toUserFacingErrorMessage(error, "Unable to create intake"))
@@ -58,38 +61,41 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
     <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
       <h2>Create Intake</h2>
 
-      <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        First name
         <input
-          placeholder="First name"
           value={formState.first_name}
           onChange={(event) => setFormState((prev) => ({ ...prev, first_name: event.target.value }))}
+          required
         />
-      </div>
+      </label>
 
-      <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Last name
         <input
-          placeholder="Last name"
           value={formState.last_name}
           onChange={(event) => setFormState((prev) => ({ ...prev, last_name: event.target.value }))}
+          required
         />
-      </div>
+      </label>
 
-      <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Email
         <input
-          placeholder="Email"
           type="email"
           value={formState.email}
           onChange={(event) => setFormState((prev) => ({ ...prev, email: event.target.value }))}
+          required
         />
-      </div>
+      </label>
 
-      <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Address
         <input
-          placeholder="Address"
           value={formState.address}
           onChange={(event) => setFormState((prev) => ({ ...prev, address: event.target.value }))}
         />
-      </div>
+      </label>
 
       <div style={{ marginBottom: 8 }}>
         <label>
@@ -103,20 +109,21 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
         </label>
       </div>
 
-      <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Notes
         <textarea
-          placeholder="Notes"
           rows={4}
           value={formState.notes}
           onChange={(event) => setFormState((prev) => ({ ...prev, notes: event.target.value }))}
         />
-      </div>
+      </label>
 
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Creating..." : "Create Intake"}
       </button>
 
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
+      {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
     </form>
   )
 }

@@ -11,6 +11,8 @@ function WorkspaceView() {
   const [workspaces, setWorkspaces] = useState<WorkspaceDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [highlightWorkspaceId, setHighlightWorkspaceId] = useState<string | null>(null)
+  const [conversionMessage, setConversionMessage] = useState<string | null>(null)
 
   const loadWorkspaces = useCallback(async () => {
     setIsLoading(true)
@@ -29,7 +31,14 @@ function WorkspaceView() {
   useEffect(() => {
     void loadWorkspaces()
 
-    const handleWorkspaceConverted = () => {
+    const handleWorkspaceConverted = (event: Event) => {
+      const convertedEvent = event as CustomEvent<{ id: string; workspace_name: string }>
+      if (convertedEvent.detail?.id) {
+        setHighlightWorkspaceId(convertedEvent.detail.id)
+      }
+      if (convertedEvent.detail?.workspace_name) {
+        setConversionMessage(`Now viewing workspaces. "${convertedEvent.detail.workspace_name}" was just created.`)
+      }
       void loadWorkspaces()
     }
 
@@ -41,11 +50,12 @@ function WorkspaceView() {
   }, [loadWorkspaces])
 
   return (
-    <section style={{ marginTop: 24 }}>
+    <section id="workspaces-section" style={{ marginTop: 24 }}>
       <h2>Workspaces</h2>
+      {conversionMessage ? <p style={{ color: "green" }}>{conversionMessage}</p> : null}
       {isLoading ? <p>Loading workspaces...</p> : null}
-      {!isLoading && workspaces.length === 0 ? <p>No workspaces found.</p> : null}
-      {!isLoading && workspaces.length > 0 ? <WorkspaceList workspaces={workspaces} /> : null}
+      {!isLoading && workspaces.length === 0 ? <p>No workspaces found yet. Convert an intake to create your first workspace.</p> : null}
+      {!isLoading && workspaces.length > 0 ? <WorkspaceList workspaces={workspaces} highlightWorkspaceId={highlightWorkspaceId} /> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
   )

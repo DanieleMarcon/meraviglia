@@ -16,7 +16,9 @@ function WorkspaceContactsPanel({ workspaceId, contacts, isContactsReady, errorM
       <h4>Contacts</h4>
       <ContactForm workspaceId={workspaceId} onCreated={onChanged} />
       {!isContactsReady ? <p>Loading contacts...</p> : null}
-      {isContactsReady && contacts.length === 0 ? <p>No contacts found for this workspace.</p> : null}
+      {isContactsReady && contacts.length === 0 ? (
+        <p>No contacts yet. Add your first contact to enable interaction tracking.</p>
+      ) : null}
       {isContactsReady && contacts.length > 0 ? <ContactList contacts={contacts} onEdited={onChanged} /> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </section>
