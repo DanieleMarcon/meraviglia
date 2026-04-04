@@ -1,104 +1,51 @@
-# Codex Task Template – Meraviglia Engine
+# Codex Task Template — Governance Baseline V2
 
-This template must be used for any AI-generated development task.
+Use this template for implementation tasks.
 
----
+## Task
+- [Single concrete outcome]
 
-# Task Title
+## Context
+- Current phase: [Point 0 / FUV / UX hardening]
+- Existing behavior:
+- Problem to solve now:
 
-Provide a concise and technical title.
+## Scope
+- In scope:
+  - [...]
+- Out of scope:
+  - [...]
 
-Example:
-"Implement grid-aware drag positioning"
+## Affected layers
+- [ui]
+- [application]
+- [repository/infra]
 
----
+## Governance constraints (mandatory)
+- Keep architecture path: `ui -> application -> repository/infra`.
+- No direct UI -> Supabase access.
+- Keep DTO/mappers as anti-leak boundary.
+- Keep validation/lifecycle rules in application services.
+- Keep errors deterministic and sanitized for user-facing UI.
+- Preserve accessibility (labels, keyboard operability, explicit blocked/error/loading states).
+- No new architecture layers.
 
-# Context
+## Functional requirements
+- [Behavior 1]
+- [Behavior 2]
 
-Explain:
+## Non-functional requirements
+- Strict typing.
+- No dead code / unused imports.
+- Maintain readability and small, targeted changes.
 
-- What part of the architecture is affected
-- Why this task is needed
-- Which roadmap phase it belongs to
+## Validation
+- `npm run check`
+- [Task-specific tests]
 
----
-
-# Scope
-
-Clearly define:
-
-- Files that MAY be modified
-- Files that MUST NOT be modified
-- Whether new files are allowed
-
----
-
-# Architectural Constraints
-
-Codex must respect:
-
-- Domain layer separation
-- Pure engine logic
-- No business logic in UI
-- Strict TypeScript
-- CSS Grid structural integrity
-
----
-
-# Functional Requirements
-
-List exact behavior expectations.
-
-Example:
-
-- Drag must snap to grid columns
-- Month calculation must be grid-based
-- No pixel assumptions
-- Must work for 3–24 months
-
----
-
-# Non-Functional Requirements
-
-- No implicit any
-- No unused imports
-- No console.logs
-- No dead code
-- Clean formatting
-
----
-
-# Validation Checklist
-
-Before completing the task, Codex must verify:
-
-- [ ] TypeScript compiles without errors
-- [ ] No new warnings introduced
-- [ ] Architecture separation maintained
-- [ ] No duplicated interfaces
-- [ ] No financial logic moved to UI
-
----
-
-# Output Format
-
-Codex must:
-
-- Provide full file replacements when required
-- Clearly indicate modified files
-- Avoid partial fragments unless explicitly requested
-- Keep explanations concise
-
----
-
-# Post-Implementation Summary
-
-Codex must include:
-
-- What changed
-- Why it aligns with architecture
-- What remains unchanged
-
----
-
-End of file.
+## Expected output
+1. Summary
+2. Files modified
+3. Governance impact notes (security/privacy/accessibility/architecture)
+4. Validation results
+5. Known limitations / deferrals

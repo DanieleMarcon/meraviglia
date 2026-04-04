@@ -1,243 +1,176 @@
-# Meraviglia OS Prompt Protocol
+# Meraviglia Prompting Protocol V2 (Governance Baseline)
 
-## 1. Purpose
+Date: 2026-04-04  
+Scope: Post-M3.x governance baseline ("Point 0")
 
-Meraviglia OS is built with AI-assisted development workflows, so prompts must follow a standardized structure to keep delivery consistent, auditable, and repeatable.
+## 1) Purpose
 
-This protocol defines how implementation prompts are written and consumed. Prompts must reference authoritative project documentation instead of embedding all rules inline.
+This protocol defines how prompts are written for Codex/ChatGPT so delivery stays aligned with the current governance baseline:
+- security by design
+- privacy/GDPR by design
+- accessibility by design
+- architecture boundaries (`ui -> application -> repository/infra -> supabase`)
 
----
-
-## 2. Prompt Architecture
-
-Every implementation prompt must follow this canonical structure.
-
-### Context
-
-### Authoritative Constraints
-
-### Task Description
-
-### Architectural Constraints
-
-### Scope
-
-### Out of Scope
-
-### Implementation Guidance
-
-### Documentation Requirements
-
-### Validation Requirements
-
-### Deliverables Expected
-
-### Quality Bar
+This protocol is practical and enforceable. It is not a generic AI writing guide.
 
 ---
 
-## 2.1 Prompt Modes
+## 2) Non-negotiable defaults (implicit in every prompt)
 
-### FULL PROMPT
+Every implementation prompt is assumed to require:
 
-Use when:
+1. **No UI -> infra/supabase shortcut**.
+2. **No persistence model leakage to UI** (DTO/mappers stay intact).
+3. **Validation and lifecycle rules in application layer** (not ad-hoc in components).
+4. **Deterministic, sanitized user-facing errors**.
+5. **Accessible interaction behavior** (labels, keyboard operability, explicit error/blocked/loading states).
+6. **No new architecture layers** and no responsibility reshuffle.
+7. **Governance check remains green** (`npm run check`).
 
-* introducing new architecture
-* high ambiguity
-* onboarding new tool
-
-### COMPACT PROMPT
-
-Use when:
-
-* task is narrow
-* documentation is stable
-* constraints can be referenced
-
-Structure:
-
-1. TASK
-2. CONTEXT
-3. CONSTRAINTS
-4. SCOPE
-5. OUT OF SCOPE
-6. REQUIRED OUTPUT
-7. VALIDATION
-8. DELIVERABLE FORMAT
+If a task needs to violate one of these, the prompt is invalid and must be rewritten.
 
 ---
 
-## 3. Authoritative Documentation References
+## 3) Standard prompt template (Codex-ready)
 
-Prompts must reference:
+Use this template for feature/refactor tasks.
 
-* ARCHITECTURE_FREEZE_v1.md
-* ENGINEERING_PROTOCOL.md
-* FEATURE_DELIVERY_PROTOCOL.md
-* PROJECT_STRUCTURE.md
-* DOMAIN_ARCHITECTURE.md
-* MERAVIGLIA_OS_MASTER_PLAN.md
-* MERAVIGLIA_POSITIONING.md
-* AI_STRATEGY.md
-* AI_TOOLING_ADOPTION_PLAN.md
+```md
+# Task
+[One concrete outcome, not a broad initiative.]
 
----
+## Context
+- Current phase: [e.g., Point 0 baseline / UX hardening]
+- Existing behavior: [what already exists]
+- Problem to solve now: [specific gap]
 
-## 4. Prompt Writing Rules
+## Scope
+- In scope:
+  - [...]
+- Out of scope:
+  - [...]
 
-* constraints must be explicit
-* scope must be clear
-* no architectural ambiguity
-* no bypass of architecture freeze
-* focus only on requested slice
+## Affected layers
+- [ui]
+- [application]
+- [repository/infra]
+(Only list layers that should change.)
 
----
+## Governance constraints (mandatory)
+- Keep architecture path: `ui -> application -> repository/infra`.
+- Do not import Supabase client outside `infra`.
+- Keep DTO/mappers as anti-leak boundary.
+- Keep validation/lifecycle enforcement in application services.
+- Keep user-facing errors deterministic and sanitized.
+- Preserve accessibility: visible labels, keyboard operability, explicit blocked/error/loading states.
+- No new architecture layers or cross-layer shortcuts.
 
-## 5. Prompt Output Contract
+## Implementation requirements
+- [Precise behavioral requirements]
+- [Data/lifecycle constraints]
+- [UI behavior constraints]
 
-Every response must include:
+## Validation
+Run and report:
+- `npm run check`
+- [Any task-specific tests]
 
-* Implementation Summary
-* Files Modified
-* Architectural Notes
-* Documentation Impact Check
-* Comment Impact Check
-* Validation Results
-* Known Limitations
-
----
-
-# 🔁 6. Cross-Chat Continuity Protocol (UPDATED)
-
-## 6.1 Mandatory Context Header
-
-Every new chat MUST start with:
-
-```
-Current milestone: [M1 / M2 / M3]
-Current stream: [DB / APP / PRODUCT]
-Current focus: [task]
-Last completed step: [summary]
-Blocked by: [if any]
+## Expected output
+1. Summary of changes
+2. Files modified
+3. Governance impact notes (security/privacy/accessibility/architecture)
+4. Validation results
+5. Residual risks or deferrals (if any)
 ```
 
 ---
 
-## 6.2 Transition Prompt Rule (MANDATORY)
+## 4) Pre-flight checklist (before sending a prompt)
 
-When switching chat, the assistant MUST generate a **Transition Prompt**.
+1. **Scope clarity**
+   - Is the task single-purpose and bounded?
+   - Are explicit out-of-scope items listed?
 
-### Structure
+2. **Layer impact clarity**
+   - Which layers are expected to change?
+   - Is any forbidden boundary crossing implied?
 
-* Current milestone
-* Current system state
-* Completed work
-* Active constraints
-* Next step
-* Risks / warnings
+3. **Governance implications**
+   - Security: any validation/error/supabase-surface impact?
+   - Privacy: any new personal fields or data exposure?
+   - Accessibility: any changes to forms/actions/error states?
 
----
+4. **Policy compatibility**
+   - Does the prompt preserve existing lifecycle policies?
+   - Does it avoid new architecture layers/shortcuts?
 
-## 6.3 Decision Persistence Rule
+5. **Verification readiness**
+   - Are required checks specified (`npm run check` + targeted tests)?
+   - Is expected output format explicit?
 
-Every architectural or security decision MUST:
-
-* be explicitly written
-* be stored in docs
-* be referenced in future steps
-
----
-
-## 6.4 Scope Control Rule
-
-* one problem per interaction
-* no scope expansion
-* respect milestone boundaries
+If any answer is unclear, do not send the prompt yet.
 
 ---
 
-## 6.5 Output Discipline
+## 5) Anti-patterns to ban (with examples)
 
-The assistant MUST:
+## A) Architecture shortcut prompts (forbidden)
 
-* provide ready-to-use prompts
-* produce production-grade outputs
-* avoid exploratory responses
+Bad:
+- "Update the component to write directly to Supabase for faster delivery."
 
----
-
-## 6.6 Milestone Awareness Rule
-
-All decisions must be evaluated against:
-
-* current milestone
-* system maturity
-* no overengineering
+Why bad:
+- Bypasses validation and policy control points.
 
 ---
 
-# 🔒 7. Delivery Discipline Layer (NEW)
+## B) Persistence leakage prompts (forbidden)
 
-This layer binds prompts to execution system (Delivery System + Roadmap).
+Bad:
+- "Return raw DB rows to UI so we avoid writing mappers."
 
-## 7.1 Mandatory Alignment
-
-Every prompt must align with:
-
-* current milestone
-* active stream
-* delivery system priorities
+Why bad:
+- Breaks DTO boundary and increases privacy/security drift.
 
 ---
 
-## 7.2 No Parallel Evolution Rule
+## C) Validation bypass prompts (forbidden)
 
-* Only ONE milestone active
-* No cross-milestone implementation
+Bad:
+- "Do minimal frontend checks; backend/review can handle rules later."
 
----
-
-## 7.3 Execution Integrity Rule
-
-Prompts MUST NOT:
-
-* introduce new architecture layers
-* redefine responsibilities
-* bypass governance checks
+Why bad:
+- Reintroduces inconsistent lifecycle enforcement and regressions.
 
 ---
 
-## 7.4 RBAC Activation Constraint (CURRENT PHASE)
+## D) Inaccessible UI shortcut prompts (forbidden)
 
-Current phase: **M1 → M2 transition**
+Bad:
+- "Add icon-only actions; we can improve labels/keyboard later."
 
-Therefore:
-
-* RBAC must be **activated, not redesigned**
-* no advanced permission engine
-* no premature abstraction
+Why bad:
+- Violates accessibility-by-design and increases UX hardening debt.
 
 ---
 
-## 8. Chat Continuity Requirement
+## E) Governance-blind prompts (forbidden)
 
-Each new chat must be:
+Bad:
+- "Implement this quickly; skip check scripts and tests for now."
 
-* self-contained
-* explicit
-* aligned with milestone
-* consistent with previous decisions
-
----
-
-## 9. Tool Independence
-
-This protocol is tool-agnostic and valid for:
-
-* ChatGPT
-* Codex
-* Claude
-* Emergent
-* future tools
+Why bad:
+- Removes the only active enforcement gate and invites silent regressions.
 
 ---
+
+## 6) Prompt acceptance rule
+
+A prompt is acceptable only if:
+1. it is bounded,
+2. layer impacts are explicit,
+3. governance constraints are explicit,
+4. validation commands are explicit,
+5. it does not request forbidden shortcuts.
+
+If one condition fails, rewrite the prompt before execution.
