@@ -83,26 +83,34 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       <p style={{ marginTop: 0, color: "#555" }}>Step 4 — Interactions are your event history for this workspace context.</p>
       {!isLoading ? (
         <p style={{ color: "#555" }}>
-          Why this matters now: {!hasRelationships
-            ? "this workspace still needs its first relationship before history can start."
+          {!hasRelationships
+            ? "Current state: history is blocked until the first relationship exists."
             : !hasEventHistory
-              ? "relationship context exists, but continuity is still thin until the first event is logged."
-              : "recorded events now form a usable historical record for follow-up continuity in this workspace."}
+              ? "Current state: relationship context exists, but history has not started yet."
+              : "Current state: recorded events are building reliable workspace history."}
         </p>
       ) : null}
       {!isLoading ? (
         <p style={{ color: "#555" }}>
-          Follow-up readiness: {!hasRelationships
+          Why this matters: {!hasRelationships
+            ? "without relationship and event context, follow-up decisions stay fragile."
+            : !hasEventHistory
+              ? "until the first event is logged, follow-up decisions rely on memory."
+              : "history makes follow-up decisions faster and easier to trust."}
+        </p>
+      ) : null}
+      {!isLoading ? (
+        <p style={{ color: "#555" }}>
+          Next action: {!hasRelationships
             ? "add the first relationship."
             : !hasEventHistory
               ? "log the first event."
-              : "continue building event history."}
+              : "keep event history current."}
         </p>
       ) : null}
-      {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {interactions.length} event{interactions.length === 1 ? "" : "s"} logged in this history.</p> : null}
       {!isLoading ? <p style={{ color: "#555" }}>Recency signal: {hasRecentInteractions ? "Event history is active this week." : "No recent interactions this week yet."}</p> : null}
       {isContactsLoading ? <p style={{ color: "#555" }}>Action status: create interaction is temporarily blocked while relationships are loading.</p> : null}
-      {!isContactsLoading && !isCreateBlocked ? <p style={{ color: "#555" }}>Action status: create interaction is enabled because at least one relationship is available as a participant.</p> : null}
+      {!isContactsLoading && !isCreateBlocked ? <p style={{ color: "#555" }}>Action status: create interaction is enabled.</p> : null}
 
       {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
@@ -126,7 +134,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>Interaction creation is blocked: no relationships exist yet. Recovery: add at least one contact in Contacts above, then log the first event in this history.</p>
+        <p style={{ color: "#555" }}>Interaction creation is blocked: no relationships exist yet. Add at least one contact above, then log the first event.</p>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (

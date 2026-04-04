@@ -77,22 +77,22 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   const hasEventHistory = interactions.length > 0
 
   const readinessStatusLabel = !hasRelationships
-    ? "Readiness status: not ready for follow-up continuity yet."
+    ? "Not ready: relationship context missing."
     : !hasEventHistory
-      ? "Readiness status: relationships are in place, but follow-up history is still thin."
-      : "Readiness status: operational history is forming from recorded events."
+      ? "Starting: relationships exist, event history is still thin."
+      : "Ready: relationship context and event history are active."
 
   const readinessSummary = !hasRelationships
-    ? "This workspace exists, but has no relationship context yet. Add the first relationship before event continuity can start."
+    ? "Without a contact, this workspace cannot anchor follow-up continuity."
     : !hasEventHistory
-      ? "This workspace has relationship context, but no recorded events yet. Log the first event to make follow-up continuity usable."
-      : "This workspace has both relationships and event history. Each new event strengthens continuity for future follow-up decisions."
+      ? "Relationship context exists, but decisions still rely on memory until the first event is logged."
+      : "Recorded events make follow-up decisions faster and more reliable."
 
   const followUpReadinessHint = !hasRelationships
-    ? "Next meaningful action: add the first relationship."
+    ? "Next action: add the first relationship."
     : !hasEventHistory
-      ? "Next meaningful action: log the first event."
-      : "Next meaningful action: continue building event history."
+      ? "Next action: log the first event."
+      : "Next action: keep event history current."
 
   return (
     <li
@@ -103,15 +103,14 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
       <p><strong>Slug:</strong> {workspace.workspace_slug}</p>
       <p><strong>Created:</strong> {new Date(workspace.created_at).toLocaleString()}</p>
       <p style={{ color: "#555", marginTop: 0 }}>
-        Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"} linked in this context.
+        Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"}, {interactions.length} event{interactions.length === 1 ? "" : "s"}.
       </p>
       <p style={{ color: "#555", marginTop: 0 }}>{readinessStatusLabel}</p>
       <p style={{ color: "#555", marginTop: 0 }}>Why this matters now: {readinessSummary}</p>
       <p style={{ color: "#555", marginTop: 0 }}>{followUpReadinessHint}</p>
       {!isInteractionsLoading ? (
         <p style={{ color: "#555", marginTop: 0 }}>
-          System signal: {interactions.length} event{interactions.length === 1 ? "" : "s"} in history.
-          {recentInteractions.length === 0 ? " No recent interactions in the last 7 days." : ` ${recentInteractions.length} recorded in the last 7 days.`}
+          Recency: {recentInteractions.length === 0 ? "No events recorded in the last 7 days." : `${recentInteractions.length} recorded in the last 7 days.`}
         </p>
       ) : null}
       <WorkspaceContactsPanel

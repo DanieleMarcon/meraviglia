@@ -37,7 +37,7 @@ function WorkspaceView() {
         setHighlightWorkspaceId(convertedEvent.detail.id)
       }
       if (convertedEvent.detail?.workspace_name) {
-        setConversionMessage(`Now in workspace context. "${convertedEvent.detail.workspace_name}" is ready — add relationships, then record events.`)
+        setConversionMessage(`Workspace ready: "${convertedEvent.detail.workspace_name}". Add relationships, then record events.`)
       }
       void loadWorkspaces()
     }
@@ -53,16 +53,11 @@ function WorkspaceView() {
     <section id="workspaces-section" style={{ marginTop: 24 }}>
       <h2>Workspaces</h2>
       <p style={{ marginTop: 0, color: "#444" }}>
-        Step 2 — Workspace is your operating context: organize relationships (contacts) and track event history (interactions).
+        Step 2 — Workspace is your operating context for relationships and event history.
       </p>
-      {!isLoading ? (
-        <p style={{ marginTop: 0, color: "#555" }}>
-          Readiness lens: each workspace below shows whether it is still thin, starting continuity, or already building usable historical context.
-        </p>
-      ) : null}
       {conversionMessage ? <p style={{ color: "green" }}>{conversionMessage}</p> : null}
       {isLoading ? <p>Loading workspaces...</p> : null}
-      {!isLoading ? <p style={{ color: "#555" }}>Progress cue: {workspaces.length} workspace context{workspaces.length === 1 ? "" : "s"} available.</p> : null}
+      {!isLoading ? <p style={{ color: "#555" }}>Progress: {workspaces.length} workspace context{workspaces.length === 1 ? "" : "s"} available.</p> : null}
       {!isLoading && workspaces.length === 0 ? <p>No workspaces found yet. Convert an intake to create your first workspace context.</p> : null}
       {!isLoading && workspaces.length > 0 ? <WorkspaceList workspaces={workspaces} highlightWorkspaceId={highlightWorkspaceId} /> : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
