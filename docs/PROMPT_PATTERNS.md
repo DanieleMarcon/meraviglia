@@ -206,3 +206,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when a recently added UX recovery mechanic increases complexity more than it improves completion
 - Avoid next time: do not keep “clever” assistive behavior when plain guidance is easier to understand
+
+## [2026-04-05] Activity-first persistence micro-refinement (schema + boundary alignment)
+- Phase: post-FUV micro-refinement
+- Prompt type: refactor/hardening
+- Goal: make entry identity explicitly activity-first at persistence level with smallest safe end-to-end change
+- Why it worked:
+  - constrained implementation to one additive field (`activity_name`) plus compatibility fallback for legacy rows
+  - required propagation through `ui -> application -> repository/infra` boundaries, preventing leaky shortcuts
+- Guardrails that mattered:
+  - no lifecycle/contact model redesign
+  - keep DTO/mappers as anti-leak boundary
+  - documentation must describe implemented behavior only
+- What was corrected during execution: removed runtime reliance on `first_name` as workspace naming surrogate and replaced it with `activity_name`
+- Reusable snippet:
+  ```
+  Introduce one additive persistence refinement to align product semantics with the data model. Add the field at schema level, propagate it through repository adapters, DTO/mappers, services, and UI bindings, define a minimal read fallback for legacy rows, and update only documentation sections that now diverge from implemented reality. No new entities, no lifecycle redesign.
+  ```
+- Reuse conditions: use when UX/domain semantics are already agreed and implemented, but persistence still encodes an older surrogate identity
+- Avoid next time: do not broaden into adjacent model cleanup once compatibility is satisfied

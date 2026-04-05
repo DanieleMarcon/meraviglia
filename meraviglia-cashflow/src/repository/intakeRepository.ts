@@ -2,6 +2,7 @@ export type IntakeStatus = "draft" | "validated" | "converted"
 
 export type IntakeRecord = {
   id: string
+  activity_name: string
   first_name: string
   last_name: string
   email: string
@@ -15,6 +16,7 @@ export type IntakeRecord = {
 }
 
 export type CreateIntakeRecordInput = {
+  activity_name: string
   first_name: string
   last_name: string
   email: string

@@ -14,7 +14,7 @@ import type {
 
 const TABLE_NAME = "intakes"
 const SELECT_FIELDS =
-  "id, first_name, last_name, email, address, is_online, notes, status, workspace_id, created_at, updated_at"
+  "id, activity_name, first_name, last_name, email, address, is_online, notes, status, workspace_id, created_at, updated_at"
 
 export class SupabaseIntakeRepository implements IntakeRepository {
   async createIntake(input: CreateIntakeRecordInput): Promise<IntakeRecord> {

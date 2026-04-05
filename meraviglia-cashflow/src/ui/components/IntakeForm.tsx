@@ -41,11 +41,10 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
     setSuccessMessage(null)
 
     try {
-      const referencePersonLabel = `${formState.reference_first_name.trim()} ${formState.reference_last_name.trim()}`.trim()
-
       await createIntake({
-        first_name: formState.activity,
-        last_name: referencePersonLabel || "Entry",
+        activity_name: formState.activity,
+        first_name: formState.reference_first_name || undefined,
+        last_name: formState.reference_last_name || undefined,
         email: formState.email,
         address: formState.address || null,
         is_online: formState.is_online,

@@ -9,6 +9,7 @@ describe("intakeWritePayloadAdapter", () => {
   it("accepts valid create payloads and emits canonical write contract", () => {
     const decoded = adaptCreateIntakeWritePayload({
       organization_id: "org-1",
+      activity_name: "Lighthouse Studio",
       first_name: "Ada",
       last_name: "Lovelace",
       email: "ada@example.com",
@@ -20,6 +21,7 @@ describe("intakeWritePayloadAdapter", () => {
 
     expect(decoded).toEqual({
       organization_id: "org-1",
+      activity_name: "Lighthouse Studio",
       first_name: "Ada",
       last_name: "Lovelace",
       email: "ada@example.com",
@@ -34,6 +36,7 @@ describe("intakeWritePayloadAdapter", () => {
     expect(() =>
       adaptCreateIntakeWritePayload({
         organization_id: "org-1",
+        activity_name: "Lighthouse Studio",
         first_name: "Ada",
         last_name: "Lovelace",
         email: "ada@example.com",
@@ -44,11 +47,13 @@ describe("intakeWritePayloadAdapter", () => {
 
   it("accepts valid update payloads with partial fields", () => {
     const decoded = adaptUpdateIntakeWritePayload({
+      activity_name: "Updated Studio",
       notes: null,
       workspace_id: "ws-1",
     })
 
     expect(decoded).toEqual({
+      activity_name: "Updated Studio",
       notes: null,
       workspace_id: "ws-1",
     })
