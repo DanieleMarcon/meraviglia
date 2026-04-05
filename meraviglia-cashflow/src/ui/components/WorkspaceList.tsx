@@ -22,7 +22,6 @@ type WorkspaceListItemProps = {
 function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps) {
   const [contacts, setContacts] = useState<ContactDTO[]>([])
   const [interactions, setInteractions] = useState<InteractionDTO[]>([])
-  const [isContactFormHighlighted, setIsContactFormHighlighted] = useState(false)
   const [isContactsLoading, setIsContactsLoading] = useState(true)
   const [isInteractionsLoading, setIsInteractionsLoading] = useState(true)
   const [contactsErrorMessage, setContactsErrorMessage] = useState<string | null>(null)
@@ -82,16 +81,6 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
       ? "Next: log the first interaction."
       : "Next: keep interactions updated."
 
-  const jumpToContactForm = () => {
-    setIsContactFormHighlighted(true)
-    window.setTimeout(() => setIsContactFormHighlighted(false), 1800)
-    document.getElementById(`workspace-${workspace.id}-contact-form`)?.scrollIntoView({ behavior: "smooth", block: "center" })
-    window.setTimeout(() => {
-      const firstNameInput = document.getElementById(`workspace-${workspace.id}-contact-first-name`) as HTMLInputElement | null
-      firstNameInput?.focus()
-    }, 250)
-  }
-
   return (
     <li
       id={`workspace-${workspace.id}`}
@@ -123,7 +112,6 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
           contacts={contacts}
           usedContactIds={usedContactIds}
           isContactsReady={isContactsReady}
-          isCreateHighlightActive={isContactFormHighlighted}
           errorMessage={contactsErrorMessage}
           onChanged={loadContacts}
         />
@@ -132,7 +120,6 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
           contacts={contacts}
           isContactsLoading={isContactsLoading}
           isContactsReady={isContactsReady}
-          onRequestAddContact={jumpToContactForm}
         />
       </div>
       {interactionsErrorMessage ? <p style={{ color: "crimson" }}>{interactionsErrorMessage}</p> : null}

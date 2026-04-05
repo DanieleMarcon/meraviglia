@@ -12,10 +12,9 @@ type InteractionFormProps = {
   contacts: ContactDTO[]
   onCreated: () => Promise<void>
   onCancel: () => void
-  onRequestAddContact: () => void
 }
 
-function InteractionForm({ workspaceId, contacts, onCreated, onCancel, onRequestAddContact }: InteractionFormProps) {
+function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: InteractionFormProps) {
   const [type, setType] = useState<InteractionTypeOption>("meeting")
   const [scheduledAt, setScheduledAt] = useState("")
   const [notes, setNotes] = useState("")
@@ -115,12 +114,9 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel, onRequest
       </div>
       {contacts.length === 0 ? (
         <div style={{ marginTop: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
-          <p style={{ color: "#5c4500", margin: "0 0 6px" }}>
-            Interaction is blocked: no contact is available yet.
+          <p style={{ color: "#5c4500", margin: 0 }}>
+            Interaction is blocked: no contact is available yet. Add a contact first, then return here.
           </p>
-          <button type="button" onClick={onRequestAddContact} disabled={isSubmitting}>
-            Add contact now
-          </button>
         </div>
       ) : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}

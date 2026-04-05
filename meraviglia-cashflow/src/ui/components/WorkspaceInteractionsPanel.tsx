@@ -12,10 +12,9 @@ type WorkspaceInteractionsPanelProps = {
   contacts: ContactDTO[]
   isContactsLoading: boolean
   isContactsReady: boolean
-  onRequestAddContact: () => void
 }
 
-function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, isContactsReady, onRequestAddContact }: WorkspaceInteractionsPanelProps) {
+function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, isContactsReady }: WorkspaceInteractionsPanelProps) {
   const [interactions, setInteractions] = useState<InteractionDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -99,7 +98,6 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
           contacts={contacts}
           onCreated={handleCreated}
           onCancel={() => setIsCreateOpen(false)}
-          onRequestAddContact={onRequestAddContact}
         />
       ) : null}
 
@@ -117,10 +115,9 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
 
       {hasNoContacts ? (
         <div style={{ marginBottom: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
-          <p style={{ margin: "0 0 6px", color: "#5c4500" }}>Interaction creation is blocked: no contacts exist in this workspace yet.</p>
-          <button type="button" onClick={onRequestAddContact}>
-            Add contact now
-          </button>
+          <p style={{ margin: 0, color: "#5c4500" }}>
+            Interaction creation is blocked: no contacts exist in this workspace yet. Add a contact in the Relationships panel, then log the interaction.
+          </p>
         </div>
       ) : null}
 

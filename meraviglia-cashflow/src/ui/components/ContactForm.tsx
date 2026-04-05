@@ -6,10 +6,9 @@ import { createContact } from "../../application/contactService"
 type ContactFormProps = {
   workspaceId: string
   onCreated: () => Promise<void>
-  isHighlighted?: boolean
 }
 
-function ContactForm({ workspaceId, onCreated, isHighlighted = false }: ContactFormProps) {
+function ContactForm({ workspaceId, onCreated }: ContactFormProps) {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
@@ -60,16 +59,12 @@ function ContactForm({ workspaceId, onCreated, isHighlighted = false }: ContactF
   }
 
   return (
-    <form
-      id={`workspace-${workspaceId}-contact-form`}
-      onSubmit={handleSubmit}
-      style={{ marginBottom: 12, border: isHighlighted ? "2px solid #2c8a3f" : "none", borderRadius: 6, padding: isHighlighted ? 8 : 0 }}
-    >
+    <form onSubmit={handleSubmit} style={{ marginBottom: 12 }}>
       <p style={{ marginBottom: 8 }}><strong>Add relationship contact</strong></p>
       <p style={{ marginTop: 0, color: "#555" }}>Start with only what you know. First name and last name are both optional, but add at least one.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         First name
-        <input id={`workspace-${workspaceId}-contact-first-name`} value={firstName} onChange={(event) => setFirstName(event.target.value)} />
+        <input value={firstName} onChange={(event) => setFirstName(event.target.value)} />
       </label>
       <label style={{ display: "block", marginBottom: 8 }}>
         Last name

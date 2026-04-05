@@ -187,3 +187,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when final UX polish reveals a model-expression gap plus a verifiability gap in blocked-state recovery
 - Avoid next time: avoid placing the only recovery CTA inside a nested view that is inaccessible when the primary action is disabled
+
+## [2026-04-05] FUV simplification rollback: remove low-value recovery CTA
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: simplify blocked states by removing noisy shortcut mechanics while keeping clear guidance
+- Why it worked:
+  - removed interaction mechanics (CTA + jump/highlight/focus) that did not prove useful in real usage
+  - preserved explicit blocked reason and next-step text in place
+- Guardrails that mattered:
+  - keep all existing architecture/contracts untouched
+  - remove only CTA-related behavior, preserve prior validated improvements
+  - maintain explicit blocked/empty/loading/error states
+- What was corrected during execution: deleted add-contact CTA chain and retained a concise blocked explanation in interactions area
+- Reusable snippet:
+  ```
+  Apply a simplification rollback: remove low-value recovery shortcuts and their supporting mechanics, keep one clear blocked-state message with actionable next-step guidance, and avoid replacing it with alternative shortcuts.
+  ```
+- Reuse conditions: use when a recently added UX recovery mechanic increases complexity more than it improves completion
+- Avoid next time: do not keep “clever” assistive behavior when plain guidance is easier to understand
