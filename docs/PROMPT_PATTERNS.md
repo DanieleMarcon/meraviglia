@@ -168,3 +168,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when a near-merge UX pass has 1–2 concrete regressions and needs strict scope control
 - Avoid next time: do not hide blocked recovery in passive text or rely on subtle links
+
+## [2026-04-05] FUV entry-reference + blocked-CTA verifiability micro-fix
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: preserve activity-first intake while allowing optional entry-stage reference person data and ensuring blocked recovery is visible in the real panel state
+- Why it worked:
+  - mapped optional semantics into existing contracts without schema/domain changes
+  - made blocked recovery visible in the parent panel state (not only inside a form users may never open)
+- Guardrails that mattered:
+  - no architecture or repository/infra changes
+  - documentation/copy reflects the exact implemented model boundary (entry reference vs workspace relationship contact)
+  - keep explicit blocked reason + adjacent actionable CTA
+- What was corrected during execution: restored optional reference-person capture in entry and surfaced the recovery CTA directly in the no-contacts interactions panel state
+- Reusable snippet:
+  ```
+  Apply a closure micro-fix: keep the primary model unchanged, add only optional early-stage reference capture mapped safely to existing contracts, and make blocked recovery actions visible in the exact state where users get blocked.
+  ```
+- Reuse conditions: use when final UX polish reveals a model-expression gap plus a verifiability gap in blocked-state recovery
+- Avoid next time: avoid placing the only recovery CTA inside a nested view that is inaccessible when the primary action is disabled

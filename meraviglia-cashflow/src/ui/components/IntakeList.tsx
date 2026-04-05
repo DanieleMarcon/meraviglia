@@ -26,6 +26,7 @@ function IntakeList({ intakes, onConverted }: IntakeListProps) {
           <li key={intake.id} style={{ border: "1px solid #ddd", padding: 12, marginBottom: 8 }}>
             <p><strong>Activity / business:</strong> {intake.first_name}</p>
             <p><strong>Email:</strong> {intake.email}</p>
+            {intake.last_name !== "Entry" ? <p><strong>Reference person:</strong> {intake.last_name}</p> : null}
             <p><strong>Status:</strong> {statusLabel[intake.status]}</p>
             {intake.notes ? <p><strong>Notes:</strong> {intake.notes}</p> : null}
             <p><strong>Created:</strong> {new Date(intake.created_at).toLocaleString()}</p>

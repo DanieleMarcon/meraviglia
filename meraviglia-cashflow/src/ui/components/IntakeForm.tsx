@@ -9,6 +9,8 @@ type IntakeFormProps = {
 
 type IntakeFormState = {
   activity: string
+  reference_first_name: string
+  reference_last_name: string
   email: string
   address: string
   is_online: boolean
@@ -17,6 +19,8 @@ type IntakeFormState = {
 
 const INITIAL_STATE: IntakeFormState = {
   activity: "",
+  reference_first_name: "",
+  reference_last_name: "",
   email: "",
   address: "",
   is_online: false,
@@ -37,9 +41,11 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
     setSuccessMessage(null)
 
     try {
+      const referencePersonLabel = `${formState.reference_first_name.trim()} ${formState.reference_last_name.trim()}`.trim()
+
       await createIntake({
         first_name: formState.activity,
-        last_name: "Entry",
+        last_name: referencePersonLabel || "Entry",
         email: formState.email,
         address: formState.address || null,
         is_online: formState.is_online,
@@ -58,7 +64,7 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 24 }}>
       <h2>Create entry</h2>
-      <p style={{ marginTop: 0, color: "#555" }}>Start with the activity or business first. Person details can be refined later in workspace contacts.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Start with the activity or business first. A reference person is optional at this stage.</p>
 
       <label style={{ display: "block", marginBottom: 8 }}>
         Activity / business
@@ -76,6 +82,23 @@ function IntakeForm({ onCreated }: IntakeFormProps) {
           value={formState.email}
           onChange={(event) => setFormState((prev) => ({ ...prev, email: event.target.value }))}
           required
+        />
+      </label>
+      <p style={{ marginTop: 0, marginBottom: 8, color: "#555" }}>
+        Optional reference person for this entry (not a workspace relationship contact yet).
+      </p>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Reference first name (optional)
+        <input
+          value={formState.reference_first_name}
+          onChange={(event) => setFormState((prev) => ({ ...prev, reference_first_name: event.target.value }))}
+        />
+      </label>
+      <label style={{ display: "block", marginBottom: 8 }}>
+        Reference last name (optional)
+        <input
+          value={formState.reference_last_name}
+          onChange={(event) => setFormState((prev) => ({ ...prev, reference_last_name: event.target.value }))}
         />
       </label>
 

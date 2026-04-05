@@ -116,7 +116,12 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>Add one contact to start logging interactions.</p>
+        <div style={{ marginBottom: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
+          <p style={{ margin: "0 0 6px", color: "#5c4500" }}>Interaction creation is blocked: no contacts exist in this workspace yet.</p>
+          <button type="button" onClick={onRequestAddContact}>
+            Add contact now
+          </button>
+        </div>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (
