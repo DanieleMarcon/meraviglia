@@ -75,24 +75,11 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
   })
   const hasRelationships = contacts.length > 0
   const hasEventHistory = interactions.length > 0
-
-  const readinessStatusLabel = !hasRelationships
-    ? "Not ready: relationship context missing."
+  const nextActionHint = !hasRelationships
+    ? "Next: add the first contact."
     : !hasEventHistory
-      ? "Starting: relationships exist, event history is still thin."
-      : "Ready: relationship context and event history are active."
-
-  const readinessSummary = !hasRelationships
-    ? "Without a contact, this workspace cannot anchor follow-up continuity."
-    : !hasEventHistory
-      ? "Relationship context exists, but decisions still rely on memory until the first event is logged."
-      : "Recorded events make follow-up decisions faster and more reliable."
-
-  const followUpReadinessHint = !hasRelationships
-    ? "Next action: add the first relationship."
-    : !hasEventHistory
-      ? "Next action: log the first event."
-      : "Next action: keep event history current."
+      ? "Next: log the first interaction."
+      : "Next: keep interactions updated."
 
   return (
     <li
@@ -112,12 +99,10 @@ function WorkspaceListItem({ workspace, isHighlighted }: WorkspaceListItemProps)
         <p style={{ margin: "0 0 4px", color: "#555" }}>
           Flow status: {contacts.length} relationship{contacts.length === 1 ? "" : "s"}, {interactions.length} event{interactions.length === 1 ? "" : "s"}.
         </p>
-        <p style={{ margin: "0 0 4px", color: "#555" }}>{readinessStatusLabel}</p>
-        <p style={{ margin: "0 0 4px", color: "#555" }}>Why this matters now: {readinessSummary}</p>
-        <p style={{ margin: 0, color: "#555" }}>{followUpReadinessHint}</p>
+        <p style={{ margin: 0, color: "#555" }}>{nextActionHint}</p>
         {!isInteractionsLoading ? (
           <p style={{ margin: "6px 0 0", color: "#555" }}>
-            Recency: {recentInteractions.length === 0 ? "No events recorded in the last 7 days." : `${recentInteractions.length} recorded in the last 7 days.`}
+            {recentInteractions.length === 0 ? "No events in the last 7 days." : `${recentInteractions.length} in the last 7 days.`}
           </p>
         ) : null}
       </header>

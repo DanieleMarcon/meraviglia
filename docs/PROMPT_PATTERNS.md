@@ -130,3 +130,79 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when users can see activity/history but still cannot infer whether the system is becoming operationally useful
 - Avoid next time: do not introduce percentages, dashboards, or new derived business rules for readiness
+
+## [2026-04-04] FUV friction-removal micro-simplification pass
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: remove micro-friction from Entry → Workspace → Contacts → Interactions without adding features or changing architecture
+- Why it worked:
+  - pushed every change through a strict "remove a decision or a step" filter
+  - treated copy as part of flow logic (short, direct, next-action language)
+- Guardrails that mattered:
+  - no new fields/features, only simplification of existing forms and feedback
+  - preserve deterministic errors and explicit loading/blocked states
+  - keep UI changes inside existing `ui -> application` boundaries
+- What was corrected during execution: removed low-value fields, shortened verbose system text, and added in-context "add contact now" recovery from interaction blocking
+- Reusable snippet:
+  ```
+  Execute a friction-removal slice on the existing end-to-end flow. Remove unclear or low-value fields, reduce required input to the minimum viable start, place key actions near blocking points, and rewrite feedback to short "done + next step" messages. No new features, no architecture/database changes.
+  ```
+- Reuse conditions: use when flow completion is possible but users still hesitate due to extra fields, verbose copy, or blocked-action dead ends
+- Avoid next time: do not replace one friction point with hidden complexity or long instructional text
+
+## [2026-04-04] FUV micro-fix: visible blocked recovery + contract-safe optional fields
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: apply a narrow UX correction without reopening scope or changing domain/service contracts
+- Why it worked:
+  - isolated the fix to two verifiable behaviors (field handling + blocked recovery visibility)
+  - required explicit visual affordance and recoverability at the exact blocked location
+- Guardrails that mattered:
+  - keep existing required backend/application constraints unchanged
+  - avoid fake parsing tricks that hide data expectations from users
+  - keep recovery action keyboard-visible and colocated with blocked reason
+- What was corrected during execution: restored separate contact fields and made blocked interaction recovery prominent with scroll+focus+highlight to contact creation
+- Reusable snippet:
+  ```
+  Apply a final micro-fix to an existing flow: restore natural field structure while preserving current service constraints, and make blocked states explicitly actionable with an adjacent recovery CTA that visibly moves the user to the next valid step.
+  ```
+- Reuse conditions: use when a near-merge UX pass has 1–2 concrete regressions and needs strict scope control
+- Avoid next time: do not hide blocked recovery in passive text or rely on subtle links
+
+## [2026-04-05] FUV entry-reference + blocked-CTA verifiability micro-fix
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: preserve activity-first intake while allowing optional entry-stage reference person data and ensuring blocked recovery is visible in the real panel state
+- Why it worked:
+  - mapped optional semantics into existing contracts without schema/domain changes
+  - made blocked recovery visible in the parent panel state (not only inside a form users may never open)
+- Guardrails that mattered:
+  - no architecture or repository/infra changes
+  - documentation/copy reflects the exact implemented model boundary (entry reference vs workspace relationship contact)
+  - keep explicit blocked reason + adjacent actionable CTA
+- What was corrected during execution: restored optional reference-person capture in entry and surfaced the recovery CTA directly in the no-contacts interactions panel state
+- Reusable snippet:
+  ```
+  Apply a closure micro-fix: keep the primary model unchanged, add only optional early-stage reference capture mapped safely to existing contracts, and make blocked recovery actions visible in the exact state where users get blocked.
+  ```
+- Reuse conditions: use when final UX polish reveals a model-expression gap plus a verifiability gap in blocked-state recovery
+- Avoid next time: avoid placing the only recovery CTA inside a nested view that is inaccessible when the primary action is disabled
+
+## [2026-04-05] FUV simplification rollback: remove low-value recovery CTA
+- Phase: FUV
+- Prompt type: refactor/hardening
+- Goal: simplify blocked states by removing noisy shortcut mechanics while keeping clear guidance
+- Why it worked:
+  - removed interaction mechanics (CTA + jump/highlight/focus) that did not prove useful in real usage
+  - preserved explicit blocked reason and next-step text in place
+- Guardrails that mattered:
+  - keep all existing architecture/contracts untouched
+  - remove only CTA-related behavior, preserve prior validated improvements
+  - maintain explicit blocked/empty/loading/error states
+- What was corrected during execution: deleted add-contact CTA chain and retained a concise blocked explanation in interactions area
+- Reusable snippet:
+  ```
+  Apply a simplification rollback: remove low-value recovery shortcuts and their supporting mechanics, keep one clear blocked-state message with actionable next-step guidance, and avoid replacing it with alternative shortcuts.
+  ```
+- Reuse conditions: use when a recently added UX recovery mechanic increases complexity more than it improves completion
+- Avoid next time: do not keep “clever” assistive behavior when plain guidance is easier to understand

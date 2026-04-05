@@ -37,7 +37,7 @@ function WorkspaceView() {
         setHighlightWorkspaceId(convertedEvent.detail.id)
       }
       if (convertedEvent.detail?.workspace_name) {
-        setConversionMessage(`Workspace ready: "${convertedEvent.detail.workspace_name}". Add relationships, then log interactions.`)
+        setConversionMessage(`Workspace "${convertedEvent.detail.workspace_name}" is ready. Add contacts and log interactions.`)
       }
       void loadWorkspaces()
     }

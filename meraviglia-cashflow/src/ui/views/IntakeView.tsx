@@ -34,7 +34,7 @@ function IntakeView() {
 
   const handleConverted = useCallback(async (workspace: { id: string; workspace_name: string }) => {
     await loadIntakes()
-    setSuccessMessage(`Entry qualified. Workspace "${workspace.workspace_name}" is ready for relationships and history.`)
+    setSuccessMessage(`Entry qualified. Workspace "${workspace.workspace_name}" is ready.`)
     window.dispatchEvent(new CustomEvent(WORKSPACE_CONVERTED_EVENT, { detail: workspace }))
     document.getElementById("workspaces-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
   }, [loadIntakes])

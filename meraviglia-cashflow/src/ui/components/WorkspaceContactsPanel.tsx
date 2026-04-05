@@ -18,14 +18,14 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
   return (
     <section style={{ padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fcfcfc" }}>
       <h4 style={{ marginTop: 0 }}>Relationships (contacts)</h4>
-      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Contacts are relationship records inside this workspace, not entry-stage identity fields.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Step 3 — Add the people involved in this workspace.</p>
       {isContactsReady ? (
         <p style={{ marginTop: 0, color: "#555" }}>
           {!hasRelationships
-            ? "Current state: no relationships yet."
+            ? "No contacts yet."
             : relationshipsInHistory === 0
-              ? "Current state: relationships exist, but none are in event history yet."
-              : `Current state: ${relationshipsInHistory} relationship${relationshipsInHistory === 1 ? "" : "s"} already anchor event history.`}
+              ? "Contacts added, but none used in interactions yet."
+              : `${relationshipsInHistory} contact${relationshipsInHistory === 1 ? "" : "s"} already used in interactions.`}
         </p>
       ) : null}
       <ContactForm workspaceId={workspaceId} onCreated={onChanged} />
@@ -36,8 +36,8 @@ function WorkspaceContactsPanel({ workspaceId, contacts, usedContactIds, isConta
       {isContactsReady && contacts.length > 0 ? (
         <p style={{ color: "#555" }}>
           {relationshipsInHistory === 0
-            ? "Next action: log the first event with one of these relationships."
-            : "Next action: keep linking events to maintain continuity."}
+            ? "Next: log the first interaction with one of these contacts."
+            : "Next: keep linking interactions to contacts."}
         </p>
       ) : null}
       {isContactsReady && contacts.length > 0 ? <ContactList contacts={contacts} usedContactIds={usedContactIds} onEdited={onChanged} /> : null}

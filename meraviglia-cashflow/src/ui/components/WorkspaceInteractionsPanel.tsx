@@ -71,7 +71,7 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
   const handleCreated = async () => {
     await loadData()
     setIsCreateOpen(false)
-    setFeedbackMessage("Interaction saved in workspace history.")
+    setFeedbackMessage("Interaction saved.")
   }
 
   return (
@@ -84,33 +84,13 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       {!isLoading ? (
         <p style={{ color: "#555" }}>
           {!hasRelationships
-            ? "Current state: history is blocked until the first relationship exists."
-            : !hasEventHistory
-              ? "Current state: relationship context exists, but history has not started yet."
-              : "Current state: recorded events are building reliable workspace history."}
-        </p>
-      ) : null}
-      {!isLoading ? (
-        <p style={{ color: "#555" }}>
-          Why this matters: {!hasRelationships
-            ? "without relationship records, interaction history cannot start."
-            : !hasEventHistory
-              ? "without logged interactions, follow-up relies on memory."
-              : "history keeps follow-up clear and consistent."}
-        </p>
-      ) : null}
-      {!isLoading ? (
-        <p style={{ color: "#555" }}>
-          Next action: {!hasRelationships
             ? "add the first relationship."
             : !hasEventHistory
               ? "log the first event."
-              : "keep event history current."}
+              : "keep history current."}
         </p>
       ) : null}
-      {!isLoading ? <p style={{ color: "#555" }}>Recency signal: {hasRecentInteractions ? "Event history is active this week." : "No recent interactions this week yet."}</p> : null}
-      {isContactsLoading ? <p style={{ color: "#555" }}>Action status: create interaction is temporarily blocked while relationships are loading.</p> : null}
-      {!isContactsLoading && !isCreateBlocked ? <p style={{ color: "#555" }}>Action status: create interaction is enabled.</p> : null}
+      {!isLoading ? <p style={{ color: "#555" }}>{hasRecentInteractions ? "Active this week." : "No interactions in the last 7 days."}</p> : null}
 
       {isCreateOpen && canRenderContactDependentUi ? (
         <InteractionForm
@@ -128,13 +108,17 @@ function WorkspaceInteractionsPanel({ workspaceId, contacts, isContactsLoading, 
       {!isLoading && interactions.length === 0 ? (
         <div style={{ border: "1px dashed #ccc", borderRadius: 4, padding: 8, marginBottom: 8 }}>
           <p style={{ margin: "0 0 4px" }}><strong>No interactions yet</strong></p>
-          <p style={{ margin: "0 0 8px" }}>Start a usable historical record by logging the first planned call, meeting, or follow-up.</p>
+          <p style={{ margin: "0 0 8px" }}>Log the first call, meeting, or follow-up.</p>
           <button type="button" onClick={() => setIsCreateOpen(true)} disabled={isContactsLoading || isCreateBlocked}>Create first interaction</button>
         </div>
       ) : null}
 
       {hasNoContacts ? (
-        <p style={{ color: "#555" }}>Interaction creation is blocked: no relationships exist yet. Add at least one contact above, then log the first event.</p>
+        <div style={{ marginBottom: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
+          <p style={{ margin: 0, color: "#5c4500" }}>
+            Interaction creation is blocked: no contacts exist in this workspace yet. Add a contact in the Relationships panel, then log the interaction.
+          </p>
+        </div>
       ) : null}
 
       {!isLoading && interactions.length > 0 && canRenderContactDependentUi ? (

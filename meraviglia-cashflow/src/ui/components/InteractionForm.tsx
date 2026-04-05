@@ -35,7 +35,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
     event.preventDefault()
 
     if (participantIds.length === 0) {
-      setErrorMessage("Select at least one participant before saving this interaction.")
+      setErrorMessage("Choose at least one contact.")
       return
     }
 
@@ -68,7 +68,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
   return (
     <form onSubmit={handleSubmit} style={{ marginBottom: 12, border: "1px solid #ddd", borderRadius: 4, padding: 8 }}>
       <p style={{ marginBottom: 8 }}><strong>New interaction</strong></p>
-      <p style={{ marginTop: 0, color: "#555" }}>Log what happened with one or more relationship contacts in this workspace.</p>
+      <p style={{ marginTop: 0, color: "#555" }}>Log the call, meeting, or follow-up.</p>
       <label style={{ display: "block", marginBottom: 8 }}>
         Type
         <select value={type} onChange={(event) => setType(event.target.value as InteractionTypeOption)}>
@@ -83,7 +83,7 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
       </label>
       <fieldset style={{ marginBottom: 8 }}>
         <legend>Relationship participants</legend>
-        {contacts.length === 0 ? <p style={{ margin: 0 }}>You need at least one contact before creating an interaction.</p> : null}
+        {contacts.length === 0 ? <p style={{ margin: 0 }}>No contacts yet.</p> : null}
         {contacts.length > 0 ? <p style={{ margin: "0 0 6px", color: "#555" }}>Pick the contacts involved in this interaction.</p> : null}
         {contacts.map((contact) => (
           <label key={contact.id} style={{ display: "block" }}>
@@ -112,7 +112,13 @@ function InteractionForm({ workspaceId, contacts, onCreated, onCancel }: Interac
         </button>
         <button type="button" onClick={onCancel} disabled={isSubmitting}>Cancel</button>
       </div>
-      {contacts.length === 0 ? <p style={{ color: "#555" }}>Blocked: no relationships to attach as participants yet. Next step: add contacts first.</p> : null}
+      {contacts.length === 0 ? (
+        <div style={{ marginTop: 8, border: "1px solid #e6a23c", borderRadius: 6, background: "#fff8e8", padding: 8 }}>
+          <p style={{ color: "#5c4500", margin: 0 }}>
+            Interaction is blocked: no contact is available yet. Add a contact first, then return here.
+          </p>
+        </div>
+      ) : null}
       {errorMessage ? <p style={{ color: "crimson" }}>{errorMessage}</p> : null}
     </form>
   )
