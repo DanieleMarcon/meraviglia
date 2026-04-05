@@ -82,7 +82,7 @@ Many-to-many mapping between users and roles, within tenant boundaries.
 Organization-scoped strategic containers for planning/orchestration initiatives.
 
 ### `public.intakes`
-Organization-scoped strategic entry records. Stores initial strategic inputs (`draft`/`validated`) and links to workspace once converted (`converted`).
+Organization-scoped strategic entry records. `activity_name` is the canonical activity/business identity at entry stage, while optional reference-person fields (`first_name`, `last_name`) remain separate from workspace contact records. Entry records store initial strategic inputs (`draft`/`validated`) and link to workspace once converted (`converted`).
 
 ### `public.contacts`
 Organization-scoped, workspace-linked strategic relationship records. Contacts carry explicit provenance metadata (`manual`, `from_intake`, `from_ai_review`) to support lifecycle traceability.
@@ -173,10 +173,11 @@ Policies ensure:
 - Add optional custom role templates per tenant onboarding workflow.
 
 ## Intake Conversion Lifecycle
-1. Intake is created with status `draft`.
-2. Intake can be updated and moved to `validated`.
-3. Conversion creates a workspace and updates intake to `converted`.
-4. Converted intake stores `workspace_id` for strategic traceability.
+1. Entry is created with `activity_name` as canonical identity and status `draft`.
+2. Entry can be updated and moved to `validated`.
+3. Conversion creates a workspace using `activity_name` and updates entry to `converted`.
+4. Converted entry stores `workspace_id` for strategic traceability.
+5. Not every entry is converted; low-continuity records may remain non-converted by design.
 
 ## Atomic Conversion Requirement (Future Hardening)
 `convertIntakeToWorkspace` currently performs multiple operations (workspace create + intake update) at application level, so the conversion is not atomic.

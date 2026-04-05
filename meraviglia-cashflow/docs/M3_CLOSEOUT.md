@@ -84,15 +84,12 @@ Clarifications applied in UX/documentation:
 
 ## DB/Schema Impact Assessment (Slice 6)
 
-No schema change is required for this slice.
-
-Current schema already supports the clarified model:
-- `intakes` can remain non-converted records.
-- `workspaces` are created only on explicit conversion.
+Minimal schema refinement is now implemented to align persistence with the clarified model:
+- `intakes.activity_name` is the canonical persisted activity/business identity at entry stage.
+- Legacy rows without `activity_name` are interpreted through compatibility fallback to existing `first_name` semantics until backfill is complete.
+- `intakes` can remain non-converted records by design; not every entry becomes a workspace.
+- `workspaces` are created only on explicit conversion and use `activity_name` as source identity.
 - `contacts` and `interactions` remain workspace-scoped relationship/history records.
-
-Potential future minimal refinement (documented, not implemented here):
-- optional dedicated `activity_name` field on `intakes` to make activity-first identity explicit at data level rather than UI semantics.
 
 ---
 

@@ -74,7 +74,7 @@ Domain expansion rule: new bounded capabilities must strengthen this continuity 
 - **Organization** is the hard tenant boundary.
 - **Workspace** belongs to exactly one organization and is created only for qualified entries with operational continuity.
 - **Contact** belongs to exactly one workspace and one organization-scoped boundary.
-- **Entry (intake record)** is the required starting artifact for each strategic lifecycle, but not every entry advances to workspace.
+- **Entry (intake record)** is the required starting artifact for each strategic lifecycle, with `activity_name` as canonical persisted identity, but not every entry advances to workspace.
 - **Blueprint** is versioned and linked to a workspace for full traceability.
 - **Scenario** belongs to exactly one blueprint and defines active action IDs plus assumption variables.
 - **SimulationResult** belongs to one scenario and stores projected indicators and risk level.
@@ -86,6 +86,7 @@ Key invariants:
 - No workspace lifecycle without entry lineage and qualification.
 - No contact without workspace ownership and explicit provenance.
 - Contacts are relationship records inside workspace scope; they may start partial/incomplete and be enriched over time.
+- Optional reference person data at entry stage is pre-workspace context metadata and is not equivalent to a workspace contact record.
 - No interaction without workspace ownership, explicit type/status/provenance semantics, and participant linkage scoped to workspace context.
 - No simulation output without declared scenario assumptions.
 

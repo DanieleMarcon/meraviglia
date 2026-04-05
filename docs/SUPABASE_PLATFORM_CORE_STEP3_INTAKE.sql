@@ -6,6 +6,7 @@ begin;
 create table if not exists public.intakes (
   id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
+  activity_name text not null,
   first_name text not null,
   last_name text not null,
   email text not null,

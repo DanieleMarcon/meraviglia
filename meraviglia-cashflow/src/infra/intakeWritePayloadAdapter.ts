@@ -6,6 +6,7 @@ import type {
 
 type CreateIntakeWritePayload = {
   organization_id: string
+  activity_name: string
   first_name: string
   last_name: string
   email: string
@@ -74,6 +75,7 @@ export const adaptCreateIntakeWritePayload = (
 
   const payload: CreateIntakeWritePayload = {
     organization_id: assertString(input.organization_id, "organization_id", "createIntake"),
+    activity_name: assertString(input.activity_name, "activity_name", "createIntake"),
     first_name: assertString(input.first_name, "first_name", "createIntake"),
     last_name: assertString(input.last_name, "last_name", "createIntake"),
     email: assertString(input.email, "email", "createIntake"),
@@ -106,6 +108,10 @@ export const adaptUpdateIntakeWritePayload = (
   }
 
   const payload: UpdateIntakeWritePayload = {}
+
+  if ("activity_name" in input && input.activity_name !== undefined) {
+    payload.activity_name = assertString(input.activity_name, "activity_name", "updateIntake")
+  }
 
   if ("first_name" in input && input.first_name !== undefined) {
     payload.first_name = assertString(input.first_name, "first_name", "updateIntake")

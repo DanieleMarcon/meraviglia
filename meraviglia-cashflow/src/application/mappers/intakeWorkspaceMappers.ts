@@ -6,6 +6,7 @@ import type { WorkspaceRecord } from "../../repository/workspaceRepository"
 export const mapIntakeRecordToDTO = (record: IntakeRecord): IntakeDTO => {
   return {
     id: record.id,
+    activity_name: record.activity_name,
     first_name: record.first_name,
     last_name: record.last_name,
     email: record.email,

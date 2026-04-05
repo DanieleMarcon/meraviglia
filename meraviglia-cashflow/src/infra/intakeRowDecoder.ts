@@ -2,6 +2,7 @@ import type { IntakeRecord, IntakeStatus } from "../repository/intakeRepository"
 
 type RawIntakeRow = {
   id?: unknown
+  activity_name?: unknown
   first_name?: unknown
   last_name?: unknown
   email?: unknown
@@ -60,6 +61,14 @@ const asIntakeStatus = (value: unknown, context: string): IntakeStatus => {
   return value as IntakeStatus
 }
 
+const resolveActivityName = (row: RawIntakeRow, context: string): string => {
+  if (typeof row.activity_name === "string" && row.activity_name.trim()) {
+    return row.activity_name
+  }
+
+  return asString(row.first_name, "first_name", `${context}:activity_name_fallback`)
+}
+
 export const decodeIntakeRow = (raw: unknown, context: string): IntakeRecord => {
   if (!isObject(raw)) {
     throw new Error(`Invalid intake row: row must be an object (${context})`)
@@ -69,6 +78,7 @@ export const decodeIntakeRow = (raw: unknown, context: string): IntakeRecord => 
 
   return {
     id: asString(row.id, "id", context),
+    activity_name: resolveActivityName(row, context),
     first_name: asString(row.first_name, "first_name", context),
     last_name: asString(row.last_name, "last_name", context),
     email: asString(row.email, "email", context),

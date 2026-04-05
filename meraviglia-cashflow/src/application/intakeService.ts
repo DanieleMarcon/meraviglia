@@ -12,6 +12,15 @@ const requireNonEmpty = (value: string, fieldName: string): string => {
   return normalized
 }
 
+const normalizeOptionalReferenceName = (value: string | undefined, fallback: string): string => {
+  if (!value) {
+    return fallback
+  }
+
+  const normalized = value.trim()
+  return normalized || fallback
+}
+
 export class IntakeService {
   private readonly intakeRepository: IntakeRepository
 
@@ -28,8 +37,9 @@ export class IntakeService {
   async createIntake(input: CreateIntakeInput): Promise<IntakeDTO> {
     const intakeRecord = await this.intakeRepository.createIntake({
       ...input,
-      first_name: requireNonEmpty(input.first_name, "first_name"),
-      last_name: requireNonEmpty(input.last_name, "last_name"),
+      activity_name: requireNonEmpty(input.activity_name, "activity_name"),
+      first_name: normalizeOptionalReferenceName(input.first_name, "Reference"),
+      last_name: normalizeOptionalReferenceName(input.last_name, "Entry"),
       email: requireNonEmpty(input.email, "email"),
     })
 
@@ -58,7 +68,7 @@ export class IntakeService {
     const intake = mapIntakeRecordToDTO(intakeRecord)
     if (intake.status === "converted") throw new Error("Intake already converted")
 
-    const workspaceName = intake.first_name.trim()
+    const workspaceName = intake.activity_name.trim()
     const workspaceSlug = workspaceName.toLowerCase().replace(/\s+/g, "-")
 
     const workspace = await this.workspaceService.createWorkspace({
