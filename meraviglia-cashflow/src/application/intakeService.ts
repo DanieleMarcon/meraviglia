@@ -12,13 +12,12 @@ const requireNonEmpty = (value: string, fieldName: string): string => {
   return normalized
 }
 
-const normalizeOptionalReferenceName = (value: string | undefined, fallback: string): string => {
+const normalizeOptionalReferenceName = (value: string | undefined): string => {
   if (!value) {
-    return fallback
+    return ""
   }
 
-  const normalized = value.trim()
-  return normalized || fallback
+  return value.trim()
 }
 
 export class IntakeService {
@@ -38,8 +37,8 @@ export class IntakeService {
     const intakeRecord = await this.intakeRepository.createIntake({
       ...input,
       activity_name: requireNonEmpty(input.activity_name, "activity_name"),
-      first_name: normalizeOptionalReferenceName(input.first_name, "Reference"),
-      last_name: normalizeOptionalReferenceName(input.last_name, "Entry"),
+      first_name: normalizeOptionalReferenceName(input.first_name),
+      last_name: normalizeOptionalReferenceName(input.last_name),
       email: requireNonEmpty(input.email, "email"),
     })
 
