@@ -225,3 +225,22 @@ If an entry feels abstract or bureaucratic, do not add it.
   ```
 - Reuse conditions: use when UX/domain semantics are already agreed and implemented, but persistence still encodes an older surrogate identity
 - Avoid next time: do not broaden into adjacent model cleanup once compatibility is satisfied
+
+## [2026-04-06] Safe shared-env operational data cleanup (access-preserving)
+- Phase: post-FUV stabilization
+- Prompt type: documentation alignment
+- Goal: reset test/dev operational records without breaking login, org membership, or RBAC access
+- Why it worked:
+  - explicitly separated "operational data" tables from "auth/access backbone" tables before writing SQL
+  - required tenant-targeted deletes plus pre/post verification in the same script
+- Guardrails that mattered:
+  - preserve `auth.users`, `public.users`, org/membership/role structures
+  - avoid schema or migration edits; data-only cleanup
+  - shared-env safety stop (must set target org UUID)
+- What was corrected during execution: none
+- Reusable snippet:
+  ```
+  Produce a shared-dev-safe SQL cleanup that deletes only operational workspace-scoped data (intakes, workspaces, contacts, interactions, participants) while preserving auth/users/org/RBAC tables. Include: dependency analysis, ordered delete SQL with comments, target-org safety guard, pre/post verification queries, and local vs remote execution notes.
+  ```
+- Reuse conditions: use when preparing user testing from polluted dev/test data while keeping existing user access intact
+- Avoid next time: do not use broad tenant-wide or global TRUNCATE/CASCADE resets in shared environments without explicit scoping and verification
